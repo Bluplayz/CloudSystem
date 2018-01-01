@@ -83,7 +83,7 @@ public class Logger {
             return;
         }
 
-        message = "[§bINFO§r]: " + message;
+        message = "[§bINFO§r]: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
@@ -101,7 +101,7 @@ public class Logger {
             return;
         }
 
-        message = "[§cERROR§r]: " + message;
+        message = "[§cERROR§r]: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
@@ -119,7 +119,7 @@ public class Logger {
             return;
         }
 
-        message = "[§5DEBUG§r]: " + message;
+        message = "[§5DEBUG§r]: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
@@ -137,7 +137,7 @@ public class Logger {
             return;
         }
 
-        message = "[§eWARNING§r]: " + message;
+        message = "[§eWARNING§r]: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
