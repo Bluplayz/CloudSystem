@@ -190,6 +190,10 @@ public class CloudWrapper {
         translations.put( "console_language_set_success", "{PREFIX} §7Die Sprache der Konsole ist §bDeutsch§7." );
         translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
         translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
+        translations.put( "network_master_connected", "{PREFIX} §7Verbindung zum CloudMaster(§b{0}§7) wurde hergestellt." );
+        translations.put( "network_master_connection_lost", "{PREFIX} §cVerbindung zum CloudMaster(§b{0}§c) verloren!" );
+        translations.put( "network_master_failed_connection", "{PREFIX} §cVerbindung zum CloudMaster(§b{0}§c) ist fehlgeschlagen!" );
+        translations.put( "network_master_failed_connection_reconnect", "{PREFIX} §cVerbinde erneut in 3 Sekunden..." );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
@@ -204,6 +208,10 @@ public class CloudWrapper {
         translations.put( "console_language_set_success", "{PREFIX} §7The Language of the Console is §bEnglish§7." );
         translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
         translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
+        translations.put( "network_master_connected", "{PREFIX} §7Successfully connected to CloudMaster(§b{0}§7)." );
+        translations.put( "network_master_connection_lost", "{PREFIX} §cConnection to CloudMaster(§b{0}§c) was lost!" );
+        translations.put( "network_master_failed_connection", "{PREFIX} §cConnection failed to CloudMaster(§b{0}§c)!" );
+        translations.put( "network_master_failed_connection_reconnect", "{PREFIX} §cReconnect in 3 Seconds..." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

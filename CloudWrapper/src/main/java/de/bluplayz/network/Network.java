@@ -1,6 +1,7 @@
 package de.bluplayz.network;
 
 import de.bluplayz.CloudWrapper;
+import de.bluplayz.locale.LocaleAPI;
 import de.bluplayz.netty.ConnectionListener;
 import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
@@ -44,10 +45,10 @@ public class Network {
             @Override
             public void accept( Boolean success ) {
                 if ( success ) {
-                    Network.this.getCloudWrapper().getLogger().info( "Successfully connected to netty server on " + Network.this.getHost() + ":" + Network.this.getPort() );
+                    LocaleAPI.log( "network_master_connected", Network.this.getHost() + ":" + Network.this.getPort() );
                 } else {
-                    Network.this.getCloudWrapper().getLogger().error( "failed to connect to netty server on " + Network.this.getHost() + ":" + Network.this.getPort() );
-                    Network.this.getCloudWrapper().getLogger().error( "reconnecting in 3 Seconds...." );
+                    LocaleAPI.log( "network_master_failed_connection", Network.this.getHost() + ":" + Network.this.getPort() );
+                    LocaleAPI.log( "network_master_failed_connection_reconnect" );
                     nettyHandler.reconnectToServer( 3, this );
                 }
             }
@@ -56,16 +57,14 @@ public class Network {
         this.getNettyHandler().registerConnectionListener( this.connectionListener = new ConnectionListener() {
             @Override
             public void channelConnected( ChannelHandlerContext ctx ) {
-                Network.this.getCloudWrapper().getLogger().info( "CloudMaster connected" );
             }
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                Network.this.getCloudWrapper().getLogger().info( "CloudMaster disconnected" );
-
-                Network.this.getCloudWrapper().getLogger().error( "Connection lost to netty server" );
-                Network.this.getCloudWrapper().getLogger().error( "reconnecting in 3 Seconds...." );
+                LocaleAPI.log( "network_master_connection_lost", Network.this.getHost() + ":" + Network.this.getPort() );
+                LocaleAPI.log( "network_master_failed_connection_reconnect" );
                 nettyHandler.reconnectToServer( 3, Network.this.getConnectingConsumer() );
+
             }
         } );
 

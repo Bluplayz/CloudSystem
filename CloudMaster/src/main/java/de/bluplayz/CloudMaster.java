@@ -281,12 +281,17 @@ public class CloudMaster {
         translations.put( "console_loading_message_start", "{PREFIX} §7{0} v{1} wird geladen..." );
         translations.put( "console_loading_message_finish", "{PREFIX} §7{0} v{1} wurde erfolgreich geladen!" );
         translations.put( "console_language_set_success", "{PREFIX} §7Die Sprache der Konsole ist §bDeutsch§7." );
+        translations.put( "network_netty_started_successfully", "{PREFIX} §7Netty Server wurde erfolgreich auf Port §b{0} §7gestartet." );
+        translations.put( "network_netty_starting_failed", "{PREFIX} §cFehler beim Starten des Netty Servers." );
         translations.put( "network_server_starting", "{PREFIX} §b{0} §7wird auf Port §b{1}§7 gestartet..." );
         translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7ist nun online auf Port §b{1}§7." );
         translations.put( "network_server_stopping", "{PREFIX} §b{0} §7wird heruntergefahren..." );
         translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7ist nun offline." );
+        translations.put( "network_wrapper_connected", "{PREFIX} §7Cloudwrapper hat sich verbunden mit §b{0}§7." );
+        translations.put( "network_wrapper_disconnected", "{PREFIX} §7Cloudwrapper hat die Verbindung getrennt von §b{0}§7." );
         translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
         translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
+
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
 
@@ -298,10 +303,14 @@ public class CloudMaster {
         translations.put( "console_loading_message_start", "{PREFIX} §7Loading {0} v{1}..." );
         translations.put( "console_loading_message_finish", "{PREFIX} §7Successfully loaded {0} v{1}!" );
         translations.put( "console_language_set_success", "{PREFIX} §7The Language of the Console is §bEnglish§7." );
+        translations.put( "network_netty_started_successfully", "{PREFIX} §7Netty Server was successfully started on port §b{0}§7." );
+        translations.put( "network_netty_starting_failed", "{PREFIX} §cError while starting Netty Server." );
         translations.put( "network_server_starting", "{PREFIX} §b{0} §7starting on port §b{1}§7..." );
         translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7is now online on port §b{1}§7." );
         translations.put( "network_server_stopping", "{PREFIX} §b{0} §7shutting down..." );
         translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7is now offline." );
+        translations.put( "network_wrapper_connected", "{PREFIX} §7Cloudwrapper connected from §b{0}§7." );
+        translations.put( "network_wrapper_disconnected", "{PREFIX} §7Cloudwrapper disconnected from §b{0}§7." );
         translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
         translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
 

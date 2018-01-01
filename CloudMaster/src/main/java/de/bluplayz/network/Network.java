@@ -1,6 +1,7 @@
 package de.bluplayz.network;
 
 import de.bluplayz.CloudMaster;
+import de.bluplayz.locale.LocaleAPI;
 import de.bluplayz.netty.ConnectionListener;
 import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
@@ -44,9 +45,9 @@ public class Network {
         this.nettyHandler = new NettyHandler();
         this.getNettyHandler().startServer( this.getPort(), success -> {
             if ( success ) {
-                this.getCloudMaster().getLogger().info( "Successfully started netty server on port " + this.getPort() );
+                LocaleAPI.log( "network_netty_started_successfully", this.getPort() );
             } else {
-                this.getCloudMaster().getLogger().error( "failed to start netty server" );
+                LocaleAPI.log( "network_netty_starting_failed" );
             }
         } );
 
@@ -58,10 +59,11 @@ public class Network {
                     return;
                 }
 
+                LocaleAPI.log( "network_wrapper_connected", ctx.channel().remoteAddress().toString().substring( 1 ) );
+
                 CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
                 cloudWrapper.startProxies( new BungeeCordProxy( cloudWrapper, Template.getProxyTemplates().get( 0 ) ) );
                 cloudWrapper.startServers( new SpigotServer( cloudWrapper, Template.getSpigotTemplates().get( 0 ) ), new SpigotServer( cloudWrapper, Template.getSpigotTemplates().get( 0 ) ) );
-                Network.this.getCloudMaster().getLogger().info( "CloudWrapper connected from " + ctx.channel().remoteAddress().toString().substring( 1 ) );
             }
 
             @Override
@@ -71,8 +73,8 @@ public class Network {
                     return;
                 }
 
+                LocaleAPI.log( "network_wrapper_disconnected", ctx.channel().remoteAddress().toString().substring( 1 ) );
                 Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
-                Network.this.getCloudMaster().getLogger().info( "CloudWrapper disconnected from " + ctx.channel().remoteAddress().toString().substring( 1 ) );
             }
         } );
 
