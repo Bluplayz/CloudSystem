@@ -106,6 +106,7 @@ public class CloudMaster {
         // Add Shutdown Thread
         Runtime.getRuntime().addShutdownHook( new Thread( () -> {
             // Stop all Minecraft Server and Proxies
+            LocaleAPI.log( "system_exit_loading" );
             for ( CloudWrapper cloudWrapper : this.getServerManager().getCloudWrappers() ) {
                 for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
                     bungeeCordProxy.shutdown();
@@ -114,6 +115,7 @@ public class CloudMaster {
                     spigotServer.shutdown();
                 }
             }
+            LocaleAPI.log( "system_exit_finished" );
         } ) );
 
         // Finish initialize message
@@ -283,7 +285,8 @@ public class CloudMaster {
         translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7ist nun online auf Port §b{1}§7." );
         translations.put( "network_server_stopping", "{PREFIX} §b{0} §7wird heruntergefahren..." );
         translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7ist nun offline." );
-
+        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
+        translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
 
@@ -299,6 +302,8 @@ public class CloudMaster {
         translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7is now online on port §b{1}§7." );
         translations.put( "network_server_stopping", "{PREFIX} §b{0} §7shutting down..." );
         translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7is now offline." );
+        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
+        translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

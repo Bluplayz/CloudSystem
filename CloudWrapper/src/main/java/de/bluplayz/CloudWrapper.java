@@ -82,6 +82,12 @@ public class CloudWrapper {
         // Initialize Network
         this.network = new Network( this, this.getConfig().getString( "network.cloudmaster.address" ), this.getConfig().getInt( "network.cloudmaster.port" ) );
 
+        // Add Shutdown Thread
+        Runtime.getRuntime().addShutdownHook( new Thread( () -> {
+            LocaleAPI.log( "system_exit_loading" );
+            LocaleAPI.log( "system_exit_finished" );
+        } ) );
+
         // Finish initialize message
         LocaleAPI.log( "console_loading_message_finish", "CloudWrapper", VERSION );
 
@@ -182,6 +188,8 @@ public class CloudWrapper {
         translations.put( "console_loading_message_start", "{PREFIX} §7{0} v{1} wird geladen..." );
         translations.put( "console_loading_message_finish", "{PREFIX} §7{0} v{1} wurde erfolgreich geladen!" );
         translations.put( "console_language_set_success", "{PREFIX} §7Die Sprache der Konsole ist §bDeutsch§7." );
+        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
+        translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
@@ -194,6 +202,8 @@ public class CloudWrapper {
         translations.put( "console_loading_message_start", "{PREFIX} §7Loading {0} v{1}..." );
         translations.put( "console_loading_message_finish", "{PREFIX} §7Successfully loaded {0} v{1}!" );
         translations.put( "console_language_set_success", "{PREFIX} §7The Language of the Console is §bEnglish§7." );
+        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
+        translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

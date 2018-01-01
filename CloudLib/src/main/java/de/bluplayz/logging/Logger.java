@@ -8,10 +8,8 @@ import org.apache.log4j.PatternLayout;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Logger {
 
@@ -21,7 +19,22 @@ public class Logger {
     @Getter
     private org.apache.log4j.Logger apacheLogger;
 
+    @Getter
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "yyyy-MM-dd" ) {{
+        this.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
+    }};
+
     public Logger( File logsDirectory ) {
+        Date date = new Date( System.currentTimeMillis() );
+        File file = new File( logsDirectory.getAbsolutePath() + "/unknown.log" );
+        for ( int id = 1; id < Integer.MAX_VALUE; id++ ) {
+            file = new File( logsDirectory, this.getSimpleDateFormat().format( date ) + "-" + id + ".log" );
+            if ( file.exists() ) {
+                continue;
+            }
+            break;
+        }
+
         if ( !logsDirectory.exists() ) {
             logsDirectory.mkdir();
         }
@@ -33,8 +46,10 @@ public class Logger {
         this.getApacheLogger().addAppender( consoleAppender );
 
         try {
-            FileAppender fileAppender = new FileAppender( layout, logsDirectory.getAbsolutePath() + "/lastlog.log", false );
+            FileAppender fileAppender = new FileAppender( layout, file.getAbsolutePath(), false );
+            FileAppender fileAppender2 = new FileAppender( layout, logsDirectory.getAbsolutePath() + "/latest.log", false );
             this.getApacheLogger().addAppender( fileAppender );
+            this.getApacheLogger().addAppender( fileAppender2 );
         } catch ( IOException e ) {
             e.printStackTrace();
         }
