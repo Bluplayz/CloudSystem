@@ -1,6 +1,6 @@
 package de.bluplayz.network;
 
-import de.bluplayz.CloudServer;
+import de.bluplayz.CloudWrapper;
 import de.bluplayz.netty.ConnectionListener;
 import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
@@ -20,7 +20,7 @@ public class Network {
     private int port = 19132;
 
     @Getter
-    private CloudServer cloudServer;
+    private CloudWrapper cloudWrapper;
 
     @Getter
     private NettyHandler nettyHandler;
@@ -34,8 +34,8 @@ public class Network {
     @Getter
     private Consumer<Boolean> connectingConsumer;
 
-    public Network( CloudServer cloudServer, String host, int port ) {
-        this.cloudServer = cloudServer;
+    public Network( CloudWrapper cloudWrapper, String host, int port ) {
+        this.cloudWrapper = cloudWrapper;
         this.host = host;
         this.port = port;
 
@@ -44,10 +44,10 @@ public class Network {
             @Override
             public void accept( Boolean success ) {
                 if ( success ) {
-                    Network.this.getCloudServer().getLogger().info( "Successfully connected to netty server on " + Network.this.getHost() + ":" + Network.this.getPort() );
+                    Network.this.getCloudWrapper().getLogger().info( "Successfully connected to netty server on " + Network.this.getHost() + ":" + Network.this.getPort() );
                 } else {
-                    Network.this.getCloudServer().getLogger().error( "failed to connect to netty server on " + Network.this.getHost() + ":" + Network.this.getPort() );
-                    Network.this.getCloudServer().getLogger().error( "reconnecting in 3 Seconds...." );
+                    Network.this.getCloudWrapper().getLogger().error( "failed to connect to netty server on " + Network.this.getHost() + ":" + Network.this.getPort() );
+                    Network.this.getCloudWrapper().getLogger().error( "reconnecting in 3 Seconds...." );
                     nettyHandler.reconnectToServer( 3, this );
                 }
             }
@@ -56,15 +56,15 @@ public class Network {
         this.getNettyHandler().registerConnectionListener( this.connectionListener = new ConnectionListener() {
             @Override
             public void channelConnected( ChannelHandlerContext ctx ) {
-                Network.this.getCloudServer().getLogger().info( "CloudMaster connected" );
+                Network.this.getCloudWrapper().getLogger().info( "CloudMaster connected" );
             }
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                Network.this.getCloudServer().getLogger().info( "CloudMaster disconnected" );
+                Network.this.getCloudWrapper().getLogger().info( "CloudMaster disconnected" );
 
-                Network.this.getCloudServer().getLogger().error( "Connection lost to netty server" );
-                Network.this.getCloudServer().getLogger().error( "reconnecting in 3 Seconds...." );
+                Network.this.getCloudWrapper().getLogger().error( "Connection lost to netty server" );
+                Network.this.getCloudWrapper().getLogger().error( "reconnecting in 3 Seconds...." );
                 nettyHandler.reconnectToServer( 3, Network.this.getConnectingConsumer() );
             }
         } );

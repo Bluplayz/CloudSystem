@@ -1,6 +1,6 @@
 package de.bluplayz.command;
 
-import de.bluplayz.CloudServer;
+import de.bluplayz.CloudWrapper;
 
 public class StopCommand extends Command {
 
@@ -13,6 +13,6 @@ public class StopCommand extends Command {
 
     @Override
     public void execute( String label, String[] args ) {
-        CloudServer.getInstance().shutdown();
+        CloudWrapper.getInstance().shutdown();
     }
 }

@@ -1,6 +1,7 @@
 package de.bluplayz.locale;
 
 import de.bluplayz.CloudMaster;
+import de.bluplayz.localemanager.locale.Locale;
 
 public class LocaleAPI {
 

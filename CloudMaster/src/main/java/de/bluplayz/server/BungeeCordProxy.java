@@ -18,7 +18,7 @@ public class BungeeCordProxy {
     public static List<Integer> PORTS_IN_USE = new ArrayList<>();
 
     @Getter
-    private CloudServer cloudServer;
+    private CloudWrapper cloudWrapper;
 
     @Getter
     private Template template;
@@ -35,8 +35,8 @@ public class BungeeCordProxy {
     @Getter
     private String name = "";
 
-    public BungeeCordProxy( CloudServer cloudServer, Template template ) {
-        this.cloudServer = cloudServer;
+    public BungeeCordProxy( CloudWrapper cloudWrapper, Template template ) {
+        this.cloudWrapper = cloudWrapper;
         this.template = template;
         this.id = STATIC_ID.incrementAndGet();
         this.name = this.getTemplate().getName() + "-" + this.id;
@@ -48,14 +48,14 @@ public class BungeeCordProxy {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
         // TODO
 
-        this.getCloudServer().getBungeeCordProxies().add( this );
+        this.getCloudWrapper().getBungeeCordProxies().add( this );
     }
 
     public void shutdown() {
         LocaleAPI.log( "network_server_stopping", this.getName() );
         // TODO
 
-        this.getCloudServer().getBungeeCordProxies().remove( this );
+        this.getCloudWrapper().getBungeeCordProxies().remove( this );
     }
 
     private int getAvailablePort() {

@@ -11,7 +11,7 @@
 
     <modules>
         <module>CloudMaster</module>
-        <module>CloudServer</module>
+        <module>CloudWrapper</module>
         <module>CloudLib</module>
     </modules>
 
@@ -28,21 +28,6 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>CloudMaster-build</id>
-            <modules>
-                <module>CloudMaster</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>CloudServer-build</id>
-            <modules>
-                <module>CloudServer</module>
-            </modules>
-        </profile>
-    </profiles>
-
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -56,14 +41,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- LocaleManager -->
-        <dependency>
-            <groupId>com.github.bluplayz</groupId>
-            <artifactId>LocaleManager</artifactId>
-            <version>7e6ef1843cc074d1ecab5b04dc413f7292bc871b</version>
             <scope>compile</scope>
         </dependency>
 

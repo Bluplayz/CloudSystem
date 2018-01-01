@@ -9,35 +9,35 @@ import java.util.List;
 public class ServerManager {
 
     @Getter
-    private List<CloudServer> cloudServers = new LinkedList<>();
+    private List<CloudWrapper> cloudWrappers = new LinkedList<>();
 
-    public CloudServer addCloudServer( Channel channel ) {
-        // Check for existing CloudServer with this channel
-        if ( this.getCloudServerByChannel( channel ) != null ) {
+    public CloudWrapper addCloudWrapper( Channel channel ) {
+        // Check for existing CloudWrapper with this channel
+        if ( this.getCloudWrapperByChannel( channel ) != null ) {
             return null;
         }
 
-        CloudServer cloudServer = new CloudServer();
-        cloudServer.onConnect( channel );
-        this.getCloudServers().add( cloudServer );
-        return cloudServer;
+        CloudWrapper cloudWrapper = new CloudWrapper();
+        cloudWrapper.onConnect( channel );
+        this.getCloudWrappers().add( cloudWrapper );
+        return cloudWrapper;
     }
 
-    public CloudServer removeCloudServer( Channel channel ) {
-        CloudServer cloudServer = this.getCloudServerByChannel( channel );
-        if ( cloudServer == null ) {
+    public CloudWrapper removeCloudWrapper( Channel channel ) {
+        CloudWrapper cloudWrapper = this.getCloudWrapperByChannel( channel );
+        if ( cloudWrapper == null ) {
             return null;
         }
 
-        cloudServer.onDisconnect();
-        this.getCloudServers().remove( cloudServer );
-        return cloudServer;
+        cloudWrapper.onDisconnect();
+        this.getCloudWrappers().remove( cloudWrapper );
+        return cloudWrapper;
     }
 
-    public CloudServer getCloudServerByChannel( Channel channel ) {
-        for ( CloudServer cloudServer : this.getCloudServers() ) {
-            if ( cloudServer.getChannel() == channel ) {
-                return cloudServer;
+    public CloudWrapper getCloudWrapperByChannel( Channel channel ) {
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            if ( cloudWrapper.getChannel() == channel ) {
+                return cloudWrapper;
             }
         }
 

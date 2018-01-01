@@ -18,7 +18,7 @@ public class SpigotServer {
     public static List<Integer> PORTS_IN_USE = new ArrayList<>();
 
     @Getter
-    private CloudServer cloudServer;
+    private CloudWrapper cloudWrapper;
 
     @Getter
     private Template template;
@@ -35,8 +35,8 @@ public class SpigotServer {
     @Getter
     private String name = "";
 
-    public SpigotServer( CloudServer cloudServer, Template template ) {
-        this.cloudServer = cloudServer;
+    public SpigotServer( CloudWrapper cloudWrapper, Template template ) {
+        this.cloudWrapper = cloudWrapper;
         this.template = template;
         this.id = STATIC_ID.incrementAndGet();
         this.name = this.getTemplate().getName() + "-" + this.id;
@@ -48,14 +48,14 @@ public class SpigotServer {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
         // TODO
 
-        this.getCloudServer().getSpigotServers().add( this );
+        this.getCloudWrapper().getSpigotServers().add( this );
     }
 
     public void shutdown() {
         LocaleAPI.log( "network_server_stopping", this.getName() );
         // TODO
 
-        this.getCloudServer().getSpigotServers().remove( this );
+        this.getCloudWrapper().getSpigotServers().remove( this );
     }
 
     private int getAvailablePort() {

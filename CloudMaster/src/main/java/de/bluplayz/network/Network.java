@@ -6,7 +6,7 @@ import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
 import de.bluplayz.netty.packet.Packet;
 import de.bluplayz.server.BungeeCordProxy;
-import de.bluplayz.server.CloudServer;
+import de.bluplayz.server.CloudWrapper;
 import de.bluplayz.server.SpigotServer;
 import de.bluplayz.server.Template;
 import io.netty.channel.Channel;
@@ -58,21 +58,21 @@ public class Network {
                     return;
                 }
 
-                CloudServer cloudServer = Network.this.getCloudMaster().getServerManager().addCloudServer( ctx.channel() );
-                cloudServer.startProxies( new BungeeCordProxy( cloudServer, Template.getProxyTemplates().get( 0 ) ) );
-                cloudServer.startServers( new SpigotServer( cloudServer, Template.getSpigotTemplates().get( 0 ) ), new SpigotServer( cloudServer, Template.getSpigotTemplates().get( 0 ) ) );
-                Network.this.getCloudMaster().getLogger().info( "CloudServer connected from " + ctx.channel().remoteAddress().toString().substring( 1 ) );
+                CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
+                cloudWrapper.startProxies( new BungeeCordProxy( cloudWrapper, Template.getProxyTemplates().get( 0 ) ) );
+                cloudWrapper.startServers( new SpigotServer( cloudWrapper, Template.getSpigotTemplates().get( 0 ) ), new SpigotServer( cloudWrapper, Template.getSpigotTemplates().get( 0 ) ) );
+                Network.this.getCloudMaster().getLogger().info( "CloudWrapper connected from " + ctx.channel().remoteAddress().toString().substring( 1 ) );
             }
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                if ( Network.this.getCloudMaster().getServerManager().getCloudServerByChannel( ctx.channel() ) == null ) {
+                if ( Network.this.getCloudMaster().getServerManager().getCloudWrapperByChannel( ctx.channel() ) == null ) {
                     ctx.close();
                     return;
                 }
 
-                Network.this.getCloudMaster().getServerManager().removeCloudServer( ctx.channel() );
-                Network.this.getCloudMaster().getLogger().info( "CloudServer disconnected from " + ctx.channel().remoteAddress().toString().substring( 1 ) );
+                Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
+                Network.this.getCloudMaster().getLogger().info( "CloudWrapper disconnected from " + ctx.channel().remoteAddress().toString().substring( 1 ) );
             }
         } );
 

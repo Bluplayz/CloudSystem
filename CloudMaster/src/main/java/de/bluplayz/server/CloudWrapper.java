@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CloudServer {
+public class CloudWrapper {
 
     public static final AtomicInteger staticId = new AtomicInteger( 0 );
 
@@ -29,7 +29,7 @@ public class CloudServer {
     public void onConnect( Channel channel ) {
         this.channel = channel;
         this.id = staticId.incrementAndGet();
-        this.name = "CloudServer-" + this.id;
+        this.name = this.getClass().getSimpleName() + "-" + this.id;
     }
 
     public void onDisconnect() {

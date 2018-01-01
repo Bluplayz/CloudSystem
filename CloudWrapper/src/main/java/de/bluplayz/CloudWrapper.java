@@ -5,8 +5,9 @@ import de.bluplayz.command.CommandHandler;
 import de.bluplayz.command.HelpCommand;
 import de.bluplayz.command.StopCommand;
 import de.bluplayz.config.Config;
-import de.bluplayz.locale.Locale;
 import de.bluplayz.locale.LocaleAPI;
+import de.bluplayz.localemanager.LocaleManager;
+import de.bluplayz.localemanager.locale.Locale;
 import de.bluplayz.logging.Logger;
 import de.bluplayz.network.Network;
 import lombok.Getter;
@@ -20,12 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CloudServer {
+public class CloudWrapper {
 
     public static final String VERSION = "1.0.0";
 
     @Getter
-    private static CloudServer instance;
+    private static CloudWrapper instance;
 
     @Getter
     private Logger logger = Logger.getLogger( "CloudSystem" );
@@ -48,12 +49,12 @@ public class CloudServer {
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public CloudServer() {
+    public CloudWrapper() {
         // Save instance for further use
         instance = this;
 
         // Rename Main-Thread
-        Thread.currentThread().setName( "CloudServerMain-Thread" );
+        Thread.currentThread().setName( "CloudWrapperMain-Thread" );
 
         // Check configdata
         this.initConfig();
@@ -62,7 +63,7 @@ public class CloudServer {
         this.initLocales();
 
         // Start initialize message
-        LocaleAPI.log( "console_loading_message_start", "CloudServer", VERSION );
+        LocaleAPI.log( "console_loading_message_start", "CloudWrapper", VERSION );
 
         // Initialize command handler
         this.commandHandler = new CommandHandler();
@@ -80,7 +81,7 @@ public class CloudServer {
         this.network = new Network( this, this.getConfig().getString( "network.cloudmaster.address" ), this.getConfig().getInt( "network.cloudmaster.port" ) );
 
         // Finish initialize message
-        LocaleAPI.log( "console_loading_message_finish", "CloudServer", VERSION );
+        LocaleAPI.log( "console_loading_message_finish", "CloudWrapper", VERSION );
 
         // Finish initialize message
         LocaleAPI.log( "console_language_set_success" );
@@ -89,7 +90,7 @@ public class CloudServer {
     public static void main( String[] args ) {
         try {
             // Load libs
-            File libDirectory = new File( CloudServer.getRootDirectory(), "libs" );
+            File libDirectory = new File( CloudWrapper.getRootDirectory(), "libs" );
             if ( !libDirectory.isDirectory() ) {
                 libDirectory.mkdir();
             }
@@ -103,7 +104,7 @@ public class CloudServer {
                 method.invoke( classLoader, url );
             }
 
-            new CloudServer();
+            new CloudWrapper();
         } catch ( Exception e ) {
             e.printStackTrace();
         }
@@ -113,7 +114,7 @@ public class CloudServer {
         File directory = null;
 
         try {
-            directory = new File( CloudServer.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() ).getParentFile();
+            directory = new File( CloudWrapper.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() ).getParentFile();
             if ( !directory.isDirectory() ) {
                 directory.mkdir();
             }
@@ -131,7 +132,7 @@ public class CloudServer {
     }
 
     private void initConfig() {
-        File configDirectory = new File( CloudServer.getRootDirectory().getAbsolutePath());
+        File configDirectory = new File( CloudWrapper.getRootDirectory().getAbsolutePath() );
 
         if ( !configDirectory.isDirectory() ) {
             configDirectory.mkdir();
@@ -169,13 +170,13 @@ public class CloudServer {
         LinkedHashMap<String, String> translations = new LinkedHashMap<>();
 
         // Initialize LocaleManager
-        this.localeManager = new LocaleManager( CloudServer.getRootDirectory() + "/locales" );
+        this.localeManager = new LocaleManager( CloudWrapper.getRootDirectory() + "/locales" );
 
         /** GERMAN */
         Locale germanLocale = getLocaleManager().createLocale( "de_DE" );
 
         translations.clear();
-        translations.put( "prefix", "§7[§3CloudServer§7]§r" );
+        translations.put( "prefix", "§7[§3CloudWrapper§7]§r" );
         translations.put( "console_loading_message_start", "{PREFIX} §7{0} v{1} wird geladen..." );
         translations.put( "console_loading_message_finish", "{PREFIX} §7{0} v{1} wurde erfolgreich geladen!" );
         translations.put( "console_language_set_success", "{PREFIX} §7Die Sprache der Konsole ist §bDeutsch§7." );
@@ -187,7 +188,7 @@ public class CloudServer {
         Locale englishLocale = getLocaleManager().createLocale( "en_EN" );
 
         translations.clear();
-        translations.put( "prefix", "§7[§3CloudServer§7]§r" );
+        translations.put( "prefix", "§7[§3CloudWrapper§7]§r" );
         translations.put( "console_loading_message_start", "{PREFIX} §7Loading {0} v{1}..." );
         translations.put( "console_loading_message_finish", "{PREFIX} §7Successfully loaded {0} v{1}!" );
         translations.put( "console_language_set_success", "{PREFIX} §7The Language of the Console is §bEnglish§7." );

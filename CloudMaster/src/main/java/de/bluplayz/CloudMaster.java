@@ -2,8 +2,9 @@ package de.bluplayz;
 
 import de.bluplayz.command.*;
 import de.bluplayz.config.Config;
-import de.bluplayz.locale.Locale;
 import de.bluplayz.locale.LocaleAPI;
+import de.bluplayz.localemanager.LocaleManager;
+import de.bluplayz.localemanager.locale.Locale;
 import de.bluplayz.logging.Logger;
 import de.bluplayz.network.Network;
 import de.bluplayz.server.*;
@@ -95,11 +96,11 @@ public class CloudMaster {
         // Add Shutdown Thread
         Runtime.getRuntime().addShutdownHook( new Thread( () -> {
             // Stop all Minecraft Server and Proxies
-            for ( CloudServer cloudServer : this.getServerManager().getCloudServers() ) {
-                for ( BungeeCordProxy bungeeCordProxy : cloudServer.getBungeeCordProxies() ) {
+            for ( CloudWrapper cloudWrapper : this.getServerManager().getCloudWrappers() ) {
+                for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
                     bungeeCordProxy.shutdown();
                 }
-                for ( SpigotServer spigotServer : cloudServer.getSpigotServers() ) {
+                for ( SpigotServer spigotServer : cloudWrapper.getSpigotServers() ) {
                     spigotServer.shutdown();
                 }
             }
