@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.bluplayz</groupId>
+    <artifactId>CloudSystem</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>CloudMaster</module>
+        <module>CloudServer</module>
+        <module>CloudLib</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>CloudMaster-build</id>
+            <modules>
+                <module>CloudMaster</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>CloudServer-build</id>
+            <modules>
+                <module>CloudServer</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- LocaleManager -->
+        <dependency>
+            <groupId>com.github.bluplayz</groupId>
+            <artifactId>LocaleManager</artifactId>
+            <version>7e6ef1843cc074d1ecab5b04dc413f7292bc871b</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- NettyLibrary -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.9.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- NettyLibrary
+        <dependency>
+            <groupId>de.bluplayz</groupId>
+            <artifactId>NettyLibrary</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
+    </dependencies>
+</project>
