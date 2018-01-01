@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CloudWrapper {
 
-    public static final AtomicInteger staticId = new AtomicInteger( 0 );
+    public static final AtomicInteger STATIC_ID = new AtomicInteger( 0 );
 
     @Getter
     public Channel channel;
@@ -28,7 +28,7 @@ public class CloudWrapper {
 
     public void onConnect( Channel channel ) {
         this.channel = channel;
-        this.id = staticId.incrementAndGet();
+        this.id = CloudWrapper.STATIC_ID.incrementAndGet();
         this.name = this.getClass().getSimpleName() + "-" + this.id;
     }
 

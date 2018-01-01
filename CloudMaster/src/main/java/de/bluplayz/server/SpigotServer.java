@@ -39,10 +39,10 @@ public class SpigotServer {
     public SpigotServer( CloudWrapper cloudWrapper, Template template ) {
         this.cloudWrapper = cloudWrapper;
         this.template = template;
-        this.id = STATIC_ID.incrementAndGet();
+        this.id = SpigotServer.STATIC_ID.incrementAndGet();
         this.name = this.getTemplate().getName() + "-" + this.id;
         this.port = this.getAvailablePort();
-        PORTS_IN_USE.add( this.getPort() );
+        SpigotServer.PORTS_IN_USE.add( this.getPort() );
     }
 
     public void startServer() {
@@ -60,8 +60,8 @@ public class SpigotServer {
     }
 
     private int getAvailablePort() {
-        for ( int port = PORT_START; port < PORT_END; port++ ) {
-            if ( PORTS_IN_USE.contains( port ) ) {
+        for ( int port = SpigotServer.PORT_START; port < SpigotServer.PORT_END; port++ ) {
+            if ( SpigotServer.PORTS_IN_USE.contains( port ) ) {
                 continue;
             }
 

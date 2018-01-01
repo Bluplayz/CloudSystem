@@ -1,13 +1,17 @@
 package de.bluplayz.logging;
 
 import lombok.Getter;
-import lombok.Setter;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 public class Logger {
 
@@ -15,36 +19,37 @@ public class Logger {
     private static Set<Logger> loggers = new HashSet<>();
 
     @Getter
-    @Setter
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "HH:mm:ss" );
+    private org.apache.log4j.Logger apacheLogger;
 
-    @Getter
-    private String name;
+    public Logger( File logsDirectory ) {
+        if ( !logsDirectory.exists() ) {
+            logsDirectory.mkdir();
+        }
 
-    public Logger( String name ) {
-        this.name = name;
+        org.apache.log4j.Logger.getRootLogger().setLevel( Level.OFF );
+        this.apacheLogger = org.apache.log4j.Logger.getLogger( "CloudSystem" );
+        PatternLayout layout = new PatternLayout( "[%d{HH:mm:ss}] [%t] %m%n" );
+        ConsoleAppender consoleAppender = new ConsoleAppender( layout );
+        this.getApacheLogger().addAppender( consoleAppender );
 
-        // Set TimeZone
-        this.getSimpleDateFormat().setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
+        try {
+            FileAppender fileAppender = new FileAppender( layout, logsDirectory.getAbsolutePath() + "/lastlog.log", false );
+            this.getApacheLogger().addAppender( fileAppender );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
+        this.getApacheLogger().setLevel( Level.INFO );
 
         // Add to Loggerlist
         Logger.getLoggers().add( this );
     }
 
     /**
-     * Get the Logger by a specified name
-     *
-     * @param name the name of the logger
-     * @return the logger with that name, create a logger if doesn't exist
+     * Get a Logger
      */
-    public static Logger getLogger( String name ) {
-        for ( Logger logger : Logger.getLoggers() ) {
-            if ( logger.getName().equalsIgnoreCase( name ) ) {
-                return logger;
-            }
-        }
-
-        return new Logger( name );
+    public static Logger getGlobal() {
+        return Logger.getLoggers().iterator().next();
     }
 
     /**
@@ -59,7 +64,7 @@ public class Logger {
 
         message = this.translateColorCodes( message );
 
-        System.out.println( Color.RESET + Color.CYAN + "[" + this.getSimpleDateFormat().format( new Date() ) + "] [" + Thread.currentThread().getName() + "]: " + Color.RESET + message + Color.RESET );
+        this.getApacheLogger().info( "[INFO]: " + message );
     }
 
     /**
@@ -74,7 +79,7 @@ public class Logger {
 
         message = this.translateColorCodes( message );
 
-        System.out.println( Color.RESET + Color.CYAN + "[" + this.getSimpleDateFormat().format( new Date() ) + "] [" + Thread.currentThread().getName() + "]: " + Color.RESET + Color.RED + "[ERROR] " + message + Color.RESET );
+        this.getApacheLogger().info( "[ERROR]: " + message );
     }
 
     /**
@@ -89,7 +94,7 @@ public class Logger {
 
         message = this.translateColorCodes( message );
 
-        System.out.println( Color.RESET + Color.CYAN + "[" + this.getSimpleDateFormat().format( new Date() ) + "] [" + Thread.currentThread().getName() + "]: " + Color.RESET + Color.CYAN + "[DEBUG] " + message + Color.RESET );
+        this.getApacheLogger().info( "[DEBUG]: " + message );
     }
 
     /**
@@ -104,31 +109,38 @@ public class Logger {
 
         message = this.translateColorCodes( message );
 
-        System.out.println( Color.RESET + Color.CYAN + "[" + this.getSimpleDateFormat().format( new Date() ) + "] [" + Thread.currentThread().getName() + "]: " + Color.RESET + Color.YELLOW + "[WARNING] " + message + Color.RESET );
+        this.getApacheLogger().info( "[WARNING]: " + message );
     }
 
     private String translateColorCodes( String message ) {
-        message = message.replaceAll( "§a", Color.GREEN );
-        message = message.replaceAll( "§b", Color.CYAN );
-        message = message.replaceAll( "§c", Color.RED );
-        message = message.replaceAll( "§d", Color.MAGENTA );
-        message = message.replaceAll( "§e", Color.YELLOW );
-        message = message.replaceAll( "§f", Color.RESET );
-        //message = message.replaceAll( "§0", Color.UNKNOWN );
-        message = message.replaceAll( "§1", Color.BLUE );
-        message = message.replaceAll( "§2", Color.GREEN );
-        message = message.replaceAll( "§3", Color.CYAN );
-        message = message.replaceAll( "§4", Color.RED );
-        message = message.replaceAll( "§5", Color.MAGENTA );
-        message = message.replaceAll( "§6", Color.YELLOW );
-        message = message.replaceAll( "§7", Color.GRAY );
-        message = message.replaceAll( "§8", Color.GRAY );
-        message = message.replaceAll( "§9", Color.BLUE );
+        Map<String, String> replace = new HashMap<String, String>() {{
+            this.put( "§a", "" );
+            this.put( "§b", "" );
+            this.put( "§c", "" );
+            this.put( "§d", "" );
+            this.put( "§e", "" );
+            this.put( "§f", "" );
 
-        message = message.replaceAll( "§r", Color.RESET );
-        message = message.replaceAll( "§l", Color.BOLD );
-        message = message.replaceAll( "§n", Color.UNDERLINED );
+            this.put( "§0", "" );
+            this.put( "§1", "" );
+            this.put( "§2", "" );
+            this.put( "§3", "" );
+            this.put( "§4", "" );
+            this.put( "§5", "" );
+            this.put( "§6", "" );
+            this.put( "§7", "" );
+            this.put( "§8", "" );
+            this.put( "§9", "" );
+
+            this.put( "§r", "" );
+            this.put( "§l", "" );
+            this.put( "§n", "" );
+        }};
+        for ( Map.Entry entry : replace.entrySet() ) {
+            message = message.replaceAll( (String) entry.getKey(), (String) entry.getValue() );
+        }
 
         return message;
+
     }
 }

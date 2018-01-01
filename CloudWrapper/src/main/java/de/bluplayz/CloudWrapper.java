@@ -29,7 +29,7 @@ public class CloudWrapper {
     private static CloudWrapper instance;
 
     @Getter
-    private Logger logger = Logger.getLogger( "CloudSystem" );
+    private Logger logger;
 
     @Getter
     private LocaleManager localeManager;
@@ -52,6 +52,8 @@ public class CloudWrapper {
     public CloudWrapper() {
         // Save instance for further use
         instance = this;
+
+        this.logger = new Logger( new File( CloudWrapper.getRootDirectory(), "logs" ) );
 
         // Rename Main-Thread
         Thread.currentThread().setName( "CloudWrapperMain-Thread" );

@@ -16,16 +16,16 @@ public class CommandHandler {
     public void registerCommand( Command command ) {
         for ( Command cmd : getCommands() ) {
             if ( command.getName().equalsIgnoreCase( cmd.getName() ) ) {
-                Logger.getLogger( "CloudSystem" ).warning( "The name of the command '" + command.getName() + "' is already in use." );
+                Logger.getGlobal().warning( "The name of the command '" + command.getName() + "' is already in use." );
             }
 
             if ( cmd.getAliases().contains( command.getName() ) ) {
-                Logger.getLogger( "CloudSystem" ).warning( "An alias is already registered with the name " + command.getName() + "." );
+                Logger.getGlobal().warning( "An alias is already registered with the name " + command.getName() + "." );
             }
 
             for ( String alias : command.getAliases() ) {
                 if ( cmd.getAliases().contains( alias ) ) {
-                    Logger.getLogger( "CloudSystem" ).warning( "The alias '" + alias + "' is already an alias of an other command." );
+                    Logger.getGlobal().warning( "The alias '" + alias + "' is already an alias of an other command." );
                     break;
                 }
             }
@@ -39,7 +39,7 @@ public class CommandHandler {
         Command command = getCommandByName( commandname );
 
         if ( command == null ) {
-            Logger.getLogger( "CloudSystem" ).error( "Command " + commandname + " was not found!" );
+            Logger.getGlobal().error( "Command " + commandname + " was not found!" );
             return;
         }
 

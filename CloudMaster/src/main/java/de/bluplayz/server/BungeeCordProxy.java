@@ -39,10 +39,10 @@ public class BungeeCordProxy {
     public BungeeCordProxy( CloudWrapper cloudWrapper, Template template ) {
         this.cloudWrapper = cloudWrapper;
         this.template = template;
-        this.id = STATIC_ID.incrementAndGet();
+        this.id = BungeeCordProxy.STATIC_ID.incrementAndGet();
         this.name = this.getTemplate().getName() + "-" + this.id;
         this.port = this.getAvailablePort();
-        PORTS_IN_USE.add( this.getPort() );
+        BungeeCordProxy.PORTS_IN_USE.add( this.getPort() );
     }
 
     public void startProxy() {
@@ -60,8 +60,8 @@ public class BungeeCordProxy {
     }
 
     private int getAvailablePort() {
-        for ( int port = PORT_START; port < PORT_END; port++ ) {
-            if ( PORTS_IN_USE.contains( port ) ) {
+        for ( int port = BungeeCordProxy.PORT_START; port < BungeeCordProxy.PORT_END; port++ ) {
+            if ( BungeeCordProxy.PORTS_IN_USE.contains( port ) ) {
                 continue;
             }
 

@@ -34,7 +34,7 @@ public class CloudMaster {
     private static CloudMaster instance;
 
     @Getter
-    private Logger logger = Logger.getLogger( "CloudSystem" );
+    private Logger logger;
 
     @Getter
     private LocaleManager localeManager;
@@ -63,6 +63,12 @@ public class CloudMaster {
     public CloudMaster() {
         // Save instance for further use
         instance = this;
+
+        this.logger = new Logger( new File( CloudMaster.getRootDirectory(), "logs" ) );
+
+        // Add Shutdown Hook
+        Runtime.getRuntime().addShutdownHook( new Thread( () -> {
+        } ) );
 
         // Rename Main-Thread
         Thread.currentThread().setName( "CloudMasterMain-Thread" );
