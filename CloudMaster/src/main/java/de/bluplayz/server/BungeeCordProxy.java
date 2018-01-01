@@ -1,6 +1,7 @@
 package de.bluplayz.server;
 
 import de.bluplayz.locale.LocaleAPI;
+import de.bluplayz.server.template.Template;
 import lombok.Getter;
 
 import java.util.ArrayList;

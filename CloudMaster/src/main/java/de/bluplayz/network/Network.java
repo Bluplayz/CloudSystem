@@ -8,7 +8,7 @@ import de.bluplayz.netty.packet.Packet;
 import de.bluplayz.server.BungeeCordProxy;
 import de.bluplayz.server.CloudWrapper;
 import de.bluplayz.server.SpigotServer;
-import de.bluplayz.server.Template;
+import de.bluplayz.server.template.Template;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;

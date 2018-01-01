@@ -1,4 +1,4 @@
-package de.bluplayz.server;
+package de.bluplayz.server.template;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +33,7 @@ public class Template {
 
     @Getter
     @Setter
-    private String templateFolder = "/home/templates/" + this.name;
+    private String templateFolder = "/home/server/" + this.name;
 
     @Getter
     @Setter

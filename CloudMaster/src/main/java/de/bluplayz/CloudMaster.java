@@ -7,7 +7,11 @@ import de.bluplayz.localemanager.LocaleManager;
 import de.bluplayz.localemanager.locale.Locale;
 import de.bluplayz.logging.Logger;
 import de.bluplayz.network.Network;
-import de.bluplayz.server.*;
+import de.bluplayz.server.BungeeCordProxy;
+import de.bluplayz.server.CloudWrapper;
+import de.bluplayz.server.ServerManager;
+import de.bluplayz.server.SpigotServer;
+import de.bluplayz.server.template.Template;
 import lombok.Getter;
 
 import java.io.File;
@@ -214,7 +218,7 @@ public class CloudMaster {
                     this.put( "minOnlineServers", 1 );
                     this.put( "maxOnlineServers", 1 );
                     this.put( "maxMemory", 1000 );
-                    this.put( "templateFolder", "/home/templates/Bungee/" );
+                    this.put( "templateFolder", "/home/server/Bungee/" );
                     this.put( "fallbackPriorities", new ArrayList<String>() {{
                         this.add( "Lobby" );
                         this.add( "Lobby" );
@@ -225,7 +229,7 @@ public class CloudMaster {
                     this.put( "minOnlineServers", 1 );
                     this.put( "maxOnlineServers", 2 );
                     this.put( "maxMemory", 500 );
-                    this.put( "templateFolder", "/home/templates/Lobby/" );
+                    this.put( "templateFolder", "/home/server/Lobby/" );
                 }} );
             }} );
 

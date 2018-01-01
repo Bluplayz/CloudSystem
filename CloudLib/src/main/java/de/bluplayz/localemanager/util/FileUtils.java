@@ -5,6 +5,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 
 public class FileUtils {
+
     public static void writeFile( String fileName, String content ) throws IOException {
         writeFile( fileName, new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) ) );
     }
