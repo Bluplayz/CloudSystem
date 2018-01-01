@@ -37,6 +37,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Packet> {
         for ( PacketHandler handler : NettyHandler.getPacketHandlers() ) {
             handler.incomingPacket( packet, this.getChannel() );
         }
+
+        NettyHandler.getInstance().runPacketCallbacks( packet );
     }
 
     @Override

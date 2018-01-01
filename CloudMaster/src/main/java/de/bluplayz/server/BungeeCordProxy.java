@@ -3,6 +3,7 @@ package de.bluplayz.server;
 import de.bluplayz.locale.LocaleAPI;
 import de.bluplayz.server.template.Template;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,16 @@ public class BungeeCordProxy {
     @Getter
     private String name = "";
 
+    @Getter
+    private int slots = 0;
+
+    @Getter
+    private int onlinePlayers = 0;
+
+    @Getter
+    @Setter
+    private ActiveMode activeMode = ActiveMode.OFFLINE;
+
     public BungeeCordProxy( CloudWrapper cloudWrapper, Template template ) {
         this.cloudWrapper = cloudWrapper;
         this.template = template;
@@ -47,14 +58,14 @@ public class BungeeCordProxy {
 
     public void startProxy() {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
-        // TODO
+        this.setActiveMode( ActiveMode.STARTING );
 
         this.getCloudWrapper().getBungeeCordProxies().add( this );
     }
 
     public void shutdown() {
         LocaleAPI.log( "network_server_stopping", this.getName() );
-        // TODO
+        this.setActiveMode( ActiveMode.STOPPING );
 
         this.getCloudWrapper().getBungeeCordProxies().remove( this );
     }
@@ -69,5 +80,20 @@ public class BungeeCordProxy {
         }
 
         return 0;
+    }
+
+    public enum ActiveMode {
+        STARTING( 0 ),
+        STARTED( 1 ),
+        ONLINE( 1 ),
+        STOPPING( 2 ),
+        OFFLINE( 3 );
+
+        @Getter
+        private int id;
+
+        ActiveMode( int id ) {
+            this.id = id;
+        }
     }
 }

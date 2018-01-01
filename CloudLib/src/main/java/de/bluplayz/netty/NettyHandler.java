@@ -1,6 +1,7 @@
 package de.bluplayz.netty;
 
 import de.bluplayz.netty.client.NettyClient;
+import de.bluplayz.netty.packet.Packet;
 import de.bluplayz.netty.server.NettyServer;
 import io.netty.channel.Channel;
 import lombok.Getter;
@@ -24,6 +25,9 @@ public class NettyHandler {
 
     @Getter
     private static NettyHandler instance;
+
+    @Getter
+    private Map<UUID, ArrayList<Consumer<Packet>>> packetCallbacks = new HashMap<>();
 
     @Getter
     @Setter
@@ -160,6 +164,32 @@ public class NettyHandler {
         }
 
         return "";
+    }
+
+    public void addPacketCallback( Packet packet, Consumer<Packet> consumer ) {
+        if ( !this.getPacketCallbacks().containsKey( packet.getUniqueId() ) ) {
+            this.getPacketCallbacks().put( packet.getUniqueId(), new ArrayList<>() );
+        }
+
+        this.getPacketCallbacks().get( packet.getUniqueId() ).add( consumer );
+    }
+
+    public void removePacketCallbacks( Packet packet ) {
+        if ( !this.getPacketCallbacks().containsKey( packet.getUniqueId() ) ) {
+            return;
+        }
+
+        this.getPacketCallbacks().remove( packet.getUniqueId() );
+    }
+
+    public void runPacketCallbacks( Packet packet ) {
+        if ( !this.getPacketCallbacks().containsKey( packet.getUniqueId() ) ) {
+            return;
+        }
+
+        for ( Consumer<Packet> consumer : this.getPacketCallbacks().get( packet.getUniqueId() ) ) {
+            consumer.accept( packet );
+        }
     }
 
     public enum Type {

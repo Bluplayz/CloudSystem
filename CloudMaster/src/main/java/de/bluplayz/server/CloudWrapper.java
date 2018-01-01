@@ -1,8 +1,10 @@
 package de.bluplayz.server;
 
+import de.bluplayz.server.template.Template;
 import io.netty.channel.Channel;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,16 +38,22 @@ public class CloudWrapper {
         this.channel = null;
     }
 
-    public void startServers( SpigotServer... spigotServers ) {
-        // TODO
+    public void startServers( Template... templates ) {
+        List<SpigotServer> spigotServers = new ArrayList<>();
+        for ( Template template : templates ) {
+            spigotServers.add( new SpigotServer( this, template ) );
+        }
 
         for ( SpigotServer spigotServer : spigotServers ) {
             spigotServer.startServer();
         }
     }
 
-    public void startProxies( BungeeCordProxy... bungeeCordProxies ) {
-        // TODO
+    public void startProxies( Template... templates ) {
+        List<BungeeCordProxy> bungeeCordProxies = new ArrayList<>();
+        for ( Template template : templates ) {
+            bungeeCordProxies.add( new BungeeCordProxy( this, template ) );
+        }
 
         for ( BungeeCordProxy bungeeCordProxy : bungeeCordProxies ) {
             bungeeCordProxy.startProxy();

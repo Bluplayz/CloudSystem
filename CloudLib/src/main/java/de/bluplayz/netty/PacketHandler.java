@@ -3,6 +3,7 @@ package de.bluplayz.netty;
 import de.bluplayz.netty.packet.Packet;
 import de.bluplayz.netty.packet.defaults.DisconnectPacket;
 import de.bluplayz.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.packet.StartServerPacket;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public abstract class PacketHandler {
         // Register default Packets
         PacketHandler.PACKETS.add( DisconnectPacket.class );
         PacketHandler.PACKETS.add( SetNamePacket.class );
+        PacketHandler.PACKETS.add( StartServerPacket.class );
 
         this.registerPackets();
     }

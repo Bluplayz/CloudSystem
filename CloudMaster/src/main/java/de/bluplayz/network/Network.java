@@ -61,9 +61,8 @@ public class Network {
 
                 LocaleAPI.log( "network_wrapper_connected", ctx.channel().remoteAddress().toString().substring( 1 ) );
 
-                CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
-                cloudWrapper.startProxies( new BungeeCordProxy( cloudWrapper, Template.getProxyTemplates().get( 0 ) ) );
-                cloudWrapper.startServers( new SpigotServer( cloudWrapper, Template.getSpigotTemplates().get( 0 ) ), new SpigotServer( cloudWrapper, Template.getSpigotTemplates().get( 0 ) ) );
+                Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
+                Network.this.getCloudMaster().getServerManager().checkForServers();
             }
 
             @Override

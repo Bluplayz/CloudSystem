@@ -22,6 +22,7 @@ public class ListCommand extends Command {
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + bungeeCordProxy.getName() + " {" );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Template: " + bungeeCordProxy.getTemplate().getName() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Port: " + bungeeCordProxy.getPort() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "State: " + bungeeCordProxy.getActiveMode().name() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + "}" );
             }
 
@@ -30,6 +31,7 @@ public class ListCommand extends Command {
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + spigotServer.getName() + " {" );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Template: " + spigotServer.getTemplate().getName() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Port: " + spigotServer.getPort() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "State: " + spigotServer.getActiveMode().name() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + "}" );
             }
             CloudMaster.getInstance().getLogger().info( "}" );

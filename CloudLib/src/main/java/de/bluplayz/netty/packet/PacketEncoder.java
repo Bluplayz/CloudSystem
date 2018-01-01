@@ -5,6 +5,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+import java.nio.charset.Charset;
+import java.util.UUID;
+
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
     @Override
@@ -15,6 +18,11 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
         }
 
         byteBuf.writeInt( id );
+
+        UUID uuid = packet.getUniqueId();
+        byteBuf.writeInt( uuid.toString().length() );
+        byteBuf.writeCharSequence( uuid.toString(), Charset.forName( "UTF-8" ) );
+
         packet.write( byteBuf );
     }
 }

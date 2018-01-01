@@ -1,8 +1,10 @@
 package de.bluplayz.server;
 
+import de.bluplayz.CloudMaster;
 import de.bluplayz.locale.LocaleAPI;
 import de.bluplayz.server.template.Template;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,16 @@ public class SpigotServer {
     @Getter
     private String name = "";
 
+    @Getter
+    private int slots = 0;
+
+    @Getter
+    private int onlinePlayers = 0;
+
+    @Getter
+    @Setter
+    private ActiveMode activeMode = ActiveMode.OFFLINE;
+
     public SpigotServer( CloudWrapper cloudWrapper, Template template ) {
         this.cloudWrapper = cloudWrapper;
         this.template = template;
@@ -47,14 +59,16 @@ public class SpigotServer {
 
     public void startServer() {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
-        // TODO
+        this.setActiveMode( ActiveMode.STARTING );
+
+        //CloudMaster.getInstance().getNetwork().getNettyHandler().add
 
         this.getCloudWrapper().getSpigotServers().add( this );
     }
 
     public void shutdown() {
         LocaleAPI.log( "network_server_stopping", this.getName() );
-        // TODO
+        this.setActiveMode( ActiveMode.STOPPING );
 
         this.getCloudWrapper().getSpigotServers().remove( this );
     }
@@ -69,5 +83,20 @@ public class SpigotServer {
         }
 
         return 0;
+    }
+
+    public enum ActiveMode {
+        STARTING( 0 ),
+        STARTED( 1 ),
+        ONLINE( 1 ),
+        STOPPING( 2 ),
+        OFFLINE( 3 );
+
+        @Getter
+        private int id;
+
+        ActiveMode( int id ) {
+            this.id = id;
+        }
     }
 }
