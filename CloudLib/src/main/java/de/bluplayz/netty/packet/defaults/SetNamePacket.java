@@ -1,4 +1,4 @@
-package de.bluplayz.netty.packet.defaultpackets;
+package de.bluplayz.netty.packet.defaults;
 
 import de.bluplayz.netty.packet.Packet;
 import io.netty.buffer.ByteBuf;
@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SetNamePacket extends Packet {
+
     @Getter
     @Setter
     private String name = "";

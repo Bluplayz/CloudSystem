@@ -24,13 +24,16 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class NettyClient {
+
     public static final boolean EPOLL = Epoll.isAvailable();
-    public static ExecutorService pool = Executors.newCachedThreadPool();
+    public static ExecutorService POOL = Executors.newCachedThreadPool();
 
     @Getter
     private EventLoopGroup eventLoopGroup;
+
     @Getter
     private Bootstrap bootstrap;
+
     @Getter
     private ChannelFuture future;
 
@@ -50,16 +53,12 @@ public class NettyClient {
     @Setter
     private Consumer<Boolean> consumer;
 
-    public NettyClient() {
-        //Logger.log( "connecting to netty" );
-    }
-
     public void connect( String host, int port, Consumer<Boolean> consumer ) {
         this.setHost( host );
         this.setPort( port );
         this.setConsumer( consumer );
 
-        pool.execute( () -> {
+        NettyClient.POOL.execute( () -> {
             this.eventLoopGroup = EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup();
             try {
                 this.bootstrap = new Bootstrap()
@@ -80,7 +79,7 @@ public class NettyClient {
 
                 this.getFuture().sync().channel().closeFuture().syncUninterruptibly();
             } catch ( Exception e ) {
-                if( NettyHandler.DEBUGMODE ){
+                if ( NettyHandler.DEBUGMODE ) {
                     e.printStackTrace();
                 }
 

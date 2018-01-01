@@ -8,6 +8,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 public class PacketDecoder extends ByteToMessageDecoder {
+
     @Override
     protected void decode( ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> output ) throws Exception {
         int id = byteBuf.readInt();

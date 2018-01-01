@@ -22,8 +22,9 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class NettyServer {
+
     public static final boolean EPOLL = Epoll.isAvailable();
-    public static ExecutorService pool = Executors.newCachedThreadPool();
+    public static ExecutorService POOL = Executors.newCachedThreadPool();
 
     @Getter
     private EventLoopGroup eventLoopGroup;
@@ -43,10 +44,10 @@ public class NettyServer {
             this.stopServer();
         }
 
-        pool.execute( () -> {
+        NettyServer.POOL.execute( () -> {
             this.eventLoopGroup = EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup();
             try {
-                bootstrap = new ServerBootstrap()
+                this.bootstrap = new ServerBootstrap()
                         .group( this.getEventLoopGroup() )
                         .channel( EPOLL ? EpollServerSocketChannel.class : NioServerSocketChannel.class )
                         .childHandler( new ChannelInitializer<SocketChannel>() {

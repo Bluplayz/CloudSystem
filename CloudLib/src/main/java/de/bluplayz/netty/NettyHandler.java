@@ -6,9 +6,7 @@ import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class NettyHandler {
@@ -16,13 +14,13 @@ public class NettyHandler {
     public static boolean DEBUGMODE = false;
 
     @Getter
-    private static ArrayList<PacketHandler> packetHandlers = new ArrayList<>();
+    private static List<PacketHandler> packetHandlers = new ArrayList<>();
 
     @Getter
-    private static ArrayList<ConnectionListener> connectionListeners = new ArrayList<>();
+    private static List<ConnectionListener> connectionListeners = new ArrayList<>();
 
     @Getter
-    private static HashMap<String, Channel> clients = new HashMap<>();
+    private static Map<String, Channel> clients = new LinkedHashMap<>();
 
     @Getter
     private static NettyHandler instance;
@@ -33,7 +31,7 @@ public class NettyHandler {
 
     @Getter
     @Setter
-    private types type = types.CLIENT;
+    private Type type = Type.CLIENT;
 
     @Getter
     private NettyClient nettyClient;
@@ -74,7 +72,7 @@ public class NettyHandler {
     }
 
     public void connectToServer( String host, int port, Consumer<Boolean> consumer ) {
-        this.type = types.CLIENT;
+        this.type = Type.CLIENT;
 
         this.unregisterAllPacketHandler();
         this.unregisterAllConnectionListener();
@@ -95,7 +93,7 @@ public class NettyHandler {
     }
 
     public void startServer( int port, Consumer<Boolean> consumer ) {
-        this.type = types.SERVER;
+        this.type = Type.SERVER;
 
         this.unregisterAllPacketHandler();
         this.unregisterAllConnectionListener();
@@ -164,7 +162,7 @@ public class NettyHandler {
         return "";
     }
 
-    public enum types {
+    public enum Type {
         SERVER,
         CLIENT
     }

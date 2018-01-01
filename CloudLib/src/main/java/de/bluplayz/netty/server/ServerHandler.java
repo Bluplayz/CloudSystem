@@ -4,8 +4,8 @@ import de.bluplayz.netty.ConnectionListener;
 import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
 import de.bluplayz.netty.packet.Packet;
-import de.bluplayz.netty.packet.defaultpackets.DisconnectPacket;
-import de.bluplayz.netty.packet.defaultpackets.SetNamePacket;
+import de.bluplayz.netty.packet.defaults.DisconnectPacket;
+import de.bluplayz.netty.packet.defaults.SetNamePacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,7 +27,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception {
-        //super.exceptionCaught( ctx, cause );
+        if ( NettyHandler.DEBUGMODE ) {
+            super.exceptionCaught( ctx, cause );
+        }
     }
 
     protected void channelRead0( ChannelHandlerContext ctx, Packet packet ) throws Exception {
