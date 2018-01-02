@@ -13,6 +13,7 @@
         <module>CloudMaster</module>
         <module>CloudWrapper</module>
         <module>CloudLib</module>
+        <module>CloudAPI</module>
     </modules>
 
     <build>

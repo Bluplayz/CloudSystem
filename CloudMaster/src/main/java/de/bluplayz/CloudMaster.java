@@ -1,17 +1,21 @@
 package de.bluplayz;
 
-import de.bluplayz.command.*;
-import de.bluplayz.config.Config;
-import de.bluplayz.locale.LocaleAPI;
-import de.bluplayz.localemanager.LocaleManager;
-import de.bluplayz.localemanager.locale.Locale;
-import de.bluplayz.logging.Logger;
-import de.bluplayz.network.Network;
-import de.bluplayz.server.BungeeCordProxy;
-import de.bluplayz.server.CloudWrapper;
-import de.bluplayz.server.ServerManager;
-import de.bluplayz.server.SpigotServer;
-import de.bluplayz.server.template.Template;
+import de.bluplayz.cloudlib.command.CommandHandler;
+import de.bluplayz.cloudlib.config.Config;
+import de.bluplayz.cloudlib.localemanager.LocaleManager;
+import de.bluplayz.cloudlib.localemanager.locale.Locale;
+import de.bluplayz.cloudlib.logging.Logger;
+import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudmaster.command.ClearConsoleCommand;
+import de.bluplayz.cloudmaster.command.HelpCommand;
+import de.bluplayz.cloudmaster.command.ListCommand;
+import de.bluplayz.cloudmaster.command.StopCommand;
+import de.bluplayz.cloudmaster.locale.LocaleAPI;
+import de.bluplayz.cloudmaster.network.Network;
+import de.bluplayz.cloudmaster.server.BungeeCordProxy;
+import de.bluplayz.cloudmaster.server.CloudWrapper;
+import de.bluplayz.cloudmaster.server.ServerManager;
+import de.bluplayz.cloudmaster.server.SpigotServer;
 import lombok.Getter;
 
 import java.io.File;
@@ -164,10 +168,10 @@ public class CloudMaster {
     }
 
     private void registerCommands() {
-        getCommandHandler().registerCommand( new HelpCommand() );
-        getCommandHandler().registerCommand( new StopCommand() );
-        getCommandHandler().registerCommand( new ClearConsoleCommand() );
-        getCommandHandler().registerCommand( new ListCommand() );
+        this.getCommandHandler().registerCommand( new HelpCommand() );
+        this.getCommandHandler().registerCommand( new StopCommand() );
+        this.getCommandHandler().registerCommand( new ClearConsoleCommand() );
+        this.getCommandHandler().registerCommand( new ListCommand() );
     }
 
     private void initMainConfig() {

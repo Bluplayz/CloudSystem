@@ -1,17 +1,17 @@
 package de.bluplayz;
 
-import de.bluplayz.command.ClearConsoleCommand;
-import de.bluplayz.command.CommandHandler;
-import de.bluplayz.command.HelpCommand;
-import de.bluplayz.command.StopCommand;
-import de.bluplayz.config.Config;
-import de.bluplayz.locale.LocaleAPI;
-import de.bluplayz.localemanager.LocaleManager;
-import de.bluplayz.localemanager.locale.Locale;
-import de.bluplayz.logging.Logger;
-import de.bluplayz.network.Network;
-import de.bluplayz.server.BungeeCordProxy;
-import de.bluplayz.server.SpigotServer;
+import de.bluplayz.cloudwrapper.command.ClearConsoleCommand;
+import de.bluplayz.cloudlib.command.CommandHandler;
+import de.bluplayz.cloudwrapper.command.HelpCommand;
+import de.bluplayz.cloudwrapper.command.StopCommand;
+import de.bluplayz.cloudlib.config.Config;
+import de.bluplayz.cloudwrapper.locale.LocaleAPI;
+import de.bluplayz.cloudlib.localemanager.LocaleManager;
+import de.bluplayz.cloudlib.localemanager.locale.Locale;
+import de.bluplayz.cloudlib.logging.Logger;
+import de.bluplayz.cloudwrapper.network.Network;
+import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
+import de.bluplayz.cloudwrapper.server.SpigotServer;
 import lombok.Getter;
 
 import java.io.File;
@@ -107,6 +107,16 @@ public class CloudWrapper {
 
     public static void main( String[] args ) {
         try {
+            File localDirectory = new File( CloudWrapper.getRootDirectory(), "local" );
+            if ( !localDirectory.isDirectory() ) {
+                localDirectory.mkdir();
+            }
+
+            File pluginDirectory = new File( localDirectory, "plugins" );
+            if ( !pluginDirectory.isDirectory() ) {
+                pluginDirectory.mkdir();
+            }
+
             // Load libs
             File libDirectory = new File( CloudWrapper.getRootDirectory(), "libs" );
             if ( !libDirectory.isDirectory() ) {
@@ -144,9 +154,9 @@ public class CloudWrapper {
     }
 
     private void registerCommands() {
-        getCommandHandler().registerCommand( new HelpCommand() );
-        getCommandHandler().registerCommand( new StopCommand() );
-        getCommandHandler().registerCommand( new ClearConsoleCommand() );
+        this.getCommandHandler().registerCommand( new HelpCommand() );
+        this.getCommandHandler().registerCommand( new StopCommand() );
+        this.getCommandHandler().registerCommand( new ClearConsoleCommand() );
     }
 
     private void initConfig() {

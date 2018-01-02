@@ -1,0 +1,5 @@
+name: CloudAPI
+version: 1.0.0
+author: Bluplayz
+
+main: de.bluplayz.cloudapi.bungee.BungeeCloudAPI
