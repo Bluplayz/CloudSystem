@@ -2,14 +2,17 @@ package de.bluplayz.cloudwrapper.server;
 
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.cloudlib.config.Config;
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.Server;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -160,6 +163,33 @@ public class SpigotServer extends Server {
         } catch ( IOException ex ) {
             ex.printStackTrace();
             return;
+        }
+
+        CloudWrapper.getInstance().getPool().execute( () -> {
+            try {
+                int exitCode = this.process.waitFor();
+                this.shutdown();
+            } catch ( InterruptedException e ) {
+                e.printStackTrace();
+            }
+        } );
+    }
+
+    public void execute( String commandline ) {
+        if ( this.getProcess() == null ) {
+            return;
+        }
+
+        if ( !this.getProcess().isAlive() ) {
+            return;
+        }
+
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
+            bufferedWriter.write( commandline + "\n" );
+            bufferedWriter.flush();
+        } catch ( IOException e ) {
+            e.printStackTrace();
         }
     }
 }

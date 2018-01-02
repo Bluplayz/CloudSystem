@@ -19,6 +19,10 @@ public class StartProxyPacket extends Packet {
     @Getter
     private Proxy proxy;
 
+    /**
+     * Will be sent from CloudMaster to CloudWrapper to start
+     * a Proxy on the CloudWrapper
+     */
     public StartProxyPacket( Proxy proxy ) {
         this.proxy = proxy;
     }

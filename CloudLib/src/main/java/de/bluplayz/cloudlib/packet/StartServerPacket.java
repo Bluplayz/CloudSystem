@@ -19,6 +19,10 @@ public class StartServerPacket extends Packet {
     @Getter
     private Server server;
 
+    /**
+     * Will be sent from CloudMaster to CloudWrapper to start
+     * a SpigotServer on the CloudWrapper
+     */
     public StartServerPacket( Server server ) {
         this.server = server;
     }
