@@ -2,7 +2,7 @@ package de.bluplayz.cloudlib.packet;
 
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.server.ActiveMode;
-import de.bluplayz.cloudlib.server.Server;
+import de.bluplayz.cloudlib.server.Proxy;
 import de.bluplayz.cloudlib.server.template.Template;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
-public class StartServerPacket extends Packet {
+public class StartProxyPacket extends Packet {
 
     @Getter
-    private Server server;
+    private Proxy proxy;
 
-    public StartServerPacket( Server server ) {
-        this.server = server;
+    public StartProxyPacket( Proxy proxy ) {
+        this.proxy = proxy;
     }
 
     @Override
@@ -82,13 +82,13 @@ public class StartServerPacket extends Packet {
         template.setMaxMemory( maxMemory );
         template.setTemplateFolder( templateFolder );
         template.setProxyFallbackPriorities( fallbackPriorities );
-        this.server = new Server( template );
+        this.proxy = new Proxy( template );
 
         // Port
-        this.getServer().setPort( byteBuf.readInt() );
+        this.getProxy().setPort( byteBuf.readInt() );
 
         // ID
-        this.getServer().setId( byteBuf.readInt() );
+        this.getProxy().setId( byteBuf.readInt() );
 
         // UUID
         length = byteBuf.readInt();
@@ -96,7 +96,7 @@ public class StartServerPacket extends Packet {
         for ( int i = 0; i < length; i++ ) {
             bytes[i] = byteBuf.readByte();
         }
-        this.getServer().setUniqueId( UUID.fromString( new String( bytes ) ) );
+        this.getProxy().setUniqueId( UUID.fromString( new String( bytes ) ) );
 
         // Name
         length = byteBuf.readInt();
@@ -104,13 +104,13 @@ public class StartServerPacket extends Packet {
         for ( int i = 0; i < length; i++ ) {
             bytes[i] = byteBuf.readByte();
         }
-        this.getServer().setName( new String( bytes ) );
+        this.getProxy().setName( new String( bytes ) );
 
         // Slots
-        this.getServer().setSlots( byteBuf.readInt() );
+        this.getProxy().setSlots( byteBuf.readInt() );
 
         // OnlinePlayers
-        this.getServer().setOnlinePlayers( byteBuf.readInt() );
+        this.getProxy().setOnlinePlayers( byteBuf.readInt() );
 
         // ActiveMode
         length = byteBuf.readInt();
@@ -118,7 +118,7 @@ public class StartServerPacket extends Packet {
         for ( int i = 0; i < length; i++ ) {
             bytes[i] = byteBuf.readByte();
         }
-        this.getServer().setActiveMode( ActiveMode.valueOf( new String( bytes ) ) );
+        this.getProxy().setActiveMode( ActiveMode.valueOf( new String( bytes ) ) );
     }
 
     @Override
@@ -127,69 +127,69 @@ public class StartServerPacket extends Packet {
 
         // Template
         // ServerType
-        bytes = this.getServer().getTemplate().getType().name().getBytes( StandardCharsets.UTF_8 );
+        bytes = this.getProxy().getTemplate().getType().name().getBytes( StandardCharsets.UTF_8 );
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
 
         // Name
-        bytes = this.getServer().getTemplate().getName().getBytes( StandardCharsets.UTF_8 );
+        bytes = this.getProxy().getTemplate().getName().getBytes( StandardCharsets.UTF_8 );
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
 
         // MinOnlineServers
-        byteBuf.writeInt( this.getServer().getTemplate().getMinOnlineServers() );
+        byteBuf.writeInt( this.getProxy().getTemplate().getMinOnlineServers() );
 
         // MaxOnlineServers
-        byteBuf.writeInt( this.getServer().getTemplate().getMaxOnlineServers() );
+        byteBuf.writeInt( this.getProxy().getTemplate().getMaxOnlineServers() );
 
         // MaxMemory
-        byteBuf.writeInt( this.getServer().getTemplate().getMaxMemory() );
+        byteBuf.writeInt( this.getProxy().getTemplate().getMaxMemory() );
 
         // TemplateFolder
-        bytes = this.getServer().getTemplate().getTemplateFolder().getBytes( StandardCharsets.UTF_8 );
+        bytes = this.getProxy().getTemplate().getTemplateFolder().getBytes( StandardCharsets.UTF_8 );
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
 
         // ProxyFallbackPriorities
-        byteBuf.writeInt( this.getServer().getTemplate().getProxyFallbackPriorities().size() );
-        for ( String fallbackTemplate : this.getServer().getTemplate().getProxyFallbackPriorities() ) {
+        byteBuf.writeInt( this.getProxy().getTemplate().getProxyFallbackPriorities().size() );
+        for ( String fallbackTemplate : this.getProxy().getTemplate().getProxyFallbackPriorities() ) {
             bytes = fallbackTemplate.getBytes( StandardCharsets.UTF_8 );
             byteBuf.writeInt( bytes.length );
             byteBuf.writeBytes( bytes );
         }
 
         // Port
-        byteBuf.writeInt( this.getServer().getPort() );
+        byteBuf.writeInt( this.getProxy().getPort() );
 
         // ID
-        byteBuf.writeInt( this.getServer().getId() );
+        byteBuf.writeInt( this.getProxy().getId() );
 
         // UUID
-        bytes = this.getServer().getUniqueId().toString().getBytes( StandardCharsets.UTF_8 );
+        bytes = this.getProxy().getUniqueId().toString().getBytes( StandardCharsets.UTF_8 );
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
 
         // Name
-        bytes = this.getServer().getName().getBytes( StandardCharsets.UTF_8 );
+        bytes = this.getProxy().getName().getBytes( StandardCharsets.UTF_8 );
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
 
         // Slots
-        byteBuf.writeInt( this.getServer().getSlots() );
+        byteBuf.writeInt( this.getProxy().getSlots() );
 
         // OnlinePlayers
-        byteBuf.writeInt( this.getServer().getOnlinePlayers() );
+        byteBuf.writeInt( this.getProxy().getOnlinePlayers() );
 
         // ActiveMode
-        bytes = this.getServer().getActiveMode().name().getBytes( StandardCharsets.UTF_8 );
+        bytes = this.getProxy().getActiveMode().name().getBytes( StandardCharsets.UTF_8 );
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
     }
 
     @Override
     public String toString() {
-        return "StartServerPacket{" +
-                "server=" + server +
+        return "StartProxyPacket{" +
+                "proxy=" + proxy +
                 '}';
     }
 }

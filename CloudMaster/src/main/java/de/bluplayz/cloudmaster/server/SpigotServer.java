@@ -35,11 +35,6 @@ public class SpigotServer extends Server {
         this.setActiveMode( ActiveMode.STARTING );
 
         StartServerPacket startServerPacket = new StartServerPacket( this );
-        CloudMaster.getInstance().getNetwork().getNettyHandler().addPacketCallback( startServerPacket, packet -> {
-            if ( !( (StartServerPacket) packet ).isSuccess() ) {
-                this.setActiveMode( ActiveMode.OFFLINE );
-            }
-        } );
         CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( startServerPacket, this.getCloudWrapper().getChannel() );
 
         this.getCloudWrapper().getSpigotServers().add( this );

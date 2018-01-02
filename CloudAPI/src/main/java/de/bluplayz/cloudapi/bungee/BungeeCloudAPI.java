@@ -1,12 +1,12 @@
-package de.bluplayz.cloudapi.bukkit;
+package de.bluplayz.cloudapi.bungee;
 
-import de.bluplayz.cloudapi.bukkit.locale.LocaleAPI;
-import de.bluplayz.cloudapi.bukkit.network.Network;
+import de.bluplayz.cloudapi.bungee.locale.LocaleAPI;
+import de.bluplayz.cloudapi.bungee.network.Network;
 import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import lombok.Getter;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -14,12 +14,12 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BukkitCloudAPI extends JavaPlugin {
+public class BungeeCloudAPI extends Plugin {
 
     public static final String VERSION = "1.0.0";
 
     @Getter
-    private static BukkitCloudAPI instance;
+    private static BungeeCloudAPI instance;
 
     @Getter
     private LocaleManager localeManager;
@@ -42,7 +42,7 @@ public class BukkitCloudAPI extends JavaPlugin {
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public BukkitCloudAPI() {
+    public BungeeCloudAPI() {
         // Save instance for further use
         instance = this;
     }

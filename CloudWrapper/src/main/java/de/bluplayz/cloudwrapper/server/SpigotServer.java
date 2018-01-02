@@ -38,7 +38,8 @@ public class SpigotServer extends Server {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
         this.setActiveMode( ActiveMode.STARTING );
 
-        this.initServerDirectory();
+        File serverDirectory = this.initServerDirectory();
+        this.startProcess( serverDirectory );
 
         this.getCloudWrapper().getSpigotServers().add( this );
     }
@@ -63,11 +64,11 @@ public class SpigotServer extends Server {
         this.getCloudWrapper().getSpigotServers().remove( this );
     }
 
-    private void initServerDirectory() {
+    private File initServerDirectory() {
         File templateFolder = new File( this.getTemplate().getTemplateFolder() );
         if ( !templateFolder.exists() ) {
             LocaleAPI.log( "network_server_starting_no_template_folder", this.getName(), this.getTemplate().getName(), this.getTemplate().getTemplateFolder() );
-            return;
+            return null;
         }
 
         File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
@@ -137,6 +138,10 @@ public class SpigotServer extends Server {
             ex.printStackTrace();
         }
 
+        return serverDirectory;
+    }
+
+    private void startProcess( File serverDirectory ) {
         String spigotJarName = "spigot.jar";
         for ( File file : serverDirectory.listFiles() ) {
             if ( file.getName().toLowerCase().endsWith( ".jar" ) ) {

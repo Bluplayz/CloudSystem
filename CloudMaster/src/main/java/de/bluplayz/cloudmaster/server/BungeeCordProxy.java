@@ -1,6 +1,7 @@
 package de.bluplayz.cloudmaster.server;
 
 import de.bluplayz.CloudMaster;
+import de.bluplayz.cloudlib.packet.StartProxyPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.Proxy;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
@@ -33,18 +34,8 @@ public class BungeeCordProxy extends Proxy {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
         this.setActiveMode( ActiveMode.STARTING );
 
-        /*
-        StartServerPacket startServerPacket = new StartServerPacket( this );
-        CloudMaster.getInstance().getNetwork().getNettyHandler().addPacketCallback( startServerPacket, packet -> {
-            if ( startServerPacket.isSuccess() ) {
-                this.setActiveMode( ActiveMode.STARTED );
-                LocaleAPI.log( "network_server_started_successfully", this.getName(), this.getPort() );
-            } else {
-                this.setActiveMode( ActiveMode.OFFLINE );
-            }
-        } );
-        CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( startServerPacket, this.getCloudWrapper().getChannel() );
-        */
+        StartProxyPacket startProxyPacket = new StartProxyPacket( this );
+        CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( startProxyPacket, this.getCloudWrapper().getChannel() );
 
         this.getCloudWrapper().getBungeeCordProxies().add( this );
     }

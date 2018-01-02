@@ -8,6 +8,7 @@ import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
+import de.bluplayz.cloudmaster.server.BungeeCordProxy;
 import de.bluplayz.cloudmaster.server.CloudWrapper;
 import de.bluplayz.cloudmaster.server.SpigotServer;
 import io.netty.channel.Channel;
@@ -92,10 +93,17 @@ public class Network {
 
                         setNamePacket.setName( cloudWrapper.getName() );
                     } else {
-                        // Bukkit or Bungee Server
-                        SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( setNamePacket.getName() );
-                        spigotServer.setActiveMode( ActiveMode.ONLINE );
-                        LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                        if ( Network.this.getCloudMaster().getServerManager().getServerByName( setNamePacket.getName() ) != null ) {
+                            // Spigot
+                            SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( setNamePacket.getName() );
+                            spigotServer.setActiveMode( ActiveMode.ONLINE );
+                            LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                        } else {
+                            // Bungee
+                            BungeeCordProxy bungeeCordProxy = Network.this.getCloudMaster().getServerManager().getProxyByName( setNamePacket.getName() );
+                            bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
+                            LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
+                        }
                     }
                 }
             }
