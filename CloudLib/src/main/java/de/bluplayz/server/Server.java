@@ -12,24 +12,31 @@ public class Server {
     public static final int PORT_END = 70000;
 
     @Getter
+    @Setter
     private Template template;
 
     @Getter
-    public int port = 0;
+    @Setter
+    private int port = 0;
 
     @Getter
-    public int id = 0;
+    @Setter
+    private int id = 0;
 
     @Getter
-    private UUID uuid = UUID.randomUUID();
+    @Setter
+    private UUID uniqueId = UUID.randomUUID();
 
     @Getter
-    public String name = "";
+    @Setter
+    private String name = "";
 
     @Getter
+    @Setter
     private int slots = 0;
 
     @Getter
+    @Setter
     private int onlinePlayers = 0;
 
     @Getter
@@ -46,7 +53,7 @@ public class Server {
                 "template=" + template +
                 ", port=" + port +
                 ", id=" + id +
-                ", uuid=" + uuid +
+                ", uuid=" + uniqueId +
                 ", name='" + name + '\'' +
                 ", slots=" + slots +
                 ", onlinePlayers=" + onlinePlayers +

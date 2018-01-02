@@ -1,4 +1,4 @@
-package de.bluplayz.config;
+package de.bluplayz.util;
 
 import java.io.*;
 import java.nio.channels.FileChannel;

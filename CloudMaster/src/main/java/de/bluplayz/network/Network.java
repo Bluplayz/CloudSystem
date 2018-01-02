@@ -6,10 +6,7 @@ import de.bluplayz.netty.ConnectionListener;
 import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
 import de.bluplayz.netty.packet.Packet;
-import de.bluplayz.server.BungeeCordProxy;
 import de.bluplayz.server.CloudWrapper;
-import de.bluplayz.server.SpigotServer;
-import de.bluplayz.server.template.Template;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
@@ -59,9 +56,8 @@ public class Network {
                     return;
                 }
 
-                LocaleAPI.log( "network_wrapper_connected", ctx.channel().remoteAddress().toString().substring( 1 ) );
-
-                Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
+                CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
+                LocaleAPI.log( "network_wrapper_connected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
                 Network.this.getCloudMaster().getServerManager().checkForServers();
             }
 
@@ -72,8 +68,8 @@ public class Network {
                     return;
                 }
 
-                LocaleAPI.log( "network_wrapper_disconnected", ctx.channel().remoteAddress().toString().substring( 1 ) );
-                Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
+                CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
+                LocaleAPI.log( "network_wrapper_disconnected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
             }
         } );
 

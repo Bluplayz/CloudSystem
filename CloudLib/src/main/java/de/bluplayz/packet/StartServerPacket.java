@@ -1,7 +1,7 @@
 package de.bluplayz.packet;
 
-import de.bluplayz.logging.Logger;
 import de.bluplayz.netty.packet.Packet;
+import de.bluplayz.server.ActiveMode;
 import de.bluplayz.server.Server;
 import de.bluplayz.server.template.Template;
 import io.netty.buffer.ByteBuf;
@@ -12,6 +12,7 @@ import lombok.Setter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 public class StartServerPacket extends Packet {
@@ -23,10 +24,6 @@ public class StartServerPacket extends Packet {
     @Setter
     private boolean success = false;
 
-    /**
-     * TODO:
-     * - nicht nur Template laden und schicken, auch den Rest der ServerInfos
-     */
     public StartServerPacket( Server server ) {
         this.server = server;
     }
@@ -77,6 +74,30 @@ public class StartServerPacket extends Packet {
         template.setTemplateFolder( templateFolder );
         template.setProxyFallbackPriorities( fallbackPriorities );
         this.server = new Server( template );
+
+        // Port
+        this.getServer().setPort( byteBuf.readInt() );
+
+        // ID
+        this.getServer().setId( byteBuf.readInt() );
+
+        // UUID
+        length = byteBuf.readInt();
+        this.getServer().setUniqueId( UUID.fromString( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) ) );
+
+        // Name
+        length = byteBuf.readInt();
+        this.getServer().setName( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) );
+
+        // Slots
+        this.getServer().setSlots( byteBuf.readInt() );
+
+        // OnlinePlayers
+        this.getServer().setOnlinePlayers( byteBuf.readInt() );
+
+        // ActiveMode
+        length = byteBuf.readInt();
+        this.getServer().setActiveMode( ActiveMode.valueOf( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) ) );
     }
 
     @Override
@@ -112,6 +133,30 @@ public class StartServerPacket extends Packet {
             byteBuf.writeInt( fallbackTemplate.length() );
             byteBuf.writeCharSequence( fallbackTemplate, Charset.forName( "UTF-8" ) );
         }
+
+        // Port
+        byteBuf.writeInt( this.getServer().getPort() );
+
+        // ID
+        byteBuf.writeInt( this.getServer().getId() );
+
+        // UUID
+        byteBuf.writeInt( this.getServer().getUniqueId().toString().length() );
+        byteBuf.writeCharSequence( this.getServer().getUniqueId().toString(), Charset.forName( "UTF-8" ) );
+
+        // Name
+        byteBuf.writeInt( this.getServer().getName().length() );
+        byteBuf.writeCharSequence( this.getServer().getName(), Charset.forName( "UTF-8" ) );
+
+        // Slots
+        byteBuf.writeInt( this.getServer().getSlots() );
+
+        // OnlinePlayers
+        byteBuf.writeInt( this.getServer().getOnlinePlayers() );
+
+        // ActiveMode
+        byteBuf.writeInt( this.getServer().getActiveMode().name().length() );
+        byteBuf.writeCharSequence( this.getServer().getActiveMode().name(), Charset.forName( "UTF-8" ) );
     }
 
     @Override

@@ -2,29 +2,29 @@ package de.bluplayz.server;
 
 import de.bluplayz.CloudMaster;
 import de.bluplayz.locale.LocaleAPI;
-import de.bluplayz.packet.StartServerPacket;
 import de.bluplayz.server.template.Template;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BungeeCordProxy extends Proxy {
 
-    public static final AtomicInteger STATIC_ID = new AtomicInteger( 0 );
     public static List<Integer> PORTS_IN_USE = new ArrayList<>();
+    public static List<Integer> IDS_IN_USE = new ArrayList<>();
 
     @Getter
     private CloudWrapper cloudWrapper;
 
     public BungeeCordProxy( CloudWrapper cloudWrapper, Template template ) {
         super( template );
-        this.id = BungeeCordProxy.STATIC_ID.incrementAndGet();
-        this.name = this.getTemplate().getName() + "-" + this.id;
+        this.setId( this.getAvailableId() );
+        this.setName( this.getTemplate().getName() + "-" + this.getId() );
         this.cloudWrapper = cloudWrapper;
-        this.port = this.getAvailablePort();
+        this.setPort( this.getAvailablePort() );
+
         BungeeCordProxy.PORTS_IN_USE.add( this.getPort() );
+        BungeeCordProxy.IDS_IN_USE.add( this.getId() );
     }
 
     public void startProxy() {
@@ -51,7 +51,16 @@ public class BungeeCordProxy extends Proxy {
         LocaleAPI.log( "network_server_stopping", this.getName() );
         this.setActiveMode( ActiveMode.STOPPING );
 
-        this.getCloudWrapper().getBungeeCordProxies().remove( this );
+        CloudMaster.getInstance().getPool().execute( () -> {
+            if ( BungeeCordProxy.PORTS_IN_USE.contains( this.getPort() ) ) {
+                BungeeCordProxy.PORTS_IN_USE.remove( (Object) this.getPort() );
+            }
+            if ( BungeeCordProxy.IDS_IN_USE.contains( this.getId() ) ) {
+                BungeeCordProxy.IDS_IN_USE.remove( (Object) this.getId() );
+            }
+        } );
+
+        CloudMaster.getInstance().getPool().execute( () -> this.getCloudWrapper().getBungeeCordProxies().remove( this ) );
     }
 
     private int getAvailablePort() {
@@ -61,6 +70,18 @@ public class BungeeCordProxy extends Proxy {
             }
 
             return port;
+        }
+
+        return 0;
+    }
+
+    private int getAvailableId() {
+        for ( int id = 1; id < 40000; id++ ) {
+            if ( SpigotServer.IDS_IN_USE.contains( id ) ) {
+                continue;
+            }
+
+            return id;
         }
 
         return 0;

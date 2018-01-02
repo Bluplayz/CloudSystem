@@ -1,5 +1,6 @@
 package de.bluplayz.server;
 
+import de.bluplayz.logging.Logger;
 import de.bluplayz.server.template.Template;
 import io.netty.channel.Channel;
 import lombok.Getter;
@@ -35,6 +36,13 @@ public class CloudWrapper {
     }
 
     public void onDisconnect() {
+        for ( BungeeCordProxy bungeeCordProxy : this.getBungeeCordProxies() ) {
+            bungeeCordProxy.shutdown();
+        }
+        for ( SpigotServer spigotServer : this.getSpigotServers() ) {
+            spigotServer.shutdown();
+        }
+
         this.channel = null;
     }
 

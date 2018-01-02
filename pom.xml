@@ -52,13 +52,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- NettyLibrary
+        <!-- Apache Commons IO -->
         <dependency>
-            <groupId>de.bluplayz</groupId>
-            <artifactId>NettyLibrary</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
         </dependency>
-        -->
     </dependencies>
 </project>

@@ -10,12 +10,12 @@ import de.bluplayz.localemanager.LocaleManager;
 import de.bluplayz.localemanager.locale.Locale;
 import de.bluplayz.logging.Logger;
 import de.bluplayz.network.Network;
-import de.bluplayz.server.Server;
+import de.bluplayz.server.BungeeCordProxy;
+import de.bluplayz.server.SpigotServer;
 import lombok.Getter;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -31,33 +31,24 @@ public class CloudWrapper {
 
     @Getter
     private static CloudWrapper instance;
-
+    @Getter
+    public List<BungeeCordProxy> bungeeCordProxies = new LinkedList<>();
+    @Getter
+    public List<SpigotServer> spigotServers = new LinkedList<>();
     @Getter
     private Logger logger;
-
     @Getter
     private LocaleManager localeManager;
-
     @Getter
     private Locale consoleLocale;
-
     @Getter
     private Config config;
-
     @Getter
     private CommandHandler commandHandler;
-
     @Getter
     private Network network;
-
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
-
-    @Getter
-    public List<Proxy> bungeeCordProxies = new LinkedList<>();
-
-    @Getter
-    public List<Server> spigotServers = new LinkedList<>();
 
     public CloudWrapper() {
         // Save instance for further use
@@ -95,6 +86,15 @@ public class CloudWrapper {
         // Add Shutdown Thread
         Runtime.getRuntime().addShutdownHook( new Thread( () -> {
             LocaleAPI.log( "system_exit_loading" );
+
+            // Stop all Minecraft Server and Proxies
+            for ( BungeeCordProxy bungeeCordProxy : this.getBungeeCordProxies() ) {
+                bungeeCordProxy.shutdown();
+            }
+            for ( SpigotServer spigotServer : this.getSpigotServers() ) {
+                spigotServer.shutdown();
+            }
+
             LocaleAPI.log( "system_exit_finished" );
         } ) );
 
@@ -204,6 +204,13 @@ public class CloudWrapper {
         translations.put( "network_master_connection_lost", "{PREFIX} §cVerbindung zum CloudMaster(§b{0}§c) verloren!" );
         translations.put( "network_master_failed_connection", "{PREFIX} §cVerbindung zum CloudMaster(§b{0}§c) ist fehlgeschlagen!" );
         translations.put( "network_master_failed_connection_reconnect", "{PREFIX} §cVerbinde erneut in 3 Sekunden..." );
+        translations.put( "network_server_starting", "{PREFIX} §b{0} §7wird auf Port §b{1}§7 gestartet..." );
+        translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7ist nun online auf Port §b{1}§7." );
+        translations.put( "network_server_stopping", "{PREFIX} §b{0} §7wird heruntergefahren..." );
+        translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7ist nun offline." );
+
+        translations.put( "network_server_starting_no_template_folder", "{PREFIX} §b{0} §7konnte nicht gestartet werden. Der TemplatePfad von dem Template §6{1}§7(§6{2}§7) ist ungültig!" );
+
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
@@ -222,6 +229,10 @@ public class CloudWrapper {
         translations.put( "network_master_connection_lost", "{PREFIX} §cConnection to CloudMaster(§b{0}§c) was lost!" );
         translations.put( "network_master_failed_connection", "{PREFIX} §cConnection failed to CloudMaster(§b{0}§c)!" );
         translations.put( "network_master_failed_connection_reconnect", "{PREFIX} §cReconnect in 3 Seconds..." );
+        translations.put( "network_server_starting", "{PREFIX} §b{0} §7starting on port §b{1}§7..." );
+        translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7is now online on port §b{1}§7." );
+        translations.put( "network_server_stopping", "{PREFIX} §b{0} §7shutting down..." );
+        translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7is now offline." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

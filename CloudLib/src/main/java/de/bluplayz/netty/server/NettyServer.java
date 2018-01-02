@@ -70,7 +70,9 @@ public class NettyServer {
 
                 consumer.accept( false );
             } finally {
-                this.getEventLoopGroup().shutdownGracefully();
+                if ( this.getEventLoopGroup() != null ) {
+                    this.getEventLoopGroup().shutdownGracefully();
+                }
             }
         } );
     }

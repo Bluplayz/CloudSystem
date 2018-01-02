@@ -287,8 +287,8 @@ public class CloudMaster {
         translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7ist nun online auf Port §b{1}§7." );
         translations.put( "network_server_stopping", "{PREFIX} §b{0} §7wird heruntergefahren..." );
         translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7ist nun offline." );
-        translations.put( "network_wrapper_connected", "{PREFIX} §7Cloudwrapper hat sich verbunden mit §b{0}§7." );
-        translations.put( "network_wrapper_disconnected", "{PREFIX} §7Cloudwrapper hat die Verbindung getrennt von §b{0}§7." );
+        translations.put( "network_wrapper_connected", "{PREFIX} §b{0} §7hat sich verbunden mit §b{1}§7." );
+        translations.put( "network_wrapper_disconnected", "{PREFIX} §b{0} §7hat die Verbindung getrennt von §b{1}§7." );
         translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
         translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
 
@@ -309,8 +309,8 @@ public class CloudMaster {
         translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7is now online on port §b{1}§7." );
         translations.put( "network_server_stopping", "{PREFIX} §b{0} §7shutting down..." );
         translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7is now offline." );
-        translations.put( "network_wrapper_connected", "{PREFIX} §7Cloudwrapper connected from §b{0}§7." );
-        translations.put( "network_wrapper_disconnected", "{PREFIX} §7Cloudwrapper disconnected from §b{0}§7." );
+        translations.put( "network_wrapper_connected", "{PREFIX} §b{0} §7connected from §b{1}§7." );
+        translations.put( "network_wrapper_disconnected", "{PREFIX} §b{0} §7disconnected from §b{1}§7." );
         translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
         translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
 

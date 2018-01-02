@@ -86,7 +86,9 @@ public class NettyClient {
                 this.setChannel( null );
                 consumer.accept( false );
             } finally {
-                this.getEventLoopGroup().shutdownGracefully();
+                if ( this.getEventLoopGroup() != null ) {
+                    this.getEventLoopGroup().shutdownGracefully();
+                }
                 this.setChannel( null );
             }
         } );
