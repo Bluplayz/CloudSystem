@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +22,12 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
         Packet packet = packetClass.newInstance();
         int length = byteBuf.readInt();
-        packet.uniqueId = UUID.fromString( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) );
+
+        byte[] bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        packet.uniqueId = UUID.fromString( new String( bytes ) );
 
         packet.read( byteBuf );
         output.add( packet );

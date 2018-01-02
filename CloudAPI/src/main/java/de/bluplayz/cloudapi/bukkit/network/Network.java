@@ -50,10 +50,6 @@ public class Network {
 
                     SetNamePacket setNamePacket = new SetNamePacket( Network.this.getBukkitCloudAPI().getServerName() );
                     Network.this.getPacketHandler().sendPacket( setNamePacket );
-                    System.out.println( "sending setNamePacket with name " + setNamePacket.getName() + " to master server" );
-
-                    setNamePacket = new SetNamePacket( setNamePacket.getName() + "BREAKlol" );
-                    Network.this.getNettyHandler().getNettyClient().getChannel().writeAndFlush( setNamePacket, Network.this.getNettyHandler().getNettyClient().getChannel().voidPromise() );
                 } else {
                     LocaleAPI.log( "network_master_failed_connection", Network.this.getHost() + ":" + Network.this.getPort() );
                     LocaleAPI.log( "network_master_failed_connection_reconnect" );

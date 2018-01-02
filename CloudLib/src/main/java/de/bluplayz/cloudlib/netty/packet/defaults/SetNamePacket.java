@@ -21,12 +21,24 @@ public class SetNamePacket extends Packet {
     @Override
     public void read( ByteBuf byteBuf ) throws IOException {
         int length = byteBuf.readInt();
-        this.setName( (String) byteBuf.readCharSequence( length, StandardCharsets.UTF_8 ) );
+        byte[] bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        this.setName( new String( bytes ) );
     }
 
     @Override
     public void write( ByteBuf byteBuf ) throws IOException {
-        byteBuf.writeInt( this.getName().length() );
-        byteBuf.writeCharSequence( this.getName(), StandardCharsets.UTF_8 );
+        byte[] bytes = this.getName().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
+    }
+
+    @Override
+    public String toString() {
+        return "SetNamePacket{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

@@ -1,7 +1,6 @@
 package de.bluplayz.cloudmaster.network;
 
 import de.bluplayz.CloudMaster;
-import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
@@ -55,8 +54,6 @@ public class Network {
         this.getNettyHandler().registerConnectionListener( this.connectionListener = new ConnectionListener() {
             @Override
             public void channelConnected( ChannelHandlerContext ctx ) {
-                Logger.getGlobal().debug( "channelConnected" );
-
                 if ( !Network.this.getWhitelist().contains( ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] ) ) {
                     //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to connect!" );
                     ctx.close();
@@ -66,7 +63,6 @@ public class Network {
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                Logger.getGlobal().debug( "channelDisconnected" );
                 if ( !Network.this.getWhitelist().contains( ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] ) ) {
                     //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to disconnect!" );
                     ctx.close();
@@ -86,11 +82,8 @@ public class Network {
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
-                Logger.getGlobal().debug( "incoming Packet " + packet.getClass().getSimpleName() );
-
                 if ( packet instanceof SetNamePacket ) {
                     SetNamePacket setNamePacket = (SetNamePacket) packet;
-                    Logger.getGlobal().debug( "SetNamePacket Incoming with name: " + setNamePacket.getName() );
                     if ( setNamePacket.getName().equalsIgnoreCase( "Unnamed-Wrapper" ) ) {
                         // CloudWrapper
                         CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( channel );

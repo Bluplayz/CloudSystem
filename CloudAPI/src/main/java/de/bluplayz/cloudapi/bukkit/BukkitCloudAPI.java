@@ -71,7 +71,7 @@ public class BukkitCloudAPI extends JavaPlugin {
         Config dataConfig = new Config( new File( this.getDataFolder(), "connection.yml" ), Config.YAML );
         String host = dataConfig.getString( "address" );
         int port = dataConfig.getInt( "port" );
-        this.serverName = dataConfig.getString( "name" );
+        this.serverName = dataConfig.getString( "servername" );
         this.serverUniqueId = UUID.fromString( dataConfig.getString( "uuid" ) );
         this.network = new Network( this, host, port );
 

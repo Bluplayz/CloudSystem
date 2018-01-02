@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class StartServerPacket extends Packet {
     @Override
     public void read( ByteBuf byteBuf ) throws Exception {
         int length;
+        byte[] bytes;
 
         // Success Callback
         this.success = byteBuf.readBoolean();
@@ -38,11 +40,19 @@ public class StartServerPacket extends Packet {
         // Template
         // ServerType
         length = byteBuf.readInt();
-        String serverType = (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) );
+        bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        String serverType = new String( bytes );
 
         // Name
         length = byteBuf.readInt();
-        String name = (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) );
+        bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        String name = new String( bytes );
 
         // MinOnlineServers
         int minOnlineServers = byteBuf.readInt();
@@ -55,14 +65,22 @@ public class StartServerPacket extends Packet {
 
         // TemplateFolder
         length = byteBuf.readInt();
-        String templateFolder = (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) );
+        bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        String templateFolder = new String( bytes );
 
         // ProxyFallbackPriorities
         List<String> fallbackPriorities = new ArrayList<>();
         int arraySize = byteBuf.readInt();
         for ( int i = 0; i < arraySize; i++ ) {
             length = byteBuf.readInt();
-            fallbackPriorities.add( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) );
+            bytes = new byte[length];
+            for ( int i2 = 0; i2 < length; i2++ ) {
+                bytes[i2] = byteBuf.readByte();
+            }
+            fallbackPriorities.add( new String( bytes ) );
         }
 
         Template template = new Template();
@@ -83,11 +101,19 @@ public class StartServerPacket extends Packet {
 
         // UUID
         length = byteBuf.readInt();
-        this.getServer().setUniqueId( UUID.fromString( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) ) );
+        bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        this.getServer().setUniqueId( UUID.fromString( new String( bytes ) ) );
 
         // Name
         length = byteBuf.readInt();
-        this.getServer().setName( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) );
+        bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        this.getServer().setName( new String( bytes ) );
 
         // Slots
         this.getServer().setSlots( byteBuf.readInt() );
@@ -97,22 +123,30 @@ public class StartServerPacket extends Packet {
 
         // ActiveMode
         length = byteBuf.readInt();
-        this.getServer().setActiveMode( ActiveMode.valueOf( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) ) );
+        bytes = new byte[length];
+        for ( int i = 0; i < length; i++ ) {
+            bytes[i] = byteBuf.readByte();
+        }
+        this.getServer().setActiveMode( ActiveMode.valueOf( new String( bytes ) ) );
     }
 
     @Override
     public void write( ByteBuf byteBuf ) throws Exception {
+        byte[] bytes;
+
         // Success Callback
         byteBuf.writeBoolean( this.isSuccess() );
 
         // Template
         // ServerType
-        byteBuf.writeInt( this.getServer().getTemplate().getType().name().length() );
-        byteBuf.writeCharSequence( this.getServer().getTemplate().getType().name(), Charset.forName( "UTF-8" ) );
+        bytes = this.getServer().getTemplate().getType().name().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
 
         // Name
-        byteBuf.writeInt( this.getServer().getTemplate().getName().length() );
-        byteBuf.writeCharSequence( this.getServer().getTemplate().getName(), Charset.forName( "UTF-8" ) );
+        bytes = this.getServer().getTemplate().getName().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
 
         // MinOnlineServers
         byteBuf.writeInt( this.getServer().getTemplate().getMinOnlineServers() );
@@ -124,14 +158,16 @@ public class StartServerPacket extends Packet {
         byteBuf.writeInt( this.getServer().getTemplate().getMaxMemory() );
 
         // TemplateFolder
-        byteBuf.writeInt( this.getServer().getTemplate().getTemplateFolder().length() );
-        byteBuf.writeCharSequence( this.getServer().getTemplate().getTemplateFolder(), Charset.forName( "UTF-8" ) );
+        bytes = this.getServer().getTemplate().getTemplateFolder().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
 
         // ProxyFallbackPriorities
         byteBuf.writeInt( this.getServer().getTemplate().getProxyFallbackPriorities().size() );
         for ( String fallbackTemplate : this.getServer().getTemplate().getProxyFallbackPriorities() ) {
-            byteBuf.writeInt( fallbackTemplate.length() );
-            byteBuf.writeCharSequence( fallbackTemplate, Charset.forName( "UTF-8" ) );
+            bytes = fallbackTemplate.getBytes( StandardCharsets.UTF_8 );
+            byteBuf.writeInt( bytes.length );
+            byteBuf.writeBytes( bytes );
         }
 
         // Port
@@ -141,12 +177,14 @@ public class StartServerPacket extends Packet {
         byteBuf.writeInt( this.getServer().getId() );
 
         // UUID
-        byteBuf.writeInt( this.getServer().getUniqueId().toString().length() );
-        byteBuf.writeCharSequence( this.getServer().getUniqueId().toString(), Charset.forName( "UTF-8" ) );
+        bytes = this.getServer().getUniqueId().toString().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
 
         // Name
-        byteBuf.writeInt( this.getServer().getName().length() );
-        byteBuf.writeCharSequence( this.getServer().getName(), Charset.forName( "UTF-8" ) );
+        bytes = this.getServer().getName().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
 
         // Slots
         byteBuf.writeInt( this.getServer().getSlots() );
@@ -155,8 +193,9 @@ public class StartServerPacket extends Packet {
         byteBuf.writeInt( this.getServer().getOnlinePlayers() );
 
         // ActiveMode
-        byteBuf.writeInt( this.getServer().getActiveMode().name().length() );
-        byteBuf.writeCharSequence( this.getServer().getActiveMode().name(), Charset.forName( "UTF-8" ) );
+        bytes = this.getServer().getActiveMode().name().getBytes( StandardCharsets.UTF_8 );
+        byteBuf.writeInt( bytes.length );
+        byteBuf.writeBytes( bytes );
     }
 
     @Override
