@@ -7,6 +7,7 @@ import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
 import de.bluplayz.netty.packet.Packet;
 import de.bluplayz.packet.StartServerPacket;
+import de.bluplayz.server.BungeeCordProxy;
 import de.bluplayz.server.SpigotServer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -63,6 +64,13 @@ public class Network {
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
+                for ( BungeeCordProxy bungeeCordProxy : Network.this.getCloudWrapper().getBungeeCordProxies() ) {
+                    bungeeCordProxy.shutdown();
+                }
+                for ( SpigotServer spigotServer : Network.this.getCloudWrapper().getSpigotServers() ) {
+                    spigotServer.shutdown();
+                }
+
                 LocaleAPI.log( "network_master_connection_lost", Network.this.getHost() + ":" + Network.this.getPort() );
                 LocaleAPI.log( "network_master_failed_connection_reconnect" );
                 nettyHandler.reconnectToServer( 3, Network.this.getConnectingConsumer() );
