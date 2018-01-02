@@ -1,24 +1,34 @@
 package de.bluplayz.packet;
 
+import de.bluplayz.logging.Logger;
 import de.bluplayz.netty.packet.Packet;
+import de.bluplayz.server.Server;
 import de.bluplayz.server.template.Template;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 public class StartServerPacket extends Packet {
 
     @Getter
-    private Template template;
+    private Server server;
 
     @Getter
+    @Setter
     private boolean success = false;
 
-    public StartServerPacket( Template template ) {
-        this.template = template;
+    /**
+     * TODO:
+     * - nicht nur Template laden und schicken, auch den Rest der ServerInfos
+     */
+    public StartServerPacket( Server server ) {
+        this.server = server;
     }
 
     @Override
@@ -28,6 +38,7 @@ public class StartServerPacket extends Packet {
         // Success Callback
         this.success = byteBuf.readBoolean();
 
+        // Template
         // ServerType
         length = byteBuf.readInt();
         String serverType = (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) );
@@ -57,14 +68,15 @@ public class StartServerPacket extends Packet {
             fallbackPriorities.add( (String) byteBuf.readCharSequence( length, Charset.forName( "UTF-8" ) ) );
         }
 
-        this.template = new Template();
-        this.template.setName( name );
-        this.template.setType( Template.Type.valueOf( serverType ) );
-        this.template.setMinOnlineServers( minOnlineServers );
-        this.template.setMaxOnlineServers( maxOnlineServers );
-        this.template.setMaxMemory( maxMemory );
-        this.template.setTemplateFolder( templateFolder );
-        this.template.setProxyFallbackPriorities( fallbackPriorities );
+        Template template = new Template();
+        template.setName( name );
+        template.setType( Template.Type.valueOf( serverType ) );
+        template.setMinOnlineServers( minOnlineServers );
+        template.setMaxOnlineServers( maxOnlineServers );
+        template.setMaxMemory( maxMemory );
+        template.setTemplateFolder( templateFolder );
+        template.setProxyFallbackPriorities( fallbackPriorities );
+        this.server = new Server( template );
     }
 
     @Override
@@ -72,32 +84,41 @@ public class StartServerPacket extends Packet {
         // Success Callback
         byteBuf.writeBoolean( this.isSuccess() );
 
+        // Template
         // ServerType
-        byteBuf.writeInt( this.getTemplate().getType().name().length() );
-        byteBuf.writeCharSequence( this.getTemplate().getType().name(), Charset.forName( "UTF-8" ) );
+        byteBuf.writeInt( this.getServer().getTemplate().getType().name().length() );
+        byteBuf.writeCharSequence( this.getServer().getTemplate().getType().name(), Charset.forName( "UTF-8" ) );
 
         // Name
-        byteBuf.writeInt( this.getTemplate().getName().length() );
-        byteBuf.writeCharSequence( this.getTemplate().getName(), Charset.forName( "UTF-8" ) );
+        byteBuf.writeInt( this.getServer().getTemplate().getName().length() );
+        byteBuf.writeCharSequence( this.getServer().getTemplate().getName(), Charset.forName( "UTF-8" ) );
 
         // MinOnlineServers
-        byteBuf.writeInt( this.getTemplate().getMinOnlineServers() );
+        byteBuf.writeInt( this.getServer().getTemplate().getMinOnlineServers() );
 
         // MaxOnlineServers
-        byteBuf.writeInt( this.getTemplate().getMaxOnlineServers() );
+        byteBuf.writeInt( this.getServer().getTemplate().getMaxOnlineServers() );
 
         // MaxMemory
-        byteBuf.writeInt( this.getTemplate().getMaxMemory() );
+        byteBuf.writeInt( this.getServer().getTemplate().getMaxMemory() );
 
         // TemplateFolder
-        byteBuf.writeInt( this.getTemplate().getTemplateFolder().length() );
-        byteBuf.writeCharSequence( this.getTemplate().getTemplateFolder(), Charset.forName( "UTF-8" ) );
+        byteBuf.writeInt( this.getServer().getTemplate().getTemplateFolder().length() );
+        byteBuf.writeCharSequence( this.getServer().getTemplate().getTemplateFolder(), Charset.forName( "UTF-8" ) );
 
         // ProxyFallbackPriorities
-        byteBuf.writeInt( this.getTemplate().getProxyFallbackPriorities().size() );
-        for ( String fallbackTemplate : this.getTemplate().getProxyFallbackPriorities() ) {
+        byteBuf.writeInt( this.getServer().getTemplate().getProxyFallbackPriorities().size() );
+        for ( String fallbackTemplate : this.getServer().getTemplate().getProxyFallbackPriorities() ) {
             byteBuf.writeInt( fallbackTemplate.length() );
             byteBuf.writeCharSequence( fallbackTemplate, Charset.forName( "UTF-8" ) );
         }
+    }
+
+    @Override
+    public String toString() {
+        return "StartServerPacket{" +
+                "server=" + server +
+                ", success=" + success +
+                '}';
     }
 }

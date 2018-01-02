@@ -10,14 +10,18 @@ import de.bluplayz.localemanager.LocaleManager;
 import de.bluplayz.localemanager.locale.Locale;
 import de.bluplayz.logging.Logger;
 import de.bluplayz.network.Network;
+import de.bluplayz.server.Server;
 import lombok.Getter;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,6 +52,12 @@ public class CloudWrapper {
 
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
+
+    @Getter
+    public List<Proxy> bungeeCordProxies = new LinkedList<>();
+
+    @Getter
+    public List<Server> spigotServers = new LinkedList<>();
 
     public CloudWrapper() {
         // Save instance for further use

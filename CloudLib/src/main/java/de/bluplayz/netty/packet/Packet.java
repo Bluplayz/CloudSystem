@@ -2,6 +2,7 @@ package de.bluplayz.netty.packet;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;

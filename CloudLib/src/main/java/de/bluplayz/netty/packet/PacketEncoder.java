@@ -14,7 +14,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
     protected void encode( ChannelHandlerContext ctx, Packet packet, ByteBuf byteBuf ) throws Exception {
         int id = PacketHandler.PACKETS.indexOf( packet.getClass() );
         if ( id == -1 ) {
-            throw new NullPointerException( "Couldn't find id of packet " + packet.getClass().getSimpleName() );
+            System.out.println( "Couldn't find id of packet " + packet.getClass().getSimpleName() );
         }
 
         byteBuf.writeInt( id );

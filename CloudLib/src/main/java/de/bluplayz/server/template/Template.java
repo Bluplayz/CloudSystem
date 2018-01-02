@@ -63,6 +63,19 @@ public class Template {
         return templates;
     }
 
+    @Override
+    public String toString() {
+        return "Template{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", minOnlineServers=" + minOnlineServers +
+                ", maxOnlineServers=" + maxOnlineServers +
+                ", maxMemory=" + maxMemory +
+                ", templateFolder='" + templateFolder + '\'' +
+                ", proxyFallbackPriorities=" + proxyFallbackPriorities +
+                '}';
+    }
+
     public enum Type {
         PROXY,
         SPIGOT

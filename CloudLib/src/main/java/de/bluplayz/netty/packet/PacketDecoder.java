@@ -17,7 +17,8 @@ public class PacketDecoder extends ByteToMessageDecoder {
         Class<? extends Packet> packetClass = PacketHandler.PACKETS.get( id );
 
         if ( packetClass == null ) {
-            throw new NullPointerException( "Couldn't find packet by id " + id );
+            //throw new NullPointerException( "Couldn't find packet by id " + id );
+            System.out.println( "Couldn't find packet by id " + id );
         }
 
         Packet packet = packetClass.newInstance();

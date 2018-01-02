@@ -2,10 +2,12 @@ package de.bluplayz.network;
 
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.locale.LocaleAPI;
+import de.bluplayz.logging.Logger;
 import de.bluplayz.netty.ConnectionListener;
 import de.bluplayz.netty.NettyHandler;
 import de.bluplayz.netty.PacketHandler;
 import de.bluplayz.netty.packet.Packet;
+import de.bluplayz.packet.StartServerPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
@@ -71,6 +73,12 @@ public class Network {
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
+                if ( packet instanceof StartServerPacket ) {
+                    StartServerPacket startServerPacket = (StartServerPacket) packet;
+                    startServerPacket.setSuccess( true );
+
+                    this.sendPacket( startServerPacket );
+                }
             }
 
             @Override
