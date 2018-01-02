@@ -1,15 +1,12 @@
-package de.bluplayz.cloudwrapper.network;
+package de.bluplayz.cloudapi.bukkit.network;
 
-import de.bluplayz.CloudWrapper;
-import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudwrapper.server.SpigotServer;
-import de.bluplayz.cloudwrapper.locale.LocaleAPI;
+import de.bluplayz.cloudapi.bukkit.BukkitCloudAPI;
+import de.bluplayz.cloudapi.bukkit.locale.LocaleAPI;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
-import de.bluplayz.cloudlib.packet.StartServerPacket;
-import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
+import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
@@ -25,7 +22,7 @@ public class Network {
     private int port = 19132;
 
     @Getter
-    private CloudWrapper cloudWrapper;
+    private BukkitCloudAPI bukkitCloudAPI;
 
     @Getter
     private NettyHandler nettyHandler;
@@ -39,8 +36,8 @@ public class Network {
     @Getter
     private Consumer<Boolean> connectingConsumer;
 
-    public Network( CloudWrapper cloudWrapper, String host, int port ) {
-        this.cloudWrapper = cloudWrapper;
+    public Network( BukkitCloudAPI bukkitCloudAPI, String host, int port ) {
+        this.bukkitCloudAPI = bukkitCloudAPI;
         this.host = host;
         this.port = port;
 
@@ -51,12 +48,16 @@ public class Network {
                 if ( success ) {
                     LocaleAPI.log( "network_master_connected", Network.this.getHost() + ":" + Network.this.getPort() );
 
-                    SetNamePacket setNamePacket = new SetNamePacket( "Unnamed-Wrapper" );
+                    SetNamePacket setNamePacket = new SetNamePacket( Network.this.getBukkitCloudAPI().getServerName() );
                     Network.this.getPacketHandler().sendPacket( setNamePacket );
+                    System.out.println( "sending setNamePacket with name " + setNamePacket.getName() + " to master server" );
+
+                    setNamePacket = new SetNamePacket( setNamePacket.getName() + "BREAKlol" );
+                    Network.this.getNettyHandler().getNettyClient().getChannel().writeAndFlush( setNamePacket, Network.this.getNettyHandler().getNettyClient().getChannel().voidPromise() );
                 } else {
                     LocaleAPI.log( "network_master_failed_connection", Network.this.getHost() + ":" + Network.this.getPort() );
                     LocaleAPI.log( "network_master_failed_connection_reconnect" );
-                    nettyHandler.reconnectToServer( 3, this );
+                    Network.this.nettyHandler.reconnectToServer( 3, this );
                 }
             }
         } );
@@ -68,16 +69,9 @@ public class Network {
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                for ( BungeeCordProxy bungeeCordProxy : Network.this.getCloudWrapper().getBungeeCordProxies() ) {
-                    bungeeCordProxy.shutdown();
-                }
-                for ( SpigotServer spigotServer : Network.this.getCloudWrapper().getSpigotServers() ) {
-                    spigotServer.shutdown();
-                }
-
                 LocaleAPI.log( "network_master_connection_lost", Network.this.getHost() + ":" + Network.this.getPort() );
                 LocaleAPI.log( "network_master_failed_connection_reconnect" );
-                nettyHandler.reconnectToServer( 3, Network.this.getConnectingConsumer() );
+                Network.this.nettyHandler.reconnectToServer( 3, Network.this.getConnectingConsumer() );
 
             }
         } );
@@ -85,16 +79,6 @@ public class Network {
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
-                if ( packet instanceof StartServerPacket ) {
-                    StartServerPacket startServerPacket = (StartServerPacket) packet;
-
-                    SpigotServer spigotServer = new SpigotServer( startServerPacket.getServer() );
-                    Network.this.getCloudWrapper().getSpigotServers().add( spigotServer );
-                    spigotServer.startServer();
-
-                    //startServerPacket.setSuccess( true );
-                    //this.sendPacket( startServerPacket );
-                }
             }
 
             @Override

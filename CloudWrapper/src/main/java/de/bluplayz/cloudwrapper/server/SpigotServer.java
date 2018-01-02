@@ -1,6 +1,7 @@
 package de.bluplayz.cloudwrapper.server;
 
 import de.bluplayz.CloudWrapper;
+import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.Server;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
@@ -83,9 +84,30 @@ public class SpigotServer extends Server {
             }
         }
 
+        // Copy Template Folder
         try {
             FileUtils.copyDirectory( templateFolder, serverDirectory );
         } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
+        // Copy global bukkit plugins (and also CloudAPI)
+        try {
+            for ( File file : new File( CloudWrapper.getRootDirectory(), "local/plugins" ).listFiles() ) {
+                FileUtils.copyFileToDirectory( file, new File( serverDirectory, "plugins" ) );
+            }
+            // Connection Data Cofig for CloudAPI
+            File directory = new File( serverDirectory, "plugins/CloudAPI" );
+            if ( !directory.exists() ) {
+                directory.mkdirs();
+            }
+            Config dataConfig = new Config( new File( directory, "connection.yml" ), Config.YAML );
+            dataConfig.set( "servername", this.getName() );
+            dataConfig.set( "uuid", this.getUniqueId().toString() );
+            dataConfig.set( "address", this.getCloudWrapper().getNetwork().getHost() );
+            dataConfig.set( "port", this.getCloudWrapper().getNetwork().getPort() );
+            dataConfig.save();
+        } catch ( IOException | NullPointerException e ) {
             e.printStackTrace();
         }
 

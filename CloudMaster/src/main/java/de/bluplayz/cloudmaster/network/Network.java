@@ -1,12 +1,16 @@
 package de.bluplayz.cloudmaster.network;
 
 import de.bluplayz.CloudMaster;
-import de.bluplayz.cloudmaster.server.CloudWrapper;
-import de.bluplayz.cloudmaster.locale.LocaleAPI;
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
+import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.server.ActiveMode;
+import de.bluplayz.cloudmaster.locale.LocaleAPI;
+import de.bluplayz.cloudmaster.server.CloudWrapper;
+import de.bluplayz.cloudmaster.server.SpigotServer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
@@ -51,31 +55,56 @@ public class Network {
         this.getNettyHandler().registerConnectionListener( this.connectionListener = new ConnectionListener() {
             @Override
             public void channelConnected( ChannelHandlerContext ctx ) {
+                Logger.getGlobal().debug( "channelConnected" );
+
                 if ( !Network.this.getWhitelist().contains( ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] ) ) {
+                    //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to connect!" );
                     ctx.close();
                     return;
                 }
-
-                CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( ctx.channel() );
-                LocaleAPI.log( "network_wrapper_connected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
-                Network.this.getCloudMaster().getServerManager().checkForServers();
             }
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                if ( Network.this.getCloudMaster().getServerManager().getCloudWrapperByChannel( ctx.channel() ) == null ) {
+                Logger.getGlobal().debug( "channelDisconnected" );
+                if ( !Network.this.getWhitelist().contains( ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] ) ) {
+                    //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to disconnect!" );
                     ctx.close();
                     return;
                 }
 
-                CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
-                LocaleAPI.log( "network_wrapper_disconnected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
+                if ( Network.this.getCloudMaster().getServerManager().getCloudWrapperByChannel( ctx.channel() ) != null ) {
+                    // CloudWrapper disconnected
+                    CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
+                    LocaleAPI.log( "network_wrapper_disconnected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
+                } else {
+                    // Bukkit- or Bungee Server disconnected
+                }
             }
         } );
 
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
+                Logger.getGlobal().debug( "incoming Packet " + packet.getClass().getSimpleName() );
+
+                if ( packet instanceof SetNamePacket ) {
+                    SetNamePacket setNamePacket = (SetNamePacket) packet;
+                    Logger.getGlobal().debug( "SetNamePacket Incoming with name: " + setNamePacket.getName() );
+                    if ( setNamePacket.getName().equalsIgnoreCase( "Unnamed-Wrapper" ) ) {
+                        // CloudWrapper
+                        CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( channel );
+                        LocaleAPI.log( "network_wrapper_connected", cloudWrapper.getName(), channel.remoteAddress().toString().substring( 1 ) );
+                        Network.this.getCloudMaster().getServerManager().checkForServers();
+
+                        setNamePacket.setName( cloudWrapper.getName() );
+                    } else {
+                        // Bukkit or Bungee Server
+                        SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( setNamePacket.getName() );
+                        spigotServer.setActiveMode( ActiveMode.ONLINE );
+                        LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                    }
+                }
             }
 
             @Override

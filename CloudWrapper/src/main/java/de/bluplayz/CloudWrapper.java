@@ -31,22 +31,31 @@ public class CloudWrapper {
 
     @Getter
     private static CloudWrapper instance;
+
     @Getter
     public List<BungeeCordProxy> bungeeCordProxies = new LinkedList<>();
+
     @Getter
     public List<SpigotServer> spigotServers = new LinkedList<>();
+
     @Getter
     private Logger logger;
+
     @Getter
     private LocaleManager localeManager;
+
     @Getter
     private Locale consoleLocale;
+
     @Getter
     private Config config;
+
     @Getter
     private CommandHandler commandHandler;
+
     @Getter
     private Network network;
+
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
 
