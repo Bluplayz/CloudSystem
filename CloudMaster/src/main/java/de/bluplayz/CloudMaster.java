@@ -1,5 +1,7 @@
 package de.bluplayz;
 
+import com.sun.net.httpserver.Authenticator;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import de.bluplayz.cloudlib.command.CommandHandler;
 import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class CloudMaster {
 
@@ -58,6 +61,9 @@ public class CloudMaster {
 
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
+
+    @Getter
+    private ExecutorService synchronizedPool = Executors.newSingleThreadExecutor();
 
     public CloudMaster() {
         // Save instance for further use
@@ -103,7 +109,7 @@ public class CloudMaster {
         // Initialize console input
         this.getPool().execute( () -> {
             Thread.currentThread().setName( "Commands-Thread" );
-            this.getCommandHandler().consoleInput();
+            this.getCommandHandler().consoleInput( command -> LocaleAPI.log( "command_not_found", command ) );
         } );
 
         // Initialize Network
@@ -147,12 +153,12 @@ public class CloudMaster {
 
             new CloudMaster();
         } catch ( Exception e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
             try {
                 System.out.println( "Stopping in 3 Seconds..." );
                 Thread.sleep( 3000 );
             } catch ( InterruptedException e1 ) {
-                e1.printStackTrace();
+                Logger.getGlobal().error( e1.getMessage(), e1 );
             }
         }
     }
@@ -166,7 +172,7 @@ public class CloudMaster {
                 directory.mkdir();
             }
         } catch ( URISyntaxException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         return directory;
@@ -292,6 +298,7 @@ public class CloudMaster {
         translations.clear();
         translations.put( "prefix", "§7[§3CloudMaster§7]§r" );
         translations.put( "console_language_set_success", "§7Die Sprache der Konsole ist §bDeutsch§7." );
+        translations.put( "command_not_found", "§cCommand §b{0} §cwurde nicht gefunden!" );
         translations.put( "network_netty_started_successfully", "§7Netty Server wurde auf Port §b{0} §7gestartet." );
         translations.put( "network_netty_starting_failed", "§cFehler beim Starten des Netty Servers." );
         translations.put( "network_server_starting", "§b{0} §7wird auf Port §b{1}§7 gestartet..." );
@@ -318,6 +325,7 @@ public class CloudMaster {
         translations.clear();
         translations.put( "prefix", "§7[§3CloudMaster§7]§r" );
         translations.put( "console_language_set_success", "§7The Language of the Console is §bEnglish§7." );
+        translations.put( "command_not_found", "§cCommand §b{0} §cwas not found!" );
         translations.put( "network_netty_started_successfully", "§7Netty Server was started on port §b{0}§7." );
         translations.put( "network_netty_starting_failed", "§cError while starting Netty Server." );
         translations.put( "network_server_starting", "§b{0} §7starting on port §b{1}§7..." );
@@ -346,6 +354,7 @@ public class CloudMaster {
     }
 
     public void shutdown() {
+        this.getSynchronizedPool().shutdown();
         this.getPool().shutdown();
         System.exit( 0 );
     }

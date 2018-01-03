@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class CommandHandler {
 
@@ -34,13 +35,12 @@ public class CommandHandler {
         getCommands().add( command );
     }
 
-    public void onExecute( String message ) {
+    public String onExecute( String message ) {
         String commandname = message.split( " " )[0];
         Command command = getCommandByName( commandname );
 
         if ( command == null ) {
-            Logger.getGlobal().error( "Command " + commandname + " was not found!" );
-            return;
+            return commandname;
         }
 
         ArrayList<String> args = new ArrayList<>();
@@ -53,6 +53,7 @@ public class CommandHandler {
         }
 
         command.execute( commandname, args.toArray( new String[args.size()] ) );
+        return null;
     }
 
     public Command getCommandByName( String name ) {
@@ -75,7 +76,7 @@ public class CommandHandler {
         return getCommandByName( command.getName() ) != null;
     }
 
-    public void consoleInput() {
+    public void consoleInput( Consumer<String> consumer ) {
         InputStreamReader in = new InputStreamReader( System.in );
         BufferedReader reader = new BufferedReader( in );
 
@@ -83,13 +84,16 @@ public class CommandHandler {
             String input;
             while ( ( input = reader.readLine() ) != null ) {
                 if ( !input.equalsIgnoreCase( "" ) ) {
-                    this.onExecute( input );
+                    String commandname = this.onExecute( input );
+                    if ( commandname != null ) {
+                        consumer.accept( this.onExecute( commandname ) );
+                    }
                 }
             }
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
-        this.consoleInput();
+        this.consoleInput( consumer );
     }
 }

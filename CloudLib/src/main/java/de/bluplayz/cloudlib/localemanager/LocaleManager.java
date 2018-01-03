@@ -1,13 +1,12 @@
 package de.bluplayz.cloudlib.localemanager;
 
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
+import de.bluplayz.cloudlib.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LocaleManager {
 
@@ -47,7 +46,7 @@ public class LocaleManager {
                 try {
                     throw new Exception( "cannot create directory" );
                 } catch ( Exception e ) {
-                    e.printStackTrace();
+                    Logger.getGlobal().error( e.getMessage(), e );
                 }
             }
         }
@@ -119,7 +118,7 @@ public class LocaleManager {
 
         // Check if no locales was loaded
         if ( locale == null ) {
-            Logger.getGlobal().log( Level.SEVERE, "No locales was loaded!" );
+            Logger.getGlobal().error( "No locales was loaded!" );
             return "error while translating, '" + key + "'";
         }
 

@@ -103,6 +103,21 @@ public class Logger {
     }
 
     /**
+     * logs an error text and exceptiopn into the console
+     *
+     * @param message the message which should print into the console
+     */
+    public void error( String message, Exception e ) {
+        message = "§cERROR§r: " + message + "§r";
+
+        this.getFileLogger().error( this.removeColorCodes( message ), e );
+        message = this.translateColorCodes( message );
+
+        //this.getApacheLogger().info( message );
+        this.getApacheLogger().error( message, e );
+    }
+
+    /**
      * logs a debug text into the console
      *
      * @param message the message which should print into the console

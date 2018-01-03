@@ -194,6 +194,7 @@ public class StartServerPacket extends Packet {
     public String toString() {
         return "StartServerPacket{" +
                 "server=" + server +
+                ", uniqueId=" + uniqueId +
                 '}';
     }
 }

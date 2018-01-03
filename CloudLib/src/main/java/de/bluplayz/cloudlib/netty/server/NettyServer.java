@@ -1,5 +1,6 @@
 package de.bluplayz.cloudlib.netty.server;
 
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.packet.PacketDecoder;
 import de.bluplayz.cloudlib.netty.packet.PacketEncoder;
@@ -65,7 +66,7 @@ public class NettyServer {
                 this.getFuture().sync().channel().closeFuture().syncUninterruptibly();
             } catch ( Exception e ) {
                 if( NettyHandler.DEBUGMODE ){
-                    e.printStackTrace();
+                    Logger.getGlobal().error( e.getMessage(), e );
                 }
 
                 consumer.accept( false );

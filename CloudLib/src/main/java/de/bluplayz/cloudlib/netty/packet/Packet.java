@@ -17,4 +17,11 @@ public abstract class Packet {
     public abstract void read( ByteBuf byteBuf ) throws Exception;
 
     public abstract void write( ByteBuf byteBuf ) throws Exception;
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "uniqueId=" + uniqueId +
+                '}';
+    }
 }

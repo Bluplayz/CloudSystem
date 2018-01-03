@@ -14,4 +14,11 @@ public class DisconnectPacket extends Packet {
     @Override
     public void write( ByteBuf byteBuf ) throws IOException {
     }
+
+    @Override
+    public String toString() {
+        return "DisconnectPacket{" +
+                "uniqueId=" + uniqueId +
+                '}';
+    }
 }

@@ -5,6 +5,7 @@ import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.server.template.Template;
 import io.netty.channel.Channel;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CloudWrapper {
 
-    public static final AtomicInteger STATIC_ID = new AtomicInteger( 0 );
+    public static List<Integer> IDS_IN_USE = new ArrayList<>();
 
     @Getter
     public Channel channel;
@@ -25,15 +26,19 @@ public class CloudWrapper {
     public List<SpigotServer> spigotServers = new LinkedList<>();
 
     @Getter
+    @Setter
     private int id = 0;
 
     @Getter
+    @Setter
     private String name = "";
 
     public void onConnect( Channel channel ) {
         this.channel = channel;
-        this.id = CloudWrapper.STATIC_ID.incrementAndGet();
-        this.name = this.getClass().getSimpleName() + "-" + this.id;
+        this.setId( this.getAvailableId() );
+        this.setName( this.getClass().getSimpleName() + "-" + this.getId() );
+
+        CloudWrapper.IDS_IN_USE.add( this.getId() );
     }
 
     public void onDisconnect() {
@@ -42,6 +47,10 @@ public class CloudWrapper {
         }
         for ( SpigotServer spigotServer : this.getSpigotServers() ) {
             spigotServer.shutdown();
+        }
+
+        if ( CloudWrapper.IDS_IN_USE.contains( this.getId() ) ) {
+            CloudWrapper.IDS_IN_USE.remove( (Object) this.getId() );
         }
 
         this.channel = null;
@@ -75,5 +84,17 @@ public class CloudWrapper {
         }
 
         CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( packet, this.getChannel() );
+    }
+
+    private int getAvailableId() {
+        for ( int id = 1; id < 40000; id++ ) {
+            if ( CloudWrapper.IDS_IN_USE.contains( id ) ) {
+                continue;
+            }
+
+            return id;
+        }
+
+        return 0;
     }
 }

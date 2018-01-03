@@ -39,6 +39,7 @@ public class SetNamePacket extends Packet {
     public String toString() {
         return "SetNamePacket{" +
                 "name='" + name + '\'' +
+                ", uniqueId=" + uniqueId +
                 '}';
     }
 }

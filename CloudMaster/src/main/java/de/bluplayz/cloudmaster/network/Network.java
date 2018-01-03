@@ -60,6 +60,8 @@ public class Network {
                     ctx.close();
                     return;
                 }
+
+                //Network.this.getCloudMaster().getServerManager().checkForServers();
             }
 
             @Override
@@ -74,8 +76,10 @@ public class Network {
                     // CloudWrapper disconnected
                     CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
                     LocaleAPI.log( "network_wrapper_disconnected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
+                    //Network.this.getCloudMaster().getServerManager().checkForServers();
                 } else {
                     // Bukkit- or Bungee Server disconnected
+                    //Network.this.getCloudMaster().getServerManager().checkForServers();
                 }
             }
         } );
@@ -89,22 +93,35 @@ public class Network {
                         // CloudWrapper
                         CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().addCloudWrapper( channel );
                         LocaleAPI.log( "network_wrapper_connected", cloudWrapper.getName(), channel.remoteAddress().toString().substring( 1 ) );
-                        Network.this.getCloudMaster().getServerManager().checkForServers();
-
                         setNamePacket.setName( cloudWrapper.getName() );
+
+                        Network.this.getCloudMaster().getServerManager().checkForServers();
                     } else {
                         if ( Network.this.getCloudMaster().getServerManager().getServerByName( setNamePacket.getName() ) != null ) {
                             // Spigot
                             SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( setNamePacket.getName() );
+
+                            if ( spigotServer.getActiveMode() == ActiveMode.ONLINE ) {
+                                return;
+                            }
+
                             spigotServer.setActiveMode( ActiveMode.ONLINE );
                             LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                            //Network.this.getCloudMaster().getServerManager().checkForServers();
                         } else {
                             // Bungee
                             BungeeCordProxy bungeeCordProxy = Network.this.getCloudMaster().getServerManager().getProxyByName( setNamePacket.getName() );
+
+                            if ( bungeeCordProxy.getActiveMode() == ActiveMode.ONLINE ) {
+                                return;
+                            }
+
                             bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
                             LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
+                            //Network.this.getCloudMaster().getServerManager().checkForServers();
                         }
                     }
+                    return;
                 }
             }
 

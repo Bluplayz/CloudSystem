@@ -2,6 +2,7 @@ package de.bluplayz.cloudwrapper.server;
 
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.cloudlib.config.Config;
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.Server;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
@@ -60,7 +61,7 @@ public class SpigotServer extends Server {
             File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
             FileUtils.deleteDirectory( serverDirectory );
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         this.getCloudWrapper().getSpigotServers().remove( this );
@@ -82,7 +83,7 @@ public class SpigotServer extends Server {
                 try {
                     FileUtils.forceDelete( file );
                 } catch ( IOException e ) {
-                    e.printStackTrace();
+                    Logger.getGlobal().error( e.getMessage(), e );
                 }
             }
         }
@@ -91,7 +92,7 @@ public class SpigotServer extends Server {
         try {
             FileUtils.copyDirectory( templateFolder, serverDirectory );
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         // Copy global bukkit plugins (and also CloudAPI)
@@ -111,7 +112,7 @@ public class SpigotServer extends Server {
             dataConfig.set( "port", this.getCloudWrapper().getNetwork().getPort() );
             dataConfig.save();
         } catch ( IOException | NullPointerException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         File properties = new File( serverDirectory, "server.properties" );
@@ -137,7 +138,7 @@ public class SpigotServer extends Server {
 
             Files.write( properties.toPath(), lines.getBytes() );
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            Logger.getGlobal().error( ex.getMessage(), ex );
         }
 
         return serverDirectory;
@@ -164,7 +165,7 @@ public class SpigotServer extends Server {
                 int exitCode = this.process.waitFor();
                 this.shutdown();
             } catch ( InterruptedException e ) {
-                e.printStackTrace();
+                Logger.getGlobal().error( e.getMessage(), e );
             }
         } );
     }
@@ -185,7 +186,7 @@ public class SpigotServer extends Server {
                 bufferedWriter.flush();
                 bufferedWriter.close();
             } catch ( IOException e ) {
-                e.printStackTrace();
+                Logger.getGlobal().error( e.getMessage(), e );
             }
         } );
     }

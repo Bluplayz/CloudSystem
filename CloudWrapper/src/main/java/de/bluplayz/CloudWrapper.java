@@ -28,8 +28,6 @@ import java.util.concurrent.Executors;
 
 public class CloudWrapper {
 
-    public static final String VERSION = "1.0.0";
-
     @Getter
     private static CloudWrapper instance;
 
@@ -60,6 +58,9 @@ public class CloudWrapper {
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
 
+    @Getter
+    private ExecutorService synchronizedPool = Executors.newSingleThreadExecutor();
+
     public CloudWrapper() {
         // Save instance for further use
         instance = this;
@@ -85,9 +86,6 @@ public class CloudWrapper {
         // Initialize locale system
         this.initLocales();
 
-        // Start initialize message
-        LocaleAPI.log( "console_loading_message_start", "CloudWrapper", VERSION );
-
         // Initialize command handler
         this.commandHandler = new CommandHandler();
 
@@ -97,7 +95,7 @@ public class CloudWrapper {
         // Initialize console input
         this.getPool().execute( () -> {
             Thread.currentThread().setName( "Commands-Thread" );
-            this.getCommandHandler().consoleInput();
+            this.getCommandHandler().consoleInput( command -> LocaleAPI.log( "command_not_found", command ) );
         } );
 
         // Initialize Network
@@ -117,9 +115,6 @@ public class CloudWrapper {
 
             LocaleAPI.log( "system_exit_finished" );
         } ) );
-
-        // Finish initialize message
-        LocaleAPI.log( "console_loading_message_finish", "CloudWrapper", VERSION );
 
         // Finish initialize message
         LocaleAPI.log( "console_language_set_success" );
@@ -154,12 +149,12 @@ public class CloudWrapper {
 
             new CloudWrapper();
         } catch ( Exception e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
             try {
                 System.out.println( "Stopping in 3 Seconds..." );
                 Thread.sleep( 3000 );
             } catch ( InterruptedException e1 ) {
-                e1.printStackTrace();
+                Logger.getGlobal().error( e1.getMessage(), e1 );
             }
         }
     }
@@ -173,7 +168,7 @@ public class CloudWrapper {
                 directory.mkdir();
             }
         } catch ( URISyntaxException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         return directory;
@@ -231,9 +226,8 @@ public class CloudWrapper {
 
         translations.clear();
         translations.put( "prefix", "§7[§3CloudWrapper§7]§r" );
-        translations.put( "console_loading_message_start", "§7{0} v{1} wird geladen..." );
-        translations.put( "console_loading_message_finish", "§7{0} v{1} wurde erfolgreich geladen!" );
         translations.put( "console_language_set_success", "§7Die Sprache der Konsole ist §bDeutsch§7." );
+        translations.put( "command_not_found", "§cCommand §b{0} §cwurde nicht gefunden!" );
         translations.put( "system_exit_loading", "§7CloudMaster wird heruntergefahren..." );
         translations.put( "system_exit_finished", "§7CloudMaster wurde erfolgreich heruntergefahren." );
         translations.put( "network_master_connected", "§7Verbindung zum CloudMaster(§b{0}§7) wurde hergestellt." );
@@ -247,7 +241,6 @@ public class CloudWrapper {
 
         translations.put( "network_server_starting_no_template_folder", "§b{0} §7konnte nicht gestartet werden. Der TemplatePfad von dem Template §6{1}§7(§6{2}§7) ist ungültig!" );
 
-
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
 
@@ -256,9 +249,8 @@ public class CloudWrapper {
 
         translations.clear();
         translations.put( "prefix", "§7[§3CloudWrapper§7]§r" );
-        translations.put( "console_loading_message_start", "§7Loading {0} v{1}..." );
-        translations.put( "console_loading_message_finish", "§7Successfully loaded {0} v{1}!" );
         translations.put( "console_language_set_success", "§7The Language of the Console is §bEnglish§7." );
+        translations.put( "command_not_found", "§cCommand §b{0} §cwas not found!" );
         translations.put( "system_exit_loading", "§7CloudMaster shutting down..." );
         translations.put( "system_exit_finished", "§7Shutdown CloudMaster successfully." );
         translations.put( "network_master_connected", "§7Successfully connected to CloudMaster(§b{0}§7)." );
@@ -278,11 +270,6 @@ public class CloudWrapper {
 
         // Set default locale
         this.getLocaleManager().setDefaultLocale( getLocaleManager().getLocale( this.getConfig().getString( "language.fallback" ) ) );
-    }
-
-    public void shutdown() {
-        this.getPool().shutdown();
-        System.exit( 0 );
     }
 
     public SpigotServer getServerByName( String name ) {
@@ -309,9 +296,15 @@ public class CloudWrapper {
         try {
             return processBuilder.start();
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         return null;
+    }
+
+    public void shutdown() {
+        this.getSynchronizedPool().shutdown();
+        this.getPool().shutdown();
+        System.exit( 0 );
     }
 }

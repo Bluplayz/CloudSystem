@@ -2,6 +2,7 @@ package de.bluplayz.cloudwrapper.server;
 
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.cloudlib.config.Config;
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.Proxy;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
@@ -53,7 +54,7 @@ public class BungeeCordProxy extends Proxy {
             File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
             FileUtils.deleteDirectory( serverDirectory );
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         this.getCloudWrapper().getBungeeCordProxies().remove( this );
@@ -75,7 +76,7 @@ public class BungeeCordProxy extends Proxy {
                 try {
                     FileUtils.forceDelete( file );
                 } catch ( IOException e ) {
-                    e.printStackTrace();
+                    Logger.getGlobal().error( e.getMessage(), e );
                 }
             }
         }
@@ -84,7 +85,7 @@ public class BungeeCordProxy extends Proxy {
         try {
             FileUtils.copyDirectory( templateFolder, serverDirectory );
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         // Copy global bukkit plugins (and also CloudAPI)
@@ -104,7 +105,7 @@ public class BungeeCordProxy extends Proxy {
             dataConfig.set( "port", this.getCloudWrapper().getNetwork().getPort() );
             dataConfig.save();
         } catch ( IOException | NullPointerException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         /*
@@ -156,7 +157,7 @@ public class BungeeCordProxy extends Proxy {
         try {
             this.process = processBuilder.start();
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Logger.getGlobal().error( e.getMessage(), e );
         }
 
         CloudWrapper.getInstance().getPool().execute( () -> {
@@ -165,7 +166,7 @@ public class BungeeCordProxy extends Proxy {
                 int exitCode = this.process.waitFor();
                 this.shutdown();
             } catch ( InterruptedException e ) {
-                e.printStackTrace();
+                Logger.getGlobal().error( e.getMessage(), e );
             }
         } );
     }
@@ -186,7 +187,7 @@ public class BungeeCordProxy extends Proxy {
                 bufferedWriter.flush();
                 bufferedWriter.close();
             } catch ( IOException e ) {
-                e.printStackTrace();
+                Logger.getGlobal().error( e.getMessage(), e );
             }
         } );
     }

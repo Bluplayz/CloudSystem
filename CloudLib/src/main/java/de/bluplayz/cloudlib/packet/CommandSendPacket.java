@@ -58,4 +58,13 @@ public class CommandSendPacket extends Packet {
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
     }
+
+    @Override
+    public String toString() {
+        return "CommandSendPacket{" +
+                "commandline='" + commandline + '\'' +
+                ", servername='" + servername + '\'' +
+                ", uniqueId=" + uniqueId +
+                '}';
+    }
 }

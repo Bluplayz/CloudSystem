@@ -194,6 +194,7 @@ public class StartProxyPacket extends Packet {
     public String toString() {
         return "StartProxyPacket{" +
                 "proxy=" + proxy +
+                ", uniqueId=" + uniqueId +
                 '}';
     }
 }
