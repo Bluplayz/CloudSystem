@@ -2,7 +2,6 @@ package de.bluplayz.cloudwrapper.server;
 
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.cloudlib.config.Config;
-import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.Server;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
@@ -158,15 +157,10 @@ public class SpigotServer extends Server {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory( serverDirectory );
         processBuilder.command( /*"screen", "-S", this.getName(),*/ "java", "-jar"/*, "Xmx" + this.getTemplate().getMaxMemory() + "M" */, spigotJarName );
-        try {
-            this.process = processBuilder.start();
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-            return;
-        }
 
         CloudWrapper.getInstance().getPool().execute( () -> {
             try {
+                this.process = CloudWrapper.getInstance().startProcess( processBuilder );
                 int exitCode = this.process.waitFor();
                 this.shutdown();
             } catch ( InterruptedException e ) {
@@ -184,12 +178,15 @@ public class SpigotServer extends Server {
             return;
         }
 
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
-            bufferedWriter.write( commandline + "\n" );
-            bufferedWriter.flush();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
+        CloudWrapper.getInstance().getPool().execute( () -> {
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
+                bufferedWriter.write( commandline + "\n" );
+                bufferedWriter.flush();
+                bufferedWriter.close();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        } );
     }
 }
