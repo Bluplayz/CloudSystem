@@ -1,11 +1,13 @@
 package de.bluplayz.cloudwrapper.network;
 
 import de.bluplayz.CloudWrapper;
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.packet.CommandSendPacket;
 import de.bluplayz.cloudlib.packet.StartProxyPacket;
 import de.bluplayz.cloudlib.packet.StartServerPacket;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
@@ -101,6 +103,23 @@ public class Network {
                     BungeeCordProxy bungeeCordProxy = new BungeeCordProxy( startProxyPacket.getProxy() );
                     Network.this.getCloudWrapper().getBungeeCordProxies().add( bungeeCordProxy );
                     bungeeCordProxy.startProxy();
+                    return;
+                }
+
+                if ( packet instanceof CommandSendPacket ) {
+                    CommandSendPacket commandSendPacket = (CommandSendPacket) packet;
+
+                    SpigotServer spigotServer = Network.this.getCloudWrapper().getServerByName( commandSendPacket.getServername() );
+                    if ( spigotServer != null ) {
+                        spigotServer.execute( commandSendPacket.getCommandline() );
+                        return;
+                    }
+
+                    BungeeCordProxy bungeeCordProxy = Network.this.getCloudWrapper().getProxyByName( commandSendPacket.getServername() );
+                    if ( bungeeCordProxy != null ) {
+                        bungeeCordProxy.execute( commandSendPacket.getCommandline() );
+                        return;
+                    }
                     return;
                 }
             }

@@ -8,8 +8,7 @@ import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class BungeeCordProxy extends Proxy {
 
@@ -140,7 +139,7 @@ public class BungeeCordProxy extends Proxy {
     }
 
     private void startProcess( File serverDirectory ) {
-        String bungeeCordJar = "bungeecord.jar";
+        String bungeeCordJar = "BungeeCord.jar";
         for ( File file : serverDirectory.listFiles() ) {
             if ( file.getName().toLowerCase().endsWith( ".jar" ) ) {
                 if ( file.getName().toLowerCase().contains( "bungee" ) || file.getName().toLowerCase().contains( "proxy" ) ) {
@@ -153,11 +152,42 @@ public class BungeeCordProxy extends Proxy {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory( serverDirectory );
         processBuilder.command( /*"screen", "-S", this.getName(),*/ "java", "-jar"/*, "Xmx" + this.getTemplate().getMaxMemory() + "M" */, bungeeCordJar );
+
         try {
             this.process = processBuilder.start();
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
+        CloudWrapper.getInstance().getPool().execute( () -> {
+            try {
+                this.process = CloudWrapper.getInstance().startProcess( processBuilder );
+                int exitCode = this.process.waitFor();
+                this.shutdown();
+            } catch ( InterruptedException e ) {
+                e.printStackTrace();
+            }
+        } );
+    }
+
+    public void execute( String commandline ) {
+        if ( this.getProcess() == null ) {
             return;
         }
+
+        if ( !this.getProcess().isAlive() ) {
+            return;
+        }
+
+        CloudWrapper.getInstance().getPool().execute( () -> {
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
+                bufferedWriter.write( commandline + "\n" );
+                bufferedWriter.flush();
+                bufferedWriter.close();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        } );
     }
 }

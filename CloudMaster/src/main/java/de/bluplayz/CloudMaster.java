@@ -6,10 +6,7 @@ import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.server.template.Template;
-import de.bluplayz.cloudmaster.command.ClearConsoleCommand;
-import de.bluplayz.cloudmaster.command.HelpCommand;
-import de.bluplayz.cloudmaster.command.ListCommand;
-import de.bluplayz.cloudmaster.command.StopCommand;
+import de.bluplayz.cloudmaster.command.*;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.network.Network;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
@@ -31,8 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CloudMaster {
-
-    public static final String VERSION = "1.0.0";
 
     @Getter
     private static CloudMaster instance;
@@ -70,6 +65,16 @@ public class CloudMaster {
 
         this.logger = new Logger( new File( CloudMaster.getRootDirectory(), "logs" ) );
 
+        this.getLogger().info( "" );
+        this.getLogger().info( "Source: https://github.com/Bluplayz/CloudSystem" );
+        this.getLogger().info( "  ____ _                 _ ____            _" );
+        this.getLogger().info( " / ___| | ___  _   _  __| / ___| _   _ ___| |_ ___ _ __ ___" );
+        this.getLogger().info( "| |   | |/ _ \\| | | |/ _` \\___ \\| | | / __| __/ _ \\ '_ ` _ \\" );
+        this.getLogger().info( "| |___| | (_) | |_| | (_| |___) | |_| \\__ \\ ||  __/ | | | | |" );
+        this.getLogger().info( " \\____|_|\\___/ \\__,_|\\__,_|____/ \\__, |___/\\__\\___|_| |_| |_|" );
+        this.getLogger().info( "Developed by Bluplayz            |___/" );
+        this.getLogger().info( "" );
+
         // Add Shutdown Hook
         Runtime.getRuntime().addShutdownHook( new Thread( () -> {
         } ) );
@@ -80,14 +85,11 @@ public class CloudMaster {
         // Initialize Main Config
         this.initMainConfig();
 
-        // Initialize Groups Config
-        this.initGroupsConfig();
-
         // Initialize locale system
         this.initLocales();
 
-        // Start initialize message
-        LocaleAPI.log( "console_loading_message_start", "CloudMaster", VERSION );
+        // Initialize Groups Config
+        this.initGroupsConfig();
 
         // Initialize command handler
         this.commandHandler = new CommandHandler();
@@ -123,9 +125,6 @@ public class CloudMaster {
         } ) );
 
         // Finish initialize message
-        LocaleAPI.log( "console_loading_message_finish", "CloudMaster", VERSION );
-
-        // Finish initialize message
         LocaleAPI.log( "console_language_set_success" );
     }
 
@@ -149,6 +148,12 @@ public class CloudMaster {
             new CloudMaster();
         } catch ( Exception e ) {
             e.printStackTrace();
+            try {
+                System.out.println( "Stopping in 3 Seconds..." );
+                Thread.sleep( 3000 );
+            } catch ( InterruptedException e1 ) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -172,6 +177,8 @@ public class CloudMaster {
         this.getCommandHandler().registerCommand( new StopCommand() );
         this.getCommandHandler().registerCommand( new ClearConsoleCommand() );
         this.getCommandHandler().registerCommand( new ListCommand() );
+        this.getCommandHandler().registerCommand( new DispatchCommand() );
+        this.getCommandHandler().registerCommand( new ScreenCommand() );
     }
 
     private void initMainConfig() {
@@ -252,6 +259,7 @@ public class CloudMaster {
             this.getGroupConfig().save();
         }
 
+        LocaleAPI.log( "network_templates_loading" );
         for ( Map.Entry entry : this.getGroupConfig().getAll().entrySet() ) {
             String name = (String) entry.getKey();
             Map<String, Object> data = (Map<String, Object>) entry.getValue();
@@ -268,6 +276,7 @@ public class CloudMaster {
             }
 
             Template.getAllTemplates().add( template );
+            LocaleAPI.log( "network_template_loaded", template.getName() );
         }
     }
 
@@ -282,19 +291,23 @@ public class CloudMaster {
 
         translations.clear();
         translations.put( "prefix", "§7[§3CloudMaster§7]§r" );
-        translations.put( "console_loading_message_start", "{PREFIX} §7{0} v{1} wird geladen..." );
-        translations.put( "console_loading_message_finish", "{PREFIX} §7{0} v{1} wurde erfolgreich geladen!" );
-        translations.put( "console_language_set_success", "{PREFIX} §7Die Sprache der Konsole ist §bDeutsch§7." );
-        translations.put( "network_netty_started_successfully", "{PREFIX} §7Netty Server wurde erfolgreich auf Port §b{0} §7gestartet." );
-        translations.put( "network_netty_starting_failed", "{PREFIX} §cFehler beim Starten des Netty Servers." );
-        translations.put( "network_server_starting", "{PREFIX} §b{0} §7wird auf Port §b{1}§7 gestartet..." );
-        translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7ist nun online auf Port §b{1}§7." );
-        translations.put( "network_server_stopping", "{PREFIX} §b{0} §7wird heruntergefahren..." );
-        translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7ist nun offline." );
-        translations.put( "network_wrapper_connected", "{PREFIX} §b{0} §7hat sich verbunden mit §b{1}§7." );
-        translations.put( "network_wrapper_disconnected", "{PREFIX} §b{0} §7hat die Verbindung getrennt von §b{1}§7." );
-        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
-        translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
+        translations.put( "console_language_set_success", "§7Die Sprache der Konsole ist §bDeutsch§7." );
+        translations.put( "network_netty_started_successfully", "§7Netty Server wurde auf Port §b{0} §7gestartet." );
+        translations.put( "network_netty_starting_failed", "§cFehler beim Starten des Netty Servers." );
+        translations.put( "network_server_starting", "§b{0} §7wird auf Port §b{1}§7 gestartet..." );
+        translations.put( "network_server_started_successfully", "§b{0} §7ist nun online auf Port §b{1}§7." );
+        translations.put( "network_server_stopping", "§b{0} §7wird heruntergefahren..." );
+        translations.put( "network_server_stopped_successfully", "§b{0} §7ist nun offline." );
+        translations.put( "network_wrapper_connected", "§b{0} §7hat sich verbunden mit §b{1}§7." );
+        translations.put( "network_wrapper_disconnected", "§b{0} §7hat die Verbindung getrennt von §b{1}§7." );
+        translations.put( "system_exit_loading", "§7CloudMaster wird heruntergefahren..." );
+        translations.put( "system_exit_finished", "§7CloudMaster wurde erfolgreich heruntergefahren." );
+        translations.put( "network_templates_loading", "§7Templates werden geladen..." );
+        translations.put( "network_template_loaded", "§7Template geladen: §b{0}§7." );
+
+        translations.put( "command_dispatch_usage", "§7Benutzung: dispatch <Servername> <Commandline>" );
+        translations.put( "command_dispatch_server_exist", "§cDer Server {0} existiert nicht!" );
+        translations.put( "command_dispatch_success", "§7Du hast §b{0} §7den Command §b{1} §7geschickt." );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
@@ -304,19 +317,23 @@ public class CloudMaster {
 
         translations.clear();
         translations.put( "prefix", "§7[§3CloudMaster§7]§r" );
-        translations.put( "console_loading_message_start", "{PREFIX} §7Loading {0} v{1}..." );
-        translations.put( "console_loading_message_finish", "{PREFIX} §7Successfully loaded {0} v{1}!" );
-        translations.put( "console_language_set_success", "{PREFIX} §7The Language of the Console is §bEnglish§7." );
-        translations.put( "network_netty_started_successfully", "{PREFIX} §7Netty Server was successfully started on port §b{0}§7." );
-        translations.put( "network_netty_starting_failed", "{PREFIX} §cError while starting Netty Server." );
-        translations.put( "network_server_starting", "{PREFIX} §b{0} §7starting on port §b{1}§7..." );
-        translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7is now online on port §b{1}§7." );
-        translations.put( "network_server_stopping", "{PREFIX} §b{0} §7shutting down..." );
-        translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7is now offline." );
-        translations.put( "network_wrapper_connected", "{PREFIX} §b{0} §7connected from §b{1}§7." );
-        translations.put( "network_wrapper_disconnected", "{PREFIX} §b{0} §7disconnected from §b{1}§7." );
-        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
-        translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
+        translations.put( "console_language_set_success", "§7The Language of the Console is §bEnglish§7." );
+        translations.put( "network_netty_started_successfully", "§7Netty Server was started on port §b{0}§7." );
+        translations.put( "network_netty_starting_failed", "§cError while starting Netty Server." );
+        translations.put( "network_server_starting", "§b{0} §7starting on port §b{1}§7..." );
+        translations.put( "network_server_started_successfully", "§b{0} §7is now online on port §b{1}§7." );
+        translations.put( "network_server_stopping", "§b{0} §7shutting down..." );
+        translations.put( "network_server_stopped_successfully", "§b{0} §7is now offline." );
+        translations.put( "network_wrapper_connected", "§b{0} §7connected from §b{1}§7." );
+        translations.put( "network_wrapper_disconnected", "§b{0} §7disconnected from §b{1}§7." );
+        translations.put( "system_exit_loading", "§7CloudMaster shutting down..." );
+        translations.put( "system_exit_finished", "§7Shutdown CloudMaster successfully." );
+        translations.put( "network_templates_loading", "§7Loading Templates..." );
+        translations.put( "network_template_loaded", "§7Template loaded: §b{0}§7." );
+
+        translations.put( "command_dispatch_usage", "§7Usage: dispatch <Servername> <Commandline>" );
+        translations.put( "command_dispatch_server_exist", "§cThe Server {0} doesn't exist!" );
+        translations.put( "command_dispatch_success", "§7You send the Command §b{1} §7to §b{0}§7." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

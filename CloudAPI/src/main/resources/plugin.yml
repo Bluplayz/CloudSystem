@@ -2,6 +2,7 @@ name: CloudAPI
 version: 1.0.0
 author: Bluplayz
 website: https://github.com/Bluplayz/CloudSystem
+load: STARTUP
 
 main: de.bluplayz.cloudapi.bukkit.BukkitCloudAPI
 

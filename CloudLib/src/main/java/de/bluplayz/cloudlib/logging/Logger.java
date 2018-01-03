@@ -46,7 +46,8 @@ public class Logger {
         this.apacheLogger = org.apache.log4j.Logger.getLogger( "CloudSystemLogger" );
         this.fileLogger = org.apache.log4j.Logger.getLogger( "CloudSystemFileLogger" );
 
-        PatternLayout layout = new PatternLayout( "[%d{HH:mm:ss}] [%t] %m%n" );
+        //PatternLayout layout = new PatternLayout( "[%d{HH:mm:ss}] [%t] %m%n" );
+        PatternLayout layout = new PatternLayout( "[%d{HH:mm:ss}] %m%n" );
         ConsoleAppender consoleAppender = new ConsoleAppender( layout );
         this.getApacheLogger().addAppender( consoleAppender );
 
@@ -79,11 +80,7 @@ public class Logger {
      * @param message the message which should print into the console
      */
     public void info( String message ) {
-        if ( message.equalsIgnoreCase( "" ) ) {
-            return;
-        }
-
-        message = "[§bINFO§r]: " + message + "§r";
+        message = "§bINFO§r: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
@@ -97,11 +94,7 @@ public class Logger {
      * @param message the message which should print into the console
      */
     public void error( String message ) {
-        if ( message.equalsIgnoreCase( "" ) ) {
-            return;
-        }
-
-        message = "[§cERROR§r]: " + message + "§r";
+        message = "§cERROR§r: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
@@ -115,11 +108,7 @@ public class Logger {
      * @param message the message which should print into the console
      */
     public void debug( String message ) {
-        if ( message.equalsIgnoreCase( "" ) ) {
-            return;
-        }
-
-        message = "[§5DEBUG§r]: " + message + "§r";
+        message = "§5DEBUG§r: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );
@@ -133,11 +122,7 @@ public class Logger {
      * @param message the message which should print into the console
      */
     public void warning( String message ) {
-        if ( message.equalsIgnoreCase( "" ) ) {
-            return;
-        }
-
-        message = "[§eWARNING§r]: " + message + "§r";
+        message = "§eWARNING§r: " + message + "§r";
 
         this.getFileLogger().info( this.removeColorCodes( message ) );
         message = this.translateColorCodes( message );

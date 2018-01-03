@@ -1,20 +1,21 @@
 package de.bluplayz;
 
-import de.bluplayz.cloudwrapper.command.ClearConsoleCommand;
 import de.bluplayz.cloudlib.command.CommandHandler;
-import de.bluplayz.cloudwrapper.command.HelpCommand;
-import de.bluplayz.cloudwrapper.command.StopCommand;
 import de.bluplayz.cloudlib.config.Config;
-import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import de.bluplayz.cloudlib.logging.Logger;
+import de.bluplayz.cloudwrapper.command.ClearConsoleCommand;
+import de.bluplayz.cloudwrapper.command.HelpCommand;
+import de.bluplayz.cloudwrapper.command.StopCommand;
+import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import de.bluplayz.cloudwrapper.network.Network;
 import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
 import de.bluplayz.cloudwrapper.server.SpigotServer;
 import lombok.Getter;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -64,6 +65,16 @@ public class CloudWrapper {
         instance = this;
 
         this.logger = new Logger( new File( CloudWrapper.getRootDirectory(), "logs" ) );
+
+        this.getLogger().info( "" );
+        this.getLogger().info( "Source: https://github.com/Bluplayz/CloudSystem" );
+        this.getLogger().info( "  ____ _                 _ ____            _" );
+        this.getLogger().info( " / ___| | ___  _   _  __| / ___| _   _ ___| |_ ___ _ __ ___" );
+        this.getLogger().info( "| |   | |/ _ \\| | | |/ _` \\___ \\| | | / __| __/ _ \\ '_ ` _ \\" );
+        this.getLogger().info( "| |___| | (_) | |_| | (_| |___) | |_| \\__ \\ ||  __/ | | | | |" );
+        this.getLogger().info( " \\____|_|\\___/ \\__,_|\\__,_|____/ \\__, |___/\\__\\___|_| |_| |_|" );
+        this.getLogger().info( "Developed by Bluplayz            |___/" );
+        this.getLogger().info( "" );
 
         // Rename Main-Thread
         Thread.currentThread().setName( "CloudWrapperMain-Thread" );
@@ -144,6 +155,12 @@ public class CloudWrapper {
             new CloudWrapper();
         } catch ( Exception e ) {
             e.printStackTrace();
+            try {
+                System.out.println( "Stopping in 3 Seconds..." );
+                Thread.sleep( 3000 );
+            } catch ( InterruptedException e1 ) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -214,21 +231,21 @@ public class CloudWrapper {
 
         translations.clear();
         translations.put( "prefix", "§7[§3CloudWrapper§7]§r" );
-        translations.put( "console_loading_message_start", "{PREFIX} §7{0} v{1} wird geladen..." );
-        translations.put( "console_loading_message_finish", "{PREFIX} §7{0} v{1} wurde erfolgreich geladen!" );
-        translations.put( "console_language_set_success", "{PREFIX} §7Die Sprache der Konsole ist §bDeutsch§7." );
-        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster wird heruntergefahren..." );
-        translations.put( "system_exit_finished", "{PREFIX} §7CloudMaster wurde erfolgreich heruntergefahren." );
-        translations.put( "network_master_connected", "{PREFIX} §7Verbindung zum CloudMaster(§b{0}§7) wurde hergestellt." );
-        translations.put( "network_master_connection_lost", "{PREFIX} §cVerbindung zum CloudMaster(§b{0}§c) verloren!" );
-        translations.put( "network_master_failed_connection", "{PREFIX} §cVerbindung zum CloudMaster(§b{0}§c) ist fehlgeschlagen!" );
-        translations.put( "network_master_failed_connection_reconnect", "{PREFIX} §cVerbinde erneut in 3 Sekunden..." );
-        translations.put( "network_server_starting", "{PREFIX} §b{0} §7wird auf Port §b{1}§7 gestartet..." );
-        translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7ist nun online auf Port §b{1}§7." );
-        translations.put( "network_server_stopping", "{PREFIX} §b{0} §7wird heruntergefahren..." );
-        translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7ist nun offline." );
+        translations.put( "console_loading_message_start", "§7{0} v{1} wird geladen..." );
+        translations.put( "console_loading_message_finish", "§7{0} v{1} wurde erfolgreich geladen!" );
+        translations.put( "console_language_set_success", "§7Die Sprache der Konsole ist §bDeutsch§7." );
+        translations.put( "system_exit_loading", "§7CloudMaster wird heruntergefahren..." );
+        translations.put( "system_exit_finished", "§7CloudMaster wurde erfolgreich heruntergefahren." );
+        translations.put( "network_master_connected", "§7Verbindung zum CloudMaster(§b{0}§7) wurde hergestellt." );
+        translations.put( "network_master_connection_lost", "§cVerbindung zum CloudMaster(§b{0}§c) verloren!" );
+        translations.put( "network_master_failed_connection", "§cVerbindung zum CloudMaster(§b{0}§c) ist fehlgeschlagen!" );
+        translations.put( "network_master_failed_connection_reconnect", "§cVerbinde erneut in 3 Sekunden..." );
+        translations.put( "network_server_starting", "§b{0} §7wird auf Port §b{1}§7 gestartet..." );
+        translations.put( "network_server_started_successfully", "§b{0} §7ist nun online auf Port §b{1}§7." );
+        translations.put( "network_server_stopping", "§b{0} §7wird heruntergefahren..." );
+        translations.put( "network_server_stopped_successfully", "§b{0} §7ist nun offline." );
 
-        translations.put( "network_server_starting_no_template_folder", "{PREFIX} §b{0} §7konnte nicht gestartet werden. Der TemplatePfad von dem Template §6{1}§7(§6{2}§7) ist ungültig!" );
+        translations.put( "network_server_starting_no_template_folder", "§b{0} §7konnte nicht gestartet werden. Der TemplatePfad von dem Template §6{1}§7(§6{2}§7) ist ungültig!" );
 
 
         germanLocale.addTranslations( translations, false );
@@ -239,19 +256,19 @@ public class CloudWrapper {
 
         translations.clear();
         translations.put( "prefix", "§7[§3CloudWrapper§7]§r" );
-        translations.put( "console_loading_message_start", "{PREFIX} §7Loading {0} v{1}..." );
-        translations.put( "console_loading_message_finish", "{PREFIX} §7Successfully loaded {0} v{1}!" );
-        translations.put( "console_language_set_success", "{PREFIX} §7The Language of the Console is §bEnglish§7." );
-        translations.put( "system_exit_loading", "{PREFIX} §7CloudMaster shutting down..." );
-        translations.put( "system_exit_finished", "{PREFIX} §7Shutdown CloudMaster successfully." );
-        translations.put( "network_master_connected", "{PREFIX} §7Successfully connected to CloudMaster(§b{0}§7)." );
-        translations.put( "network_master_connection_lost", "{PREFIX} §cConnection to CloudMaster(§b{0}§c) was lost!" );
-        translations.put( "network_master_failed_connection", "{PREFIX} §cConnection failed to CloudMaster(§b{0}§c)!" );
-        translations.put( "network_master_failed_connection_reconnect", "{PREFIX} §cReconnect in 3 Seconds..." );
-        translations.put( "network_server_starting", "{PREFIX} §b{0} §7starting on port §b{1}§7..." );
-        translations.put( "network_server_started_successfully", "{PREFIX} §b{0} §7is now online on port §b{1}§7." );
-        translations.put( "network_server_stopping", "{PREFIX} §b{0} §7shutting down..." );
-        translations.put( "network_server_stopped_successfully", "{PREFIX} §b{0} §7is now offline." );
+        translations.put( "console_loading_message_start", "§7Loading {0} v{1}..." );
+        translations.put( "console_loading_message_finish", "§7Successfully loaded {0} v{1}!" );
+        translations.put( "console_language_set_success", "§7The Language of the Console is §bEnglish§7." );
+        translations.put( "system_exit_loading", "§7CloudMaster shutting down..." );
+        translations.put( "system_exit_finished", "§7Shutdown CloudMaster successfully." );
+        translations.put( "network_master_connected", "§7Successfully connected to CloudMaster(§b{0}§7)." );
+        translations.put( "network_master_connection_lost", "§cConnection to CloudMaster(§b{0}§c) was lost!" );
+        translations.put( "network_master_failed_connection", "§cConnection failed to CloudMaster(§b{0}§c)!" );
+        translations.put( "network_master_failed_connection_reconnect", "§cReconnect in 3 Seconds..." );
+        translations.put( "network_server_starting", "§b{0} §7starting on port §b{1}§7..." );
+        translations.put( "network_server_started_successfully", "§b{0} §7is now online on port §b{1}§7." );
+        translations.put( "network_server_stopping", "§b{0} §7shutting down..." );
+        translations.put( "network_server_stopped_successfully", "§b{0} §7is now offline." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */
@@ -266,5 +283,35 @@ public class CloudWrapper {
     public void shutdown() {
         this.getPool().shutdown();
         System.exit( 0 );
+    }
+
+    public SpigotServer getServerByName( String name ) {
+        for ( SpigotServer spigotServer : this.getSpigotServers() ) {
+            if ( spigotServer.getName().equals( name ) ) {
+                return spigotServer;
+            }
+        }
+
+        return null;
+    }
+
+    public BungeeCordProxy getProxyByName( String name ) {
+        for ( BungeeCordProxy bungeeCordProxy : this.getBungeeCordProxies() ) {
+            if ( bungeeCordProxy.getName().equals( name ) ) {
+                return bungeeCordProxy;
+            }
+        }
+
+        return null;
+    }
+
+    public synchronized Process startProcess( ProcessBuilder processBuilder ) {
+        try {
+            return processBuilder.start();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

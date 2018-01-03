@@ -1,5 +1,7 @@
 package de.bluplayz.cloudmaster.server;
 
+import de.bluplayz.CloudMaster;
+import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.server.template.Template;
 import io.netty.channel.Channel;
 import lombok.Getter;
@@ -65,5 +67,13 @@ public class CloudWrapper {
         for ( BungeeCordProxy bungeeCordProxy : bungeeCordProxies ) {
             bungeeCordProxy.startProxy();
         }
+    }
+
+    public void sendPacket( Packet packet ) {
+        if ( packet == null ) {
+            return;
+        }
+
+        CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( packet, this.getChannel() );
     }
 }
