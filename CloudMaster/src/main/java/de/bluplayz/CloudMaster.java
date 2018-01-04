@@ -1,7 +1,5 @@
 package de.bluplayz;
 
-import com.sun.net.httpserver.Authenticator;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import de.bluplayz.cloudlib.command.CommandHandler;
 import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 public class CloudMaster {
 
@@ -308,7 +305,7 @@ public class CloudMaster {
         translations.put( "network_wrapper_connected", "§b{0} §7hat sich verbunden mit §b{1}§7." );
         translations.put( "network_wrapper_disconnected", "§b{0} §7hat die Verbindung getrennt von §b{1}§7." );
         translations.put( "system_exit_loading", "§7CloudMaster wird heruntergefahren..." );
-        translations.put( "system_exit_finished", "§7CloudMaster wurde erfolgreich heruntergefahren." );
+        translations.put( "system_exit_finished", "§7CloudMaster wurde heruntergefahren." );
         translations.put( "network_templates_loading", "§7Templates werden geladen..." );
         translations.put( "network_template_loaded", "§7Template geladen: §b{0}§7." );
 
@@ -335,7 +332,7 @@ public class CloudMaster {
         translations.put( "network_wrapper_connected", "§b{0} §7connected from §b{1}§7." );
         translations.put( "network_wrapper_disconnected", "§b{0} §7disconnected from §b{1}§7." );
         translations.put( "system_exit_loading", "§7CloudMaster shutting down..." );
-        translations.put( "system_exit_finished", "§7Shutdown CloudMaster successfully." );
+        translations.put( "system_exit_finished", "§7CloudMaster shutdown." );
         translations.put( "network_templates_loading", "§7Loading Templates..." );
         translations.put( "network_template_loaded", "§7Template loaded: §b{0}§7." );
 

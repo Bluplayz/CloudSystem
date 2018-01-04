@@ -54,7 +54,7 @@ public class BungeeCordProxy extends Proxy {
             File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
             FileUtils.deleteDirectory( serverDirectory );
         } catch ( IOException e ) {
-            Logger.getGlobal().error( e.getMessage(), e );
+            //Logger.getGlobal().error( e.getMessage(), e );
         }
 
         this.getCloudWrapper().getBungeeCordProxies().remove( this );

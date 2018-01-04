@@ -3,9 +3,7 @@ package de.bluplayz.cloudlib.netty;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.DisconnectPacket;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudlib.packet.CommandSendPacket;
-import de.bluplayz.cloudlib.packet.StartProxyPacket;
-import de.bluplayz.cloudlib.packet.StartServerPacket;
+import de.bluplayz.cloudlib.packet.*;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
@@ -22,6 +20,8 @@ public abstract class PacketHandler {
         PacketHandler.PACKETS.add( SetNamePacket.class );
         PacketHandler.PACKETS.add( StartServerPacket.class );
         PacketHandler.PACKETS.add( StartProxyPacket.class );
+        PacketHandler.PACKETS.add( ServerStartedPacket.class );
+        PacketHandler.PACKETS.add( ProxyStartedPacket.class );
         PacketHandler.PACKETS.add( CommandSendPacket.class );
 
         this.registerPackets();

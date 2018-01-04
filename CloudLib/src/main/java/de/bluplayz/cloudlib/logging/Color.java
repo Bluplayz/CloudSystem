@@ -1,6 +1,7 @@
 package de.bluplayz.cloudlib.logging;
 
 public class Color {
+
     // Colors
     public static String WHITE = (char) 27 + "[30m";
     public static String RED = (char) 27 + "[31m";

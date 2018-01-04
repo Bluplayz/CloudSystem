@@ -47,6 +47,36 @@ public class ServerManager {
         return null;
     }
 
+    public CloudWrapper getCloudWrapperByName( String name ) {
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            if ( cloudWrapper.getName().equalsIgnoreCase( name ) ) {
+                return cloudWrapper;
+            }
+        }
+
+        return null;
+    }
+
+    public CloudWrapper getCloudWrapperByServer( SpigotServer spigotServer ) {
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            if ( cloudWrapper.getSpigotServers().contains( spigotServer ) ) {
+                return cloudWrapper;
+            }
+        }
+
+        return null;
+    }
+
+    public CloudWrapper getCloudWrapperByProxy( BungeeCordProxy bungeeCordProxy ) {
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            if ( cloudWrapper.getBungeeCordProxies().contains( bungeeCordProxy ) ) {
+                return cloudWrapper;
+            }
+        }
+
+        return null;
+    }
+
     public SpigotServer getServerByName( String name ) {
         for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
             for ( SpigotServer spigotServer : cloudWrapper.getSpigotServers() ) {

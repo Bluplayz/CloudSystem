@@ -6,6 +6,8 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.packet.ProxyStartedPacket;
+import de.bluplayz.cloudlib.packet.ServerStartedPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
@@ -17,6 +19,8 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Network {
 
@@ -79,7 +83,18 @@ public class Network {
                     //Network.this.getCloudMaster().getServerManager().checkForServers();
                 } else {
                     // Bukkit- or Bungee Server disconnected
-                    //Network.this.getCloudMaster().getServerManager().checkForServers();
+                    if ( Network.this.getNettyHandler().getClientnameByChannel( ctx.channel() ).equalsIgnoreCase( "" ) ) {
+                        return;
+                    }
+
+                    LocaleAPI.log( "network_server_stopped_successfully", Network.this.getNettyHandler().getClientnameByChannel( ctx.channel() ) );
+
+                    new Timer().schedule( new TimerTask() {
+                        @Override
+                        public void run() {
+                            Network.this.getCloudMaster().getServerManager().checkForServers();
+                        }
+                    }, 2000 );
                 }
             }
         } );
@@ -108,6 +123,9 @@ public class Network {
                             spigotServer.setActiveMode( ActiveMode.ONLINE );
                             LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
+
+                            ServerStartedPacket serverStartedPacket = new ServerStartedPacket( spigotServer.getName() );
+                            Network.this.getPacketHandler().sendPacket( serverStartedPacket, Network.this.getCloudMaster().getServerManager().getCloudWrapperByServer( spigotServer ).getChannel() );
                         } else {
                             // Bungee
                             BungeeCordProxy bungeeCordProxy = Network.this.getCloudMaster().getServerManager().getProxyByName( setNamePacket.getName() );
@@ -119,6 +137,9 @@ public class Network {
                             bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
                             LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
+
+                            ProxyStartedPacket proxyStartedPacket = new ProxyStartedPacket( bungeeCordProxy.getName() );
+                            Network.this.getPacketHandler().sendPacket( proxyStartedPacket, Network.this.getCloudMaster().getServerManager().getCloudWrapperByProxy( bungeeCordProxy ).getChannel() );
                         }
                     }
                     return;

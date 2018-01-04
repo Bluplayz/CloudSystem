@@ -1,15 +1,13 @@
 package de.bluplayz.cloudwrapper.network;
 
 import de.bluplayz.CloudWrapper;
-import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudlib.packet.CommandSendPacket;
-import de.bluplayz.cloudlib.packet.StartProxyPacket;
-import de.bluplayz.cloudlib.packet.StartServerPacket;
+import de.bluplayz.cloudlib.packet.*;
+import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
 import de.bluplayz.cloudwrapper.server.SpigotServer;
@@ -120,6 +118,32 @@ public class Network {
                         bungeeCordProxy.execute( commandSendPacket.getCommandline() );
                         return;
                     }
+                    return;
+                }
+
+                if ( packet instanceof ServerStartedPacket ) {
+                    ServerStartedPacket serverStartedPacket = (ServerStartedPacket) packet;
+
+                    SpigotServer spigotServer = Network.this.getCloudWrapper().getServerByName( serverStartedPacket.getName() );
+                    if ( spigotServer == null ) {
+                        return;
+                    }
+
+                    spigotServer.setActiveMode( ActiveMode.ONLINE );
+                    LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                    return;
+                }
+
+                if ( packet instanceof ProxyStartedPacket ) {
+                    ProxyStartedPacket proxyStartedPacket = (ProxyStartedPacket) packet;
+
+                    BungeeCordProxy bungeeCordProxy = Network.this.getCloudWrapper().getProxyByName( proxyStartedPacket.getName() );
+                    if ( bungeeCordProxy == null ) {
+                        return;
+                    }
+
+                    bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
+                    LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
                     return;
                 }
             }

@@ -11,6 +11,14 @@
     <artifactId>CloudLib</artifactId>
 
     <dependencies>
+        <!-- jLine -->
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>2.12</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Google GSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
