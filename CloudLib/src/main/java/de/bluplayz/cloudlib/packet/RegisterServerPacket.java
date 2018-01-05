@@ -7,16 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class StartServerPacket extends Packet {
+public class RegisterServerPacket extends Packet {
 
     @Getter
     private ServerData serverData;
 
     /**
-     * Will be sent from CloudMaster to CloudWrapper to start
-     * a Server(BungeeCord or Spigot) on the CloudWrapper
+     * Will be sent from CloudMaster to BungeeCord
+     * to register a Server
      */
-    public StartServerPacket( ServerData serverData ) {
+    public RegisterServerPacket( ServerData serverData ) {
         this.serverData = serverData;
     }
 
@@ -33,7 +33,7 @@ public class StartServerPacket extends Packet {
 
     @Override
     public String toString() {
-        return "StartServerPacket{" +
+        return "RegisterServerPacket{" +
                 "serverData=" + serverData +
                 ", uniqueId=" + uniqueId +
                 '}';

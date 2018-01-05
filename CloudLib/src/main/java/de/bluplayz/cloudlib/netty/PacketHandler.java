@@ -18,10 +18,14 @@ public abstract class PacketHandler {
         // Register default Packets
         PacketHandler.PACKETS.add( DisconnectPacket.class );
         PacketHandler.PACKETS.add( SetNamePacket.class );
+
         PacketHandler.PACKETS.add( StartServerPacket.class );
-        PacketHandler.PACKETS.add( StartProxyPacket.class );
+        //PacketHandler.PACKETS.add( StopServerPacket.class ); TODO
+
         PacketHandler.PACKETS.add( ServerStartedPacket.class );
-        PacketHandler.PACKETS.add( ProxyStartedPacket.class );
+        PacketHandler.PACKETS.add( ServerStoppedPacket.class );
+
+        PacketHandler.PACKETS.add( RegisterServerPacket.class );
         PacketHandler.PACKETS.add( CommandSendPacket.class );
 
         this.registerPackets();

@@ -129,6 +129,26 @@ public class ServerManager {
         return proxies;
     }
 
+    public List<SpigotServer> getServers() {
+        List<SpigotServer> servers = new ArrayList<>();
+
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            servers.addAll( cloudWrapper.getSpigotServers() );
+        }
+
+        return servers;
+    }
+
+    public List<BungeeCordProxy> getProxies() {
+        List<BungeeCordProxy> proxies = new ArrayList<>();
+
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            proxies.addAll( cloudWrapper.getBungeeCordProxies() );
+        }
+
+        return proxies;
+    }
+
     public void checkForServers() {
         CloudMaster.getInstance().getSynchronizedPool().execute( () -> {
             if ( this.getCloudWrappers().size() == 0 ) {

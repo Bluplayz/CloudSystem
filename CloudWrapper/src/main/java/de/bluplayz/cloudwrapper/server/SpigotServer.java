@@ -3,8 +3,9 @@ package de.bluplayz.cloudwrapper.server;
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.logging.Logger;
+import de.bluplayz.cloudlib.packet.ServerStoppedPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
-import de.bluplayz.cloudlib.server.Server;
+import de.bluplayz.cloudlib.server.ServerData;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
@@ -17,7 +18,7 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-public class SpigotServer extends Server {
+public class SpigotServer extends ServerData {
 
     @Getter
     private CloudWrapper cloudWrapper = CloudWrapper.getInstance();
@@ -25,16 +26,19 @@ public class SpigotServer extends Server {
     @Getter
     private Process process;
 
-    public SpigotServer( Server server ) {
-        super( server.getTemplate() );
+    @Getter
+    private BufferedWriter bufferedWriter;
 
-        this.setId( server.getId() );
-        this.setName( server.getName() );
-        this.setName( server.getName() );
-        this.setActiveMode( server.getActiveMode() );
-        this.setUniqueId( server.getUniqueId() );
-        this.setPort( server.getPort() );
-        this.setOnlinePlayers( server.getOnlinePlayers() );
+    public SpigotServer( ServerData serverData ) {
+        super( serverData.getTemplate() );
+
+        this.setId( serverData.getId() );
+        this.setName( serverData.getName() );
+        this.setName( serverData.getName() );
+        this.setActiveMode( serverData.getActiveMode() );
+        this.setUniqueId( serverData.getUniqueId() );
+        this.setPort( serverData.getPort() );
+        this.setOnlinePlayers( serverData.getOnlinePlayers() );
     }
 
     public void startServer() {
@@ -48,12 +52,19 @@ public class SpigotServer extends Server {
     }
 
     public void shutdown() {
-        LocaleAPI.log( "network_server_stopping", this.getName() );
-        this.setActiveMode( ActiveMode.STOPPING );
+        if ( this.getActiveMode() != ActiveMode.OFFLINE && this.getActiveMode() != ActiveMode.STOPPING ) {
+            LocaleAPI.log( "network_server_stopping", this.getName() );
+            this.setActiveMode( ActiveMode.STOPPING );
+        }
 
         if ( this.getProcess() != null ) {
             if ( this.getProcess().isAlive() ) {
                 this.getProcess().destroy();
+                try {
+                    this.getBufferedWriter().close();
+                } catch ( IOException e ) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -63,6 +74,14 @@ public class SpigotServer extends Server {
         } catch ( IOException e ) {
             //Logger.getGlobal().error( e.getMessage(), e );
         }
+
+        if ( this.getActiveMode() != ActiveMode.OFFLINE ) {
+            this.setActiveMode( ActiveMode.OFFLINE );
+            LocaleAPI.log( "network_server_stopped_successfully", this.getName(), this.getPort() );
+        }
+
+        ServerStoppedPacket serverStoppedPacket = new ServerStoppedPacket( this.getName() );
+        this.getCloudWrapper().getNetwork().getPacketHandler().sendPacket( serverStoppedPacket );
 
         this.getCloudWrapper().getSpigotServers().remove( this );
     }
@@ -162,7 +181,10 @@ public class SpigotServer extends Server {
         CloudWrapper.getInstance().getPool().execute( () -> {
             try {
                 this.process = CloudWrapper.getInstance().startProcess( processBuilder );
+                this.bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
+
                 int exitCode = this.process.waitFor();
+                this.setActiveMode( ActiveMode.STOPPING );
                 this.shutdown();
             } catch ( InterruptedException e ) {
                 Logger.getGlobal().error( e.getMessage(), e );
@@ -181,10 +203,12 @@ public class SpigotServer extends Server {
 
         CloudWrapper.getInstance().getPool().execute( () -> {
             try {
-                BufferedWriter bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
-                bufferedWriter.write( commandline + "\n" );
-                bufferedWriter.flush();
-                bufferedWriter.close();
+                if ( this.getBufferedWriter() == null ) {
+                    return;
+                }
+
+                this.getBufferedWriter().write( commandline + "\n" );
+                this.getBufferedWriter().flush();
             } catch ( IOException e ) {
                 Logger.getGlobal().error( e.getMessage(), e );
             }

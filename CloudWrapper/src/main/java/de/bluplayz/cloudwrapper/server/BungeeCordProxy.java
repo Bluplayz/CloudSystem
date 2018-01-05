@@ -3,15 +3,19 @@ package de.bluplayz.cloudwrapper.server;
 import de.bluplayz.CloudWrapper;
 import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.logging.Logger;
+import de.bluplayz.cloudlib.packet.ServerStoppedPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
-import de.bluplayz.cloudlib.server.Proxy;
+import de.bluplayz.cloudlib.server.ServerData;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
-public class BungeeCordProxy extends Proxy {
+public class BungeeCordProxy extends ServerData {
 
     @Getter
     private CloudWrapper cloudWrapper = CloudWrapper.getInstance();
@@ -19,16 +23,19 @@ public class BungeeCordProxy extends Proxy {
     @Getter
     private Process process;
 
-    public BungeeCordProxy( Proxy proxy ) {
-        super( proxy.getTemplate() );
+    @Getter
+    private BufferedWriter bufferedWriter;
 
-        this.setId( proxy.getId() );
-        this.setName( proxy.getName() );
-        this.setName( proxy.getName() );
-        this.setActiveMode( proxy.getActiveMode() );
-        this.setUniqueId( proxy.getUniqueId() );
-        this.setPort( proxy.getPort() );
-        this.setOnlinePlayers( proxy.getOnlinePlayers() );
+    public BungeeCordProxy( ServerData serverData ) {
+        super( serverData.getTemplate() );
+
+        this.setId( serverData.getId() );
+        this.setName( serverData.getName() );
+        this.setName( serverData.getName() );
+        this.setActiveMode( serverData.getActiveMode() );
+        this.setUniqueId( serverData.getUniqueId() );
+        this.setPort( serverData.getPort() );
+        this.setOnlinePlayers( serverData.getOnlinePlayers() );
     }
 
     public void startProxy() {
@@ -41,12 +48,19 @@ public class BungeeCordProxy extends Proxy {
     }
 
     public void shutdown() {
-        LocaleAPI.log( "network_server_stopping", this.getName() );
-        this.setActiveMode( ActiveMode.STOPPING );
+        if ( this.getActiveMode() != ActiveMode.OFFLINE && this.getActiveMode() != ActiveMode.STOPPING ) {
+            LocaleAPI.log( "network_server_stopping", this.getName() );
+            this.setActiveMode( ActiveMode.STOPPING );
+        }
 
         if ( this.getProcess() != null ) {
             if ( this.getProcess().isAlive() ) {
                 this.getProcess().destroy();
+                try {
+                    this.getBufferedWriter().close();
+                } catch ( IOException e ) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -56,6 +70,14 @@ public class BungeeCordProxy extends Proxy {
         } catch ( IOException e ) {
             //Logger.getGlobal().error( e.getMessage(), e );
         }
+
+        if ( this.getActiveMode() != ActiveMode.OFFLINE ) {
+            this.setActiveMode( ActiveMode.OFFLINE );
+            LocaleAPI.log( "network_server_stopped_successfully", this.getName(), this.getPort() );
+        }
+
+        ServerStoppedPacket serverStoppedPacket = new ServerStoppedPacket( this.getName() );
+        this.getCloudWrapper().getNetwork().getPacketHandler().sendPacket( serverStoppedPacket );
 
         this.getCloudWrapper().getBungeeCordProxies().remove( this );
     }
@@ -163,7 +185,10 @@ public class BungeeCordProxy extends Proxy {
         CloudWrapper.getInstance().getPool().execute( () -> {
             try {
                 this.process = CloudWrapper.getInstance().startProcess( processBuilder );
+                this.bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
+
                 int exitCode = this.process.waitFor();
+                this.setActiveMode( ActiveMode.STOPPING );
                 this.shutdown();
             } catch ( InterruptedException e ) {
                 Logger.getGlobal().error( e.getMessage(), e );
@@ -182,10 +207,8 @@ public class BungeeCordProxy extends Proxy {
 
         CloudWrapper.getInstance().getPool().execute( () -> {
             try {
-                BufferedWriter bufferedWriter = new BufferedWriter( new OutputStreamWriter( this.getProcess().getOutputStream() ) );
-                bufferedWriter.write( commandline + "\n" );
-                bufferedWriter.flush();
-                bufferedWriter.close();
+                this.getBufferedWriter().write( commandline + "\n" );
+                this.getBufferedWriter().flush();
             } catch ( IOException e ) {
                 Logger.getGlobal().error( e.getMessage(), e );
             }

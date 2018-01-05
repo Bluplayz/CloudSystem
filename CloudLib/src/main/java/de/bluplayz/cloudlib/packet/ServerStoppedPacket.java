@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 import java.nio.charset.StandardCharsets;
 
 @NoArgsConstructor
-public class ProxyStartedPacket extends Packet {
+public class ServerStoppedPacket extends Packet {
 
     @Getter
     private String name;
 
     /**
-     * Will be sent from CloudMaster to CloudWrapper
-     * when the Proxy is online
+     * Will be sent from CloudWrapper to CloudMaster
+     * when the Server is offline
      */
-    public ProxyStartedPacket( String name ) {
+    public ServerStoppedPacket( String name ) {
         this.name = name;
     }
 
@@ -47,7 +47,7 @@ public class ProxyStartedPacket extends Packet {
 
     @Override
     public String toString() {
-        return "ProxyStartedPacket{" +
+        return "ServerStoppedPacket{" +
                 "name='" + name + '\'' +
                 ", uniqueId=" + uniqueId +
                 '}';

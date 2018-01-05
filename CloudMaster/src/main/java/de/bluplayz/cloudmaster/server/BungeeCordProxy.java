@@ -1,17 +1,17 @@
 package de.bluplayz.cloudmaster.server;
 
 import de.bluplayz.CloudMaster;
-import de.bluplayz.cloudlib.packet.StartProxyPacket;
+import de.bluplayz.cloudlib.packet.StartServerPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
-import de.bluplayz.cloudlib.server.Proxy;
-import de.bluplayz.cloudmaster.locale.LocaleAPI;
+import de.bluplayz.cloudlib.server.ServerData;
 import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BungeeCordProxy extends Proxy {
+public class BungeeCordProxy extends ServerData {
 
     public static List<Integer> PORTS_IN_USE = new ArrayList<>();
     public static List<Integer> IDS_IN_USE = new ArrayList<>();
@@ -34,15 +34,17 @@ public class BungeeCordProxy extends Proxy {
         LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
         this.setActiveMode( ActiveMode.STARTING );
 
-        StartProxyPacket startProxyPacket = new StartProxyPacket( this );
+        StartServerPacket startProxyPacket = new StartServerPacket( this );
         CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( startProxyPacket, this.getCloudWrapper().getChannel() );
 
         this.getCloudWrapper().getBungeeCordProxies().add( this );
     }
 
     public void shutdown() {
-        LocaleAPI.log( "network_server_stopping", this.getName() );
-        this.setActiveMode( ActiveMode.STOPPING );
+        if ( this.getActiveMode() != ActiveMode.OFFLINE && this.getActiveMode() != ActiveMode.STOPPING ) {
+            LocaleAPI.log( "network_server_stopping", this.getName() );
+            this.setActiveMode( ActiveMode.STOPPING );
+        }
 
         CloudMaster.getInstance().getPool().execute( () -> {
             if ( BungeeCordProxy.PORTS_IN_USE.contains( this.getPort() ) ) {
@@ -57,7 +59,7 @@ public class BungeeCordProxy extends Proxy {
     }
 
     private int getAvailablePort() {
-        for ( int port = BungeeCordProxy.PORT_START; port < BungeeCordProxy.PORT_END; port++ ) {
+        for ( int port = BungeeCordProxy.PROXY_PORT_START; port < BungeeCordProxy.PROXY_PORT_END; port++ ) {
             if ( BungeeCordProxy.PORTS_IN_USE.contains( port ) ) {
                 continue;
             }
@@ -70,7 +72,7 @@ public class BungeeCordProxy extends Proxy {
 
     private int getAvailableId() {
         for ( int id = 1; id < 40000; id++ ) {
-            if ( SpigotServer.IDS_IN_USE.contains( id ) ) {
+            if ( BungeeCordProxy.IDS_IN_USE.contains( id ) ) {
                 continue;
             }
 

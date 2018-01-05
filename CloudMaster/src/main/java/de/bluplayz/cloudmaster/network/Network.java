@@ -6,8 +6,8 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudlib.packet.ProxyStartedPacket;
 import de.bluplayz.cloudlib.packet.ServerStartedPacket;
+import de.bluplayz.cloudlib.packet.ServerStoppedPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
@@ -81,20 +81,6 @@ public class Network {
                     CloudWrapper cloudWrapper = Network.this.getCloudMaster().getServerManager().removeCloudWrapper( ctx.channel() );
                     LocaleAPI.log( "network_wrapper_disconnected", cloudWrapper.getName(), ctx.channel().remoteAddress().toString().substring( 1 ) );
                     //Network.this.getCloudMaster().getServerManager().checkForServers();
-                } else {
-                    // Bukkit- or Bungee Server disconnected
-                    if ( Network.this.getNettyHandler().getClientnameByChannel( ctx.channel() ).equalsIgnoreCase( "" ) ) {
-                        return;
-                    }
-
-                    LocaleAPI.log( "network_server_stopped_successfully", Network.this.getNettyHandler().getClientnameByChannel( ctx.channel() ) );
-
-                    new Timer().schedule( new TimerTask() {
-                        @Override
-                        public void run() {
-                            Network.this.getCloudMaster().getServerManager().checkForServers();
-                        }
-                    }, 2000 );
                 }
             }
         } );
@@ -138,11 +124,38 @@ public class Network {
                             LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
 
-                            ProxyStartedPacket proxyStartedPacket = new ProxyStartedPacket( bungeeCordProxy.getName() );
-                            Network.this.getPacketHandler().sendPacket( proxyStartedPacket, Network.this.getCloudMaster().getServerManager().getCloudWrapperByProxy( bungeeCordProxy ).getChannel() );
+                            ServerStartedPacket serverStartedPacket = new ServerStartedPacket( bungeeCordProxy.getName() );
+                            Network.this.getPacketHandler().sendPacket( serverStartedPacket, Network.this.getCloudMaster().getServerManager().getCloudWrapperByProxy( bungeeCordProxy ).getChannel() );
                         }
                     }
                     return;
+                }
+
+                if ( packet instanceof ServerStoppedPacket ) {
+                    ServerStoppedPacket serverStoppedPacket = (ServerStoppedPacket) packet;
+
+                    // Bukkit- or Bungee Server stopped
+                    String name = serverStoppedPacket.getName();
+
+                    SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( name );
+                    BungeeCordProxy bungeeCordProxy = Network.this.getCloudMaster().getServerManager().getProxyByName( name );
+                    if ( spigotServer != null ) {
+                        LocaleAPI.log( "network_server_stopped_successfully", name );
+                        spigotServer.setActiveMode( ActiveMode.OFFLINE );
+                        spigotServer.shutdown();
+                    }
+                    if ( bungeeCordProxy != null ) {
+                        LocaleAPI.log( "network_server_stopped_successfully", name );
+                        bungeeCordProxy.setActiveMode( ActiveMode.OFFLINE );
+                        bungeeCordProxy.shutdown();
+                    }
+
+                    new Timer().schedule( new TimerTask() {
+                        @Override
+                        public void run() {
+                            Network.this.getCloudMaster().getServerManager().checkForServers();
+                        }
+                    }, 1500 );
                 }
             }
 
