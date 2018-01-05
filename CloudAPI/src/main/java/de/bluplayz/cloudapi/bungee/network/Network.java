@@ -7,10 +7,14 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.packet.RegisterServerPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 
+import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
 public class Network {
@@ -75,6 +79,27 @@ public class Network {
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
+                //System.out.println( "Incoming Packet: " + packet.toString() );
+                if ( packet instanceof RegisterServerPacket ) {
+                    RegisterServerPacket registerServerPacket = (RegisterServerPacket) packet;
+
+                    if ( ProxyServer.getInstance().getServers().containsKey( registerServerPacket.getServerData().getName() ) ) {
+                        return;
+                    }
+
+                    ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(
+                            registerServerPacket.getServerData().getName(),
+                            InetSocketAddress.createUnresolved( registerServerPacket.getServerData().getHost(), registerServerPacket.getServerData().getPort() ),
+                            registerServerPacket.getServerData().getMotd(),
+                            false
+                    );
+                    ProxyServer.getInstance().getServers().put( registerServerPacket.getServerData().getName(), serverInfo );
+
+                    if ( Network.this.getBungeeCloudAPI().getProxyFallbackPriorities().contains( registerServerPacket.getServerData().getTemplate().getName() ) ) {
+                        // Add to fallback Server
+                        ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().add( registerServerPacket.getServerData().getName() );
+                    }
+                }
             }
 
             @Override

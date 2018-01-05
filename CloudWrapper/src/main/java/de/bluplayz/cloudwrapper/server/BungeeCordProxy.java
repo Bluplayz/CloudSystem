@@ -120,11 +120,12 @@ public class BungeeCordProxy extends ServerData {
             if ( !directory.exists() ) {
                 directory.mkdirs();
             }
-            Config dataConfig = new Config( new File( directory, "connection.yml" ), Config.YAML );
+            Config dataConfig = new Config( new File( directory, "data.yml" ), Config.YAML );
             dataConfig.set( "servername", this.getName() );
             dataConfig.set( "uuid", this.getUniqueId().toString() );
             dataConfig.set( "address", this.getCloudWrapper().getNetwork().getHost() );
             dataConfig.set( "port", this.getCloudWrapper().getNetwork().getPort() );
+            dataConfig.set( "fallbackPriorities", this.getTemplate().getProxyFallbackPriorities() );
             dataConfig.save();
         } catch ( IOException | NullPointerException e ) {
             Logger.getGlobal().error( e.getMessage(), e );

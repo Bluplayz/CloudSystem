@@ -6,10 +6,13 @@ import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import lombok.Getter;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +43,9 @@ public class BungeeCloudAPI extends Plugin {
     private UUID serverUniqueId;
 
     @Getter
+    private List<String> proxyFallbackPriorities = new ArrayList<>();
+
+    @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
 
     public BungeeCloudAPI() {
@@ -64,12 +70,21 @@ public class BungeeCloudAPI extends Plugin {
         // Register Events
         this.registerEvents();
 
+        // Edit Config
+        if ( ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().contains( "lobby" ) ) {
+            ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().remove( "lobby" );
+        }
+        if ( ProxyServer.getInstance().getServers().containsKey( "lobby" ) ) {
+            ProxyServer.getInstance().getServers().remove( "lobby" );
+        }
+
         // Initialize Network
-        Config dataConfig = new Config( new File( this.getDataFolder(), "connection.yml" ), Config.YAML );
+        Config dataConfig = new Config( new File( this.getDataFolder(), "data.yml" ), Config.YAML );
         String host = dataConfig.getString( "address" );
         int port = dataConfig.getInt( "port" );
         this.serverName = dataConfig.getString( "servername" );
         this.serverUniqueId = UUID.fromString( dataConfig.getString( "uuid" ) );
+        this.proxyFallbackPriorities = dataConfig.getStringList( "fallbackPriorities" );
         this.network = new Network( this, host, port );
 
         // Finish initialize message

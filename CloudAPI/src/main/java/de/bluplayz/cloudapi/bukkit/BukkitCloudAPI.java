@@ -65,7 +65,7 @@ public class BukkitCloudAPI extends JavaPlugin {
         this.registerEvents();
 
         // Initialize Network
-        Config dataConfig = new Config( new File( this.getDataFolder(), "connection.yml" ), Config.YAML );
+        Config dataConfig = new Config( new File( this.getDataFolder(), "data.yml" ), Config.YAML );
         String host = dataConfig.getString( "address" );
         int port = dataConfig.getInt( "port" );
         this.serverName = dataConfig.getString( "servername" );

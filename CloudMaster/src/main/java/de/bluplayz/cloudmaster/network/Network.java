@@ -6,6 +6,7 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.packet.RegisterServerPacket;
 import de.bluplayz.cloudlib.packet.ServerStartedPacket;
 import de.bluplayz.cloudlib.packet.ServerStoppedPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
@@ -110,6 +111,12 @@ public class Network {
                             LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
 
+                            // Register in all BungeeCords
+                            RegisterServerPacket registerServerPacket = new RegisterServerPacket( spigotServer );
+                            for ( BungeeCordProxy bungeeCordProxy : Network.this.getCloudMaster().getServerManager().getProxies() ) {
+                                Network.this.getPacketHandler().sendPacket( registerServerPacket, NettyHandler.getClients().get( bungeeCordProxy.getName() ) );
+                            }
+
                             ServerStartedPacket serverStartedPacket = new ServerStartedPacket( spigotServer.getName() );
                             Network.this.getPacketHandler().sendPacket( serverStartedPacket, Network.this.getCloudMaster().getServerManager().getCloudWrapperByServer( spigotServer ).getChannel() );
                         } else {
@@ -123,6 +130,12 @@ public class Network {
                             bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
                             LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
+
+                            // Register all existing SpigotServer in the BungeeCord
+                            for ( SpigotServer spigotServer : Network.this.getCloudMaster().getServerManager().getServers() ) {
+                                RegisterServerPacket registerServerPacket = new RegisterServerPacket( spigotServer );
+                                Network.this.getPacketHandler().sendPacket( registerServerPacket, channel );
+                            }
 
                             ServerStartedPacket serverStartedPacket = new ServerStartedPacket( bungeeCordProxy.getName() );
                             Network.this.getPacketHandler().sendPacket( serverStartedPacket, Network.this.getCloudMaster().getServerManager().getCloudWrapperByProxy( bungeeCordProxy ).getChannel() );
@@ -155,7 +168,7 @@ public class Network {
                         public void run() {
                             Network.this.getCloudMaster().getServerManager().checkForServers();
                         }
-                    }, 1500 );
+                    }, 3500 );
                 }
             }
 
