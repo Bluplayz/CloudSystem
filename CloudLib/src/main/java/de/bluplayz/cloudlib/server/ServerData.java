@@ -8,8 +8,6 @@ import lombok.Setter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class ServerData {
@@ -76,37 +74,7 @@ public class ServerData {
         byte[] bytes;
 
         // Template
-        // ServerType
-        bytes = this.getTemplate().getType().name().getBytes( StandardCharsets.UTF_8 );
-        byteBuf.writeInt( bytes.length );
-        byteBuf.writeBytes( bytes );
-
-        // Name
-        bytes = this.getTemplate().getName().getBytes( StandardCharsets.UTF_8 );
-        byteBuf.writeInt( bytes.length );
-        byteBuf.writeBytes( bytes );
-
-        // MinOnlineServers
-        byteBuf.writeInt( this.getTemplate().getMinOnlineServers() );
-
-        // MaxOnlineServers
-        byteBuf.writeInt( this.getTemplate().getMaxOnlineServers() );
-
-        // MaxMemory
-        byteBuf.writeInt( this.getTemplate().getMaxMemory() );
-
-        // TemplateFolder
-        bytes = this.getTemplate().getTemplateFolder().getBytes( StandardCharsets.UTF_8 );
-        byteBuf.writeInt( bytes.length );
-        byteBuf.writeBytes( bytes );
-
-        // ProxyFallbackPriorities
-        byteBuf.writeInt( this.getTemplate().getProxyFallbackPriorities().size() );
-        for ( String fallbackTemplate : this.getTemplate().getProxyFallbackPriorities() ) {
-            bytes = fallbackTemplate.getBytes( StandardCharsets.UTF_8 );
-            byteBuf.writeInt( bytes.length );
-            byteBuf.writeBytes( bytes );
-        }
+        this.getTemplate().toByteBuf( byteBuf );
 
         // ID
         byteBuf.writeInt( this.getId() );
@@ -151,59 +119,8 @@ public class ServerData {
         byte[] bytes;
 
         // Template
-        // ServerType
-        length = byteBuf.readInt();
-        bytes = new byte[length];
-        for ( int i = 0; i < length; i++ ) {
-            bytes[i] = byteBuf.readByte();
-        }
-        String serverType = new String( bytes );
-
-        // Name
-        length = byteBuf.readInt();
-        bytes = new byte[length];
-        for ( int i = 0; i < length; i++ ) {
-            bytes[i] = byteBuf.readByte();
-        }
-        String name = new String( bytes );
-
-        // MinOnlineServers
-        int minOnlineServers = byteBuf.readInt();
-
-        // MaxOnlineServers
-        int maxOnlineServers = byteBuf.readInt();
-
-        // MaxMemory
-        int maxMemory = byteBuf.readInt();
-
-        // TemplateFolder
-        length = byteBuf.readInt();
-        bytes = new byte[length];
-        for ( int i = 0; i < length; i++ ) {
-            bytes[i] = byteBuf.readByte();
-        }
-        String templateFolder = new String( bytes );
-
-        // ProxyFallbackPriorities
-        List<String> fallbackPriorities = new ArrayList<>();
-        int arraySize = byteBuf.readInt();
-        for ( int i = 0; i < arraySize; i++ ) {
-            length = byteBuf.readInt();
-            bytes = new byte[length];
-            for ( int i2 = 0; i2 < length; i2++ ) {
-                bytes[i2] = byteBuf.readByte();
-            }
-            fallbackPriorities.add( new String( bytes ) );
-        }
-
         this.template = new Template();
-        this.template.setName( name );
-        this.template.setType( Template.Type.valueOf( serverType ) );
-        this.template.setMinOnlineServers( minOnlineServers );
-        this.template.setMaxOnlineServers( maxOnlineServers );
-        this.template.setMaxMemory( maxMemory );
-        this.template.setTemplateFolder( templateFolder );
-        this.template.setProxyFallbackPriorities( fallbackPriorities );
+        this.template.fromByteBuf( byteBuf );
 
         // ID
         this.setId( byteBuf.readInt() );

@@ -2,51 +2,61 @@ package de.bluplayz.cloudmaster.command;
 
 import de.bluplayz.CloudMaster;
 import de.bluplayz.cloudlib.command.Command;
-import de.bluplayz.cloudlib.packet.CommandSendPacket;
+import de.bluplayz.cloudlib.packet.SaveServerPacket;
+import de.bluplayz.cloudlib.server.template.Template;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
+import de.bluplayz.cloudmaster.server.CloudWrapper;
 import de.bluplayz.cloudmaster.server.SpigotServer;
 
-import java.util.Arrays;
 import java.util.UUID;
 
-public class DispatchCommand extends Command {
+public class SaveServerCommand extends Command {
 
-    public DispatchCommand() {
-        super( "Dispatch" );
+    public SaveServerCommand() {
+        super( "SaveServer" );
     }
 
     @Override
     public void execute( String label, String[] args ) {
-        // dispatch <servername> <commandline>
+        // Usage: /saveserver <name | uuid> <templatename>
+        // SaveServer Command um den aktuellen Server mit allen Configs direkt zu kopieren (/saveserver Lobby-1 Lobby / /saveserver <name> <templatename>)
+
         if ( args.length < 2 ) {
-            LocaleAPI.log( "command_dispatch_usage" );
+            LocaleAPI.log( "command_saveserver_usage" );
             return;
         }
 
         String server = args[0];
-        String commandline = Arrays.toString( args ).substring( server.length() + 3, Arrays.toString( args ).length() - 1 ).replaceAll( ", ", " " );
+        String templatename = args[1];
 
         SpigotServer spigotServer = this.getSpigotServer( server );
         BungeeCordProxy bungeeCordProxy = this.getBungeeCordProxy( server );
+        Template template = Template.getTemplateByName( templatename );
 
+        if ( spigotServer == null && bungeeCordProxy == null ) {
+            LocaleAPI.log( "command_saveserver_server_not_exist", server );
+            return;
+        }
+
+        if ( template == null ) {
+            LocaleAPI.log( "command_saveserver_template_not_exist", server );
+            return;
+        }
+
+        CloudWrapper cloudWrapper;
         if ( spigotServer != null ) {
-            CommandSendPacket commandSendPacket = new CommandSendPacket( spigotServer.getName(), commandline );
-            spigotServer.getCloudWrapper().sendPacket( commandSendPacket );
-
-            LocaleAPI.log( "command_dispatch_success", spigotServer.getName(), commandline );
-            return;
+            cloudWrapper = CloudMaster.getInstance().getServerManager().getCloudWrapperByServer( spigotServer );
+        } else {
+            cloudWrapper = CloudMaster.getInstance().getServerManager().getCloudWrapperByProxy( bungeeCordProxy );
         }
 
-        if ( bungeeCordProxy != null ) {
-            CommandSendPacket commandSendPacket = new CommandSendPacket( bungeeCordProxy.getName(), commandline );
-            bungeeCordProxy.getCloudWrapper().sendPacket( commandSendPacket );
+        // Send Packet to Wrapper
+        SaveServerPacket saveServerPacket = new SaveServerPacket( spigotServer != null ? spigotServer.getName() : bungeeCordProxy.getName(), template );
+        CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( saveServerPacket, cloudWrapper.getChannel() );
 
-            LocaleAPI.log( "command_dispatch_success", bungeeCordProxy.getName(), commandline );
-            return;
-        }
-
-        LocaleAPI.log( "command_dispatch_server_not_exist", server );
+        // Success Message
+        LocaleAPI.log( "command_saveserver_success", spigotServer != null ? spigotServer.getName() : bungeeCordProxy.getName(), template.getName() );
     }
 
     private SpigotServer getSpigotServer( String server ) {

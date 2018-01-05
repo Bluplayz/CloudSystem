@@ -3,9 +3,7 @@ package de.bluplayz.cloudlib.command;
 import de.bluplayz.cloudlib.logging.Logger;
 import lombok.Getter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -77,12 +75,12 @@ public class CommandHandler {
     }
 
     public void consoleInput( Consumer<String> consumer ) {
-        InputStreamReader in = new InputStreamReader( System.in );
-        BufferedReader reader = new BufferedReader( in );
+        //InputStreamReader in = new InputStreamReader( System.in );
+        //BufferedReader reader = new BufferedReader( in );
 
         try {
             String input;
-            while ( ( input = reader.readLine() ) != null ) {
+            while ( ( input = Logger.getGlobal().getReader().readLine() ) != null ) {
                 if ( !input.equalsIgnoreCase( "" ) ) {
                     String commandname = this.onExecute( input );
                     if ( commandname != null ) {

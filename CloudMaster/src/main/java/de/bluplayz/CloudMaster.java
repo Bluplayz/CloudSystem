@@ -178,10 +178,10 @@ public class CloudMaster {
     private void registerCommands() {
         this.getCommandHandler().registerCommand( new HelpCommand() );
         this.getCommandHandler().registerCommand( new StopCommand() );
-        this.getCommandHandler().registerCommand( new ClearConsoleCommand() );
         this.getCommandHandler().registerCommand( new ListCommand() );
         this.getCommandHandler().registerCommand( new DispatchCommand() );
         this.getCommandHandler().registerCommand( new ScreenCommand() );
+        this.getCommandHandler().registerCommand( new SaveServerCommand() );
     }
 
     private void initMainConfig() {
@@ -310,8 +310,13 @@ public class CloudMaster {
         translations.put( "network_template_loaded", "§7Template geladen: §b{0}§7." );
 
         translations.put( "command_dispatch_usage", "§7Benutzung: dispatch <Servername> <Commandline>" );
-        translations.put( "command_dispatch_server_exist", "§cDer Server {0} existiert nicht!" );
+        translations.put( "command_dispatch_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
         translations.put( "command_dispatch_success", "§7Du hast §b{0} §7den Command §b{1} §7geschickt." );
+
+        translations.put( "command_saveserver_usage", "§7Benutzung: saveserver <Servername> <Templatename>" );
+        translations.put( "command_saveserver_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
+        translations.put( "command_saveserver_template_not_exist", "§cDas Template §b{0} §cexistiert nicht!" );
+        translations.put( "command_saveserver_success", "§7Der Server §b{0} §7wurde in das Template §b{1} §7kopiert." );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
@@ -337,8 +342,13 @@ public class CloudMaster {
         translations.put( "network_template_loaded", "§7Template loaded: §b{0}§7." );
 
         translations.put( "command_dispatch_usage", "§7Usage: dispatch <Servername> <Commandline>" );
-        translations.put( "command_dispatch_server_exist", "§cThe Server {0} doesn't exist!" );
+        translations.put( "command_dispatch_server_not_exist", "§cThe Server §b{0} §cdoesn't exist!" );
         translations.put( "command_dispatch_success", "§7You send the Command §b{1} §7to §b{0}§7." );
+
+        translations.put( "command_saveserver_usage", "§7Usage: saveserver <Servername> <Templatename>" );
+        translations.put( "command_saveserver_server_not_exist", "§cThe Server §b{0} §cdoesn't exit!" );
+        translations.put( "command_saveserver_template_not_exist", "§cThe Template §b{0} §cdoesn't exist!" );
+        translations.put( "command_saveserver_success", "§7The Server §b{0} §7was copied in the Template §b{1}§7." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

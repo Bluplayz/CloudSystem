@@ -5,7 +5,6 @@ import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import de.bluplayz.cloudlib.logging.Logger;
-import de.bluplayz.cloudwrapper.command.ClearConsoleCommand;
 import de.bluplayz.cloudwrapper.command.HelpCommand;
 import de.bluplayz.cloudwrapper.command.StopCommand;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
@@ -177,7 +176,6 @@ public class CloudWrapper {
     private void registerCommands() {
         this.getCommandHandler().registerCommand( new HelpCommand() );
         this.getCommandHandler().registerCommand( new StopCommand() );
-        this.getCommandHandler().registerCommand( new ClearConsoleCommand() );
     }
 
     private void initConfig() {

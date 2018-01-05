@@ -55,8 +55,8 @@ public class BungeeCloudAPI extends Plugin {
 
     /**
      * TODO
-     * - SaveServer Command um den aktuellen Server mit allen Configs direkt zu kopieren (/saveserver Lobby-1 Lobby / /saveserver <name> <templatename>)
-     *
+     * - StartServer Command
+     * - StopServer Command
      * - Logs speichern
      * - Screen Funktion
      *

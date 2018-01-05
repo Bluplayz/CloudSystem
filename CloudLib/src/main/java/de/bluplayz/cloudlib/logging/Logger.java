@@ -1,5 +1,6 @@
 package de.bluplayz.cloudlib.logging;
 
+import jline.console.ConsoleReader;
 import lombok.Getter;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
@@ -15,6 +16,9 @@ public class Logger {
 
     @Getter
     private static Set<Logger> loggers = new HashSet<>();
+
+    @Getter
+    private ConsoleReader reader;
 
     @Getter
     private org.apache.log4j.Logger fileLogger;
@@ -62,6 +66,13 @@ public class Logger {
 
         this.getApacheLogger().setLevel( Level.INFO );
         this.getFileLogger().setLevel( Level.INFO );
+
+        try {
+            this.reader = new ConsoleReader( System.in, System.out );
+            this.reader.setExpandEvents( false );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
 
         // Add to Loggerlist
         Logger.getLoggers().add( this );

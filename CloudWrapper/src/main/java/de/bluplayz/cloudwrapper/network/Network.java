@@ -7,9 +7,11 @@ import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
 import de.bluplayz.cloudlib.packet.CommandSendPacket;
+import de.bluplayz.cloudlib.packet.SaveServerPacket;
 import de.bluplayz.cloudlib.packet.ServerStartedPacket;
 import de.bluplayz.cloudlib.packet.StartServerPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
+import de.bluplayz.cloudlib.server.ServerData;
 import de.bluplayz.cloudlib.server.template.Template;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
@@ -17,7 +19,10 @@ import de.bluplayz.cloudwrapper.server.SpigotServer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.function.Consumer;
 
 public class Network {
@@ -139,11 +144,44 @@ public class Network {
                     }
                     return;
                 }
+
+                if ( packet instanceof SaveServerPacket ) {
+                    SaveServerPacket saveServerPacket = (SaveServerPacket) packet;
+
+                    SpigotServer spigotServer = Network.this.getCloudWrapper().getServerByName( saveServerPacket.getTargetServerName() );
+                    BungeeCordProxy bungeeCordProxy = Network.this.getCloudWrapper().getProxyByName( saveServerPacket.getTargetServerName() );
+
+                    if ( spigotServer == null && bungeeCordProxy == null ) {
+                        return;
+                    }
+
+                    ServerData serverData = spigotServer != null ? spigotServer : bungeeCordProxy;
+
+                    File templateDirectory = new File( saveServerPacket.getTargetTemplate().getTemplateFolder() );
+                    File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + serverData.getTemplate().getName() + "/" + serverData.getName() );
+
+                    Network.this.copyDirectoryRecursive( serverDirectory, templateDirectory );
+                    return;
+                }
             }
 
             @Override
             public void registerPackets() {
             }
         } );
+    }
+
+    private void copyDirectoryRecursive( File src, File dest ) {
+        try {
+            for ( File file : src.listFiles() ) {
+                if ( file.isDirectory() ) {
+                    this.copyDirectoryRecursive(file, new File( dest, file.getName() ));
+                } else {
+                    FileUtils.copyFileToDirectory( file, dest );
+                }
+            }
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
     }
 }

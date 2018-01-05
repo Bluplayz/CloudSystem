@@ -28,6 +28,7 @@ public abstract class PacketHandler {
         PacketHandler.PACKETS.add( RegisterServerPacket.class );
         PacketHandler.PACKETS.add( UnregisterServerPacket.class );
 
+        PacketHandler.PACKETS.add( SaveServerPacket.class );
         PacketHandler.PACKETS.add( CommandSendPacket.class );
 
         this.registerPackets();
