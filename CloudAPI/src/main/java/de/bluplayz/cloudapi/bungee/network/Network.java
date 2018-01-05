@@ -8,6 +8,7 @@ import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
 import de.bluplayz.cloudlib.packet.RegisterServerPacket;
+import de.bluplayz.cloudlib.packet.UnregisterServerPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
@@ -99,6 +100,23 @@ public class Network {
                         // Add to fallback Server
                         ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().add( registerServerPacket.getServerData().getName() );
                     }
+                    return;
+                }
+
+                if ( packet instanceof UnregisterServerPacket ) {
+                    UnregisterServerPacket unregisterServerPacket = (UnregisterServerPacket) packet;
+
+                    if ( ProxyServer.getInstance().getServers().containsKey( unregisterServerPacket.getServerData().getName() ) ) {
+                        return;
+                    }
+
+                    ProxyServer.getInstance().getServers().remove( unregisterServerPacket.getServerData().getName() );
+
+                    if ( Network.this.getBungeeCloudAPI().getProxyFallbackPriorities().contains( unregisterServerPacket.getServerData().getTemplate().getName() ) ) {
+                        // Remove from fallback Server
+                        ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().remove( unregisterServerPacket.getServerData().getName() );
+                    }
+                    return;
                 }
             }
 

@@ -53,6 +53,24 @@ public class BungeeCloudAPI extends Plugin {
         instance = this;
     }
 
+    /**
+     * TODO
+     * - SaveServer Command um den aktuellen Server mit allen Configs direkt zu kopieren (/saveserver Lobby-1 Lobby / /saveserver <name> <templatename>)
+     *
+     * - Logs speichern
+     * - Screen Funktion
+     *
+     * - Spieler connectet über einen Proxy
+     * - Beim ServerSwitch Und/oder ServerJoin schickt er zum Server ein packet (über den Master)
+     * und die BukkitAPI schaltet ihn in einer List für 3 Sekunden frei zu joinen
+     * Andernfalls wird er gekickt, weil er nicht von einem CloudSystem proxy kam sondern von einem anderen Proxy
+     *
+     *
+     * Methode 2:
+     * Wenn ein Proxy startet, dann packet zu allen anderen Proxies und dann
+     * registrieren die Proxies die ip und whitelisten die ip, alle anderen ips werden gekickt (wie bei onlyProxyJoin)
+     */
+
     @Override
     public void onEnable() {
         // Initialize Main Config

@@ -234,10 +234,10 @@ public class CloudWrapper {
         translations.put( "network_master_connection_lost", "§cVerbindung zum CloudMaster(§b{0}§c) verloren!" );
         translations.put( "network_master_failed_connection", "§cVerbindung zum CloudMaster(§b{0}§c) ist fehlgeschlagen!" );
         translations.put( "network_master_failed_connection_reconnect", "§cVerbinde erneut in 3 Sekunden..." );
-        translations.put( "network_server_starting", "§b{0} §7wird auf Port §b{1}§7 gestartet..." );
-        translations.put( "network_server_started_successfully", "§b{0} §7ist nun online auf Port §b{1}§7." );
-        translations.put( "network_server_stopping", "§b{0} §7wird heruntergefahren..." );
-        translations.put( "network_server_stopped", "§b{0} §7wurde heruntergefahren." );
+        translations.put( "network_server_starting", "§b{0}§7(§6{1}§7) §7wird auf Port §b{2}§7 gestartet..." );
+        translations.put( "network_server_started_successfully", "§b{0}§7(§6{1}§7) §7ist nun online auf Port §b{2}§7." );
+        translations.put( "network_server_stopping", "§b{0}§7(§6{1}§7) §7wird heruntergefahren..." );
+        translations.put( "network_server_stopped", "§b{0}§7(§6{1}§7) §7wurde heruntergefahren." );
         translations.put( "network_server_stopped_successfully", "§b{0} §7ist nun offline." );
 
         translations.put( "network_server_starting_no_template_folder", "§b{0} §7konnte nicht gestartet werden. Der TemplatePfad von dem Template §6{1}§7(§6{2}§7) ist ungültig!" );
@@ -258,10 +258,10 @@ public class CloudWrapper {
         translations.put( "network_master_connection_lost", "§cConnection to CloudMaster(§b{0}§c) was lost!" );
         translations.put( "network_master_failed_connection", "§cConnection failed to CloudMaster(§b{0}§c)!" );
         translations.put( "network_master_failed_connection_reconnect", "§cReconnect in 3 Seconds..." );
-        translations.put( "network_server_starting", "§b{0} §7starting on port §b{1}§7..." );
-        translations.put( "network_server_started_successfully", "§b{0} §7is now online on port §b{1}§7." );
-        translations.put( "network_server_stopping", "§b{0} §7shutting down..." );
-        translations.put( "network_server_stopped", "§b{0} §7shutdown." );
+        translations.put( "network_server_starting", "§b{0}§7(§6{1}§7) §7starting on port §b{2}§7..." );
+        translations.put( "network_server_started_successfully", "§b{0}§7(§6{1}§7) §7is now online on port §b{2}§7." );
+        translations.put( "network_server_stopping", "§b{0}§7(§6{1}§7) §7shutting down..." );
+        translations.put( "network_server_stopped", "§b{0}§7(§6{1}§7) §7shutdown." );
         translations.put( "network_server_stopped_successfully", "§b{0} §7is now offline." );
 
         englishLocale.addTranslations( translations, false );

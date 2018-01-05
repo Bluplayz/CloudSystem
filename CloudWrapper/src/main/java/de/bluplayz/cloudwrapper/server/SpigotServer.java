@@ -42,7 +42,7 @@ public class SpigotServer extends ServerData {
     }
 
     public void startServer() {
-        LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
+        LocaleAPI.log( "network_server_starting", this.getName(), this.getUniqueId().toString(), this.getPort() );
         this.setActiveMode( ActiveMode.STARTING );
 
         File serverDirectory = this.initServerDirectory();
@@ -53,7 +53,7 @@ public class SpigotServer extends ServerData {
 
     public void shutdown() {
         if ( this.getActiveMode() != ActiveMode.OFFLINE && this.getActiveMode() != ActiveMode.STOPPING ) {
-            LocaleAPI.log( "network_server_stopping", this.getName() );
+            LocaleAPI.log( "network_server_stopping", this.getName(), this.getUniqueId().toString() );
             this.setActiveMode( ActiveMode.STOPPING );
         }
 

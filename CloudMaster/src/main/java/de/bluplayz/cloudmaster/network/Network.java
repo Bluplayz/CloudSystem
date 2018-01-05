@@ -9,6 +9,7 @@ import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
 import de.bluplayz.cloudlib.packet.RegisterServerPacket;
 import de.bluplayz.cloudlib.packet.ServerStartedPacket;
 import de.bluplayz.cloudlib.packet.ServerStoppedPacket;
+import de.bluplayz.cloudlib.packet.UnregisterServerPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
@@ -108,7 +109,7 @@ public class Network {
                             }
 
                             spigotServer.setActiveMode( ActiveMode.ONLINE );
-                            LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                            LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getUniqueId().toString(), spigotServer.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
 
                             // Register in all BungeeCords
@@ -128,7 +129,7 @@ public class Network {
                             }
 
                             bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
-                            LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
+                            LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getUniqueId().toString(), bungeeCordProxy.getPort() );
                             //Network.this.getCloudMaster().getServerManager().checkForServers();
 
                             // Register all existing SpigotServer in the BungeeCord
@@ -153,12 +154,19 @@ public class Network {
                     SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( name );
                     BungeeCordProxy bungeeCordProxy = Network.this.getCloudMaster().getServerManager().getProxyByName( name );
                     if ( spigotServer != null ) {
-                        LocaleAPI.log( "network_server_stopped_successfully", name );
+                        LocaleAPI.log( "network_server_stopped_successfully", name, spigotServer.getUniqueId().toString() );
+
+                        // Unregister in all BungeeCords
+                        UnregisterServerPacket unregisterServerPacket = new UnregisterServerPacket( spigotServer );
+                        for ( BungeeCordProxy bungeeCordProxy2 : Network.this.getCloudMaster().getServerManager().getProxies() ) {
+                            Network.this.getPacketHandler().sendPacket( unregisterServerPacket, NettyHandler.getClients().get( bungeeCordProxy2.getName() ) );
+                        }
+
                         spigotServer.setActiveMode( ActiveMode.OFFLINE );
                         spigotServer.shutdown();
                     }
                     if ( bungeeCordProxy != null ) {
-                        LocaleAPI.log( "network_server_stopped_successfully", name );
+                        LocaleAPI.log( "network_server_stopped_successfully", name, bungeeCordProxy.getUniqueId().toString() );
                         bungeeCordProxy.setActiveMode( ActiveMode.OFFLINE );
                         bungeeCordProxy.shutdown();
                     }

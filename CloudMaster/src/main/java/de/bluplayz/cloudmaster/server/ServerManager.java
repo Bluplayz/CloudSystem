@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class ServerManager {
 
@@ -89,10 +90,34 @@ public class ServerManager {
         return null;
     }
 
+    public SpigotServer getServerByUUID( UUID uuid ) {
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            for ( SpigotServer spigotServer : cloudWrapper.getSpigotServers() ) {
+                if ( spigotServer.getUniqueId().equals( uuid ) ) {
+                    return spigotServer;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public BungeeCordProxy getProxyByName( String name ) {
         for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
             for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
                 if ( bungeeCordProxy.getName().equals( name ) ) {
+                    return bungeeCordProxy;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public BungeeCordProxy getProxyByUUID( UUID uuid ) {
+        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+            for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
+                if ( bungeeCordProxy.getUniqueId().equals( uuid ) ) {
                     return bungeeCordProxy;
                 }
             }

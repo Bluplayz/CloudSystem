@@ -39,7 +39,7 @@ public class BungeeCordProxy extends ServerData {
     }
 
     public void startProxy() {
-        LocaleAPI.log( "network_server_starting", this.getName(), this.getPort() );
+        LocaleAPI.log( "network_server_starting", this.getName(), this.getUniqueId().toString(), this.getPort() );
 
         File serverDirectory = this.initServerDirectory();
         this.startProcess( serverDirectory );
@@ -49,7 +49,7 @@ public class BungeeCordProxy extends ServerData {
 
     public void shutdown() {
         if ( this.getActiveMode() != ActiveMode.OFFLINE && this.getActiveMode() != ActiveMode.STOPPING ) {
-            LocaleAPI.log( "network_server_stopping", this.getName() );
+            LocaleAPI.log( "network_server_stopping", this.getName(), this.getUniqueId().toString() );
             this.setActiveMode( ActiveMode.STOPPING );
         }
 

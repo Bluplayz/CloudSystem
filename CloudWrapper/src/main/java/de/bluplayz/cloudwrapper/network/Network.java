@@ -127,14 +127,14 @@ public class Network {
                     SpigotServer spigotServer = Network.this.getCloudWrapper().getServerByName( serverStartedPacket.getName() );
                     if ( spigotServer != null ) {
                         spigotServer.setActiveMode( ActiveMode.ONLINE );
-                        LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getPort() );
+                        LocaleAPI.log( "network_server_started_successfully", spigotServer.getName(), spigotServer.getUniqueId().toString(), spigotServer.getPort() );
                         return;
                     }
 
                     BungeeCordProxy bungeeCordProxy = Network.this.getCloudWrapper().getProxyByName( serverStartedPacket.getName() );
                     if ( bungeeCordProxy != null ) {
                         bungeeCordProxy.setActiveMode( ActiveMode.ONLINE );
-                        LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getPort() );
+                        LocaleAPI.log( "network_server_started_successfully", bungeeCordProxy.getName(), bungeeCordProxy.getUniqueId().toString(), bungeeCordProxy.getPort() );
                         return;
                     }
                     return;
