@@ -1,5 +1,6 @@
 package de.bluplayz.cloudapi.bungee;
 
+import de.bluplayz.cloudapi.bungee.listener.ServerConnectListener;
 import de.bluplayz.cloudapi.bungee.locale.LocaleAPI;
 import de.bluplayz.cloudapi.bungee.network.Network;
 import de.bluplayz.cloudlib.config.Config;
@@ -8,6 +9,7 @@ import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,24 +55,6 @@ public class BungeeCloudAPI extends Plugin {
         instance = this;
     }
 
-    /**
-     * TODO
-     * - StartServer Command
-     * - StopServer Command
-     * - Logs speichern
-     * - Screen Funktion
-     *
-     * - Spieler connectet über einen Proxy
-     * - Beim ServerSwitch Und/oder ServerJoin schickt er zum Server ein packet (über den Master)
-     * und die BukkitAPI schaltet ihn in einer List für 3 Sekunden frei zu joinen
-     * Andernfalls wird er gekickt, weil er nicht von einem CloudSystem proxy kam sondern von einem anderen Proxy
-     *
-     *
-     * Methode 2:
-     * Wenn ein Proxy startet, dann packet zu allen anderen Proxies und dann
-     * registrieren die Proxies die ip und whitelisten die ip, alle anderen ips werden gekickt (wie bei onlyProxyJoin)
-     */
-
     @Override
     public void onEnable() {
         // Initialize Main Config
@@ -104,6 +88,8 @@ public class BungeeCloudAPI extends Plugin {
         this.serverUniqueId = UUID.fromString( dataConfig.getString( "uuid" ) );
         this.proxyFallbackPriorities = dataConfig.getStringList( "fallbackPriorities" );
         this.network = new Network( this, host, port );
+
+        FileUtils.deleteQuietly( new File( this.getDataFolder(), "data.yml" ) );
 
         // Finish initialize message
         LocaleAPI.log( "console_loading_message_finish", "CloudMaster", VERSION );
@@ -191,5 +177,6 @@ public class BungeeCloudAPI extends Plugin {
     }
 
     private void registerEvents() {
+        this.getProxy().getPluginManager().registerListener( this, new ServerConnectListener( this ) );
     }
 }

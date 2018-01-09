@@ -7,6 +7,7 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.packet.DispatchCommandPacket;
 import de.bluplayz.cloudlib.packet.RegisterServerPacket;
 import de.bluplayz.cloudlib.packet.UnregisterServerPacket;
 import io.netty.channel.Channel;
@@ -116,6 +117,12 @@ public class Network {
                         // Remove from fallback Server
                         ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().remove( unregisterServerPacket.getServerData().getName() );
                     }
+                    return;
+                }
+
+                if ( packet instanceof DispatchCommandPacket ) {
+                    DispatchCommandPacket dispatchCommandPacket = (DispatchCommandPacket) packet;
+                    ProxyServer.getInstance().getPluginManager().dispatchCommand( ProxyServer.getInstance().getConsole(), dispatchCommandPacket.getCommandline() );
                     return;
                 }
             }

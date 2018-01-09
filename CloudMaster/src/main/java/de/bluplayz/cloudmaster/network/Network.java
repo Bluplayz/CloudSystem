@@ -1,15 +1,13 @@
 package de.bluplayz.cloudmaster.network;
 
 import de.bluplayz.CloudMaster;
+import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudlib.packet.RegisterServerPacket;
-import de.bluplayz.cloudlib.packet.ServerStartedPacket;
-import de.bluplayz.cloudlib.packet.ServerStoppedPacket;
-import de.bluplayz.cloudlib.packet.UnregisterServerPacket;
+import de.bluplayz.cloudlib.packet.*;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
@@ -177,6 +175,20 @@ public class Network {
                             Network.this.getCloudMaster().getServerManager().checkForServers();
                         }
                     }, 3500 );
+                    return;
+                }
+
+                if ( packet instanceof VerifyPlayerPacket ) {
+                    VerifyPlayerPacket verifyPlayerPacket = (VerifyPlayerPacket) packet;
+
+                    SpigotServer spigotServer = Network.this.getCloudMaster().getServerManager().getServerByName( verifyPlayerPacket.getServername() );
+                    BungeeCordProxy bungeeCordProxy = Network.this.getCloudMaster().getServerManager().getProxyByName( verifyPlayerPacket.getServername() );
+
+                    if ( spigotServer == null && bungeeCordProxy == null ) {
+                        return;
+                    }
+
+                    Network.this.getPacketHandler().sendPacket( verifyPlayerPacket, spigotServer != null ? NettyHandler.getClients().get( spigotServer.getName() ) : NettyHandler.getClients().get( bungeeCordProxy.getName() ) );
                 }
             }
 

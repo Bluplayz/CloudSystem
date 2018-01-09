@@ -75,9 +75,6 @@ public class CommandHandler {
     }
 
     public void consoleInput( Consumer<String> consumer ) {
-        //InputStreamReader in = new InputStreamReader( System.in );
-        //BufferedReader reader = new BufferedReader( in );
-
         try {
             String input;
             while ( ( input = Logger.getGlobal().getReader().readLine() ) != null ) {

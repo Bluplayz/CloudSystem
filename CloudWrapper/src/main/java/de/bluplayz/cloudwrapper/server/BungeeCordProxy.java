@@ -131,34 +131,6 @@ public class BungeeCordProxy extends ServerData {
             Logger.getGlobal().error( e.getMessage(), e );
         }
 
-        /*
-        File properties = new File( serverDirectory, "server.properties" );
-        try {
-            String lines = new String( Files.readAllBytes( properties.toPath() ), StandardCharsets.UTF_8 );
-            String[] splitLines = lines.split( "\n" );
-
-            int i = 0;
-            for ( String line : splitLines ) {
-                switch ( line.split( "=" )[0] ) {
-                    case "server-port":
-                        lines = lines.replace( line, "server-port=" + this.getPort() );
-                        break;
-                    case "online-mode":
-                        lines = lines.replace( line, "online-mode=false" );
-                        break;
-                    case "server-ip":
-                        lines = lines.replace( line, "server-ip=" + InetAddress.getLocalHost().getHostAddress() );
-                        break;
-                }
-                i++;
-            }
-
-            Files.write( properties.toPath(), lines.getBytes() );
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        }
-        */
-
         return serverDirectory;
     }
 

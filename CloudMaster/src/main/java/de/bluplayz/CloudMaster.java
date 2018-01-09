@@ -62,6 +62,21 @@ public class CloudMaster {
     @Getter
     private ExecutorService synchronizedPool = Executors.newSingleThreadExecutor();
 
+    /**
+     * TODO
+     * - StartServer Command
+     * - StopServer Command
+     * - Logs speichern
+     * - Screen Funktion
+     *
+     * - ServerDataUpdatePacket
+     * -
+     *
+     * - Spieler connectet über einen Proxy
+     * - Beim ServerSwitch Und/oder ServerJoin schickt er zum Server ein packet (über den Master)
+     * und die BukkitAPI schaltet ihn in einer List für 3 Sekunden frei zu joinen
+     * Andernfalls wird er gekickt, weil er nicht von einem CloudSystem proxy kam sondern von einem anderen Proxy
+     */
     public CloudMaster() {
         // Save instance for further use
         instance = this;

@@ -1,15 +1,19 @@
 package de.bluplayz.cloudapi.bukkit;
 
+import de.bluplayz.cloudapi.bukkit.listener.PlayerLoginListener;
 import de.bluplayz.cloudapi.bukkit.locale.LocaleAPI;
 import de.bluplayz.cloudapi.bukkit.network.Network;
 import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,6 +46,9 @@ public class BukkitCloudAPI extends JavaPlugin {
     @Getter
     private ExecutorService pool = Executors.newCachedThreadPool();
 
+    @Getter
+    private List<UUID> allowedPlayers = new ArrayList<>();
+
     public BukkitCloudAPI() {
         // Save instance for further use
         instance = this;
@@ -71,6 +78,8 @@ public class BukkitCloudAPI extends JavaPlugin {
         this.serverName = dataConfig.getString( "servername" );
         this.serverUniqueId = UUID.fromString( dataConfig.getString( "uuid" ) );
         this.network = new Network( this, host, port );
+
+        FileUtils.deleteQuietly( new File( this.getDataFolder(), "data.yml" ) );
 
         // Finish initialize message
         LocaleAPI.log( "console_loading_message_finish", "CloudMaster", VERSION );
@@ -158,5 +167,6 @@ public class BukkitCloudAPI extends JavaPlugin {
     }
 
     private void registerEvents() {
+        this.getServer().getPluginManager().registerEvents( new PlayerLoginListener( this ), this );
     }
 }

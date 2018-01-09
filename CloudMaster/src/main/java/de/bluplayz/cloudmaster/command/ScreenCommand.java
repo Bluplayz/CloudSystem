@@ -23,7 +23,7 @@ public class ScreenCommand extends Command {
         if ( servername.split( "-" ).length >= 2 ) {
             SpigotServer spigotServer = CloudMaster.getInstance().getServerManager().getServerByName( servername );
             if ( spigotServer != null ) {
-                CommandSendPacket commandSendPacket = new CommandSendPacket( servername, commandline );
+                DispatchCommandPacket commandSendPacket = new DispatchCommandPacket( servername, commandline );
                 spigotServer.getCloudWrapper().sendPacket( commandSendPacket );
 
                 LocaleAPI.log( "command_dispatch_success", servername, commandline );
@@ -32,7 +32,7 @@ public class ScreenCommand extends Command {
 
             BungeeCordProxy bungeeCordProxy = CloudMaster.getInstance().getServerManager().getProxyByName( servername );
             if ( bungeeCordProxy != null ) {
-                CommandSendPacket commandSendPacket = new CommandSendPacket( servername, commandline );
+                DispatchCommandPacket commandSendPacket = new DispatchCommandPacket( servername, commandline );
                 bungeeCordProxy.getCloudWrapper().sendPacket( commandSendPacket );
 
                 LocaleAPI.log( "command_dispatch_success", servername, commandline );

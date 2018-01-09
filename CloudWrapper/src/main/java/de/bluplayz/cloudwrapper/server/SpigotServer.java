@@ -134,6 +134,7 @@ public class SpigotServer extends ServerData {
             Logger.getGlobal().error( e.getMessage(), e );
         }
 
+        // Init server.properties
         File properties = new File( serverDirectory, "server.properties" );
         try {
             String lines = new String( Files.readAllBytes( properties.toPath() ), StandardCharsets.UTF_8 );
@@ -150,6 +151,30 @@ public class SpigotServer extends ServerData {
                         break;
                     case "server-ip":
                         lines = lines.replace( line, "server-ip=" + InetAddress.getLocalHost().getHostAddress() );
+                        break;
+                }
+                i++;
+            }
+
+            Files.write( properties.toPath(), lines.getBytes() );
+        } catch ( IOException ex ) {
+            Logger.getGlobal().error( ex.getMessage(), ex );
+        }
+
+        // Init spigot.yml
+        properties = new File( serverDirectory, "spigot.yml" );
+        try {
+            String lines = new String( Files.readAllBytes( properties.toPath() ), StandardCharsets.UTF_8 );
+            String[] splitLines = lines.split( "\n" );
+
+            int i = 0;
+            for ( String line : splitLines ) {
+                switch ( line.split( ":" )[0] ) {
+                    case "bungeecord":
+                        lines = lines.replace( line, line.replace( "false", "true" ) );
+                        break;
+                    case "restart-on-crash":
+                        lines = lines.replace( line, line.replace( "true", "false" ) );
                         break;
                 }
                 i++;

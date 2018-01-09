@@ -22,7 +22,9 @@ public class ListCommand extends Command {
             for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + bungeeCordProxy.getName() + " {" );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Template: " + bungeeCordProxy.getTemplate().getName() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "UniqueId: " + bungeeCordProxy.getUniqueId().toString() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Port: " + bungeeCordProxy.getPort() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Players: " + bungeeCordProxy.getOnlinePlayers() + " / " + bungeeCordProxy.getSlots() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "State: " + bungeeCordProxy.getActiveMode().name() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + "}" );
             }
@@ -31,7 +33,9 @@ public class ListCommand extends Command {
             for ( SpigotServer spigotServer : cloudWrapper.getSpigotServers() ) {
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + spigotServer.getName() + " {" );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Template: " + spigotServer.getTemplate().getName() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "UniqueId: " + spigotServer.getUniqueId().toString() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Port: " + spigotServer.getPort() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Players: " + spigotServer.getOnlinePlayers() + " / " + spigotServer.getSlots() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "State: " + spigotServer.getActiveMode().name() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + "}" );
             }

@@ -2,7 +2,8 @@ package de.bluplayz.cloudmaster.command;
 
 import de.bluplayz.CloudMaster;
 import de.bluplayz.cloudlib.command.Command;
-import de.bluplayz.cloudlib.packet.CommandSendPacket;
+import de.bluplayz.cloudlib.netty.NettyHandler;
+import de.bluplayz.cloudlib.packet.DispatchCommandPacket;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
 import de.bluplayz.cloudmaster.server.SpigotServer;
@@ -31,16 +32,16 @@ public class DispatchCommand extends Command {
         BungeeCordProxy bungeeCordProxy = this.getBungeeCordProxy( server );
 
         if ( spigotServer != null ) {
-            CommandSendPacket commandSendPacket = new CommandSendPacket( spigotServer.getName(), commandline );
-            spigotServer.getCloudWrapper().sendPacket( commandSendPacket );
+            DispatchCommandPacket dispatchCommandPacket = new DispatchCommandPacket( commandline );
+            CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( dispatchCommandPacket, NettyHandler.getClients().get( spigotServer.getName() ) );
 
             LocaleAPI.log( "command_dispatch_success", spigotServer.getName(), commandline );
             return;
         }
 
         if ( bungeeCordProxy != null ) {
-            CommandSendPacket commandSendPacket = new CommandSendPacket( bungeeCordProxy.getName(), commandline );
-            bungeeCordProxy.getCloudWrapper().sendPacket( commandSendPacket );
+            DispatchCommandPacket dispatchCommandPacket = new DispatchCommandPacket( commandline );
+            CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( dispatchCommandPacket, NettyHandler.getClients().get( bungeeCordProxy.getName() ) );
 
             LocaleAPI.log( "command_dispatch_success", bungeeCordProxy.getName(), commandline );
             return;

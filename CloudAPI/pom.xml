@@ -52,16 +52,16 @@
     </build>
 
     <repositories>
-        <!--
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
-        -->
+        <!--
         <repository>
             <id>cloudnet-repo</id>
             <url>http://dytanic.de/repositories</url>
         </repository>
+        -->
     </repositories>
 
     <dependencies>
@@ -73,18 +73,18 @@
         </dependency>
 
         <!-- BungeeCord -->
-        <!--
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.8-SNAPSHOT</version>
+            <version>1.12-SNAPSHOT</version>
+            <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        -->
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-bootstrap</artifactId>
-            <version>1.8-1.12</version>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.12-SNAPSHOT</version>
+            <type>javadoc</type>
             <scope>provided</scope>
         </dependency>
 

@@ -7,9 +7,13 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
+import de.bluplayz.cloudlib.packet.DispatchCommandPacket;
+import de.bluplayz.cloudlib.packet.VerifyPlayerPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.function.Consumer;
 
@@ -68,13 +72,39 @@ public class Network {
                 LocaleAPI.log( "network_master_connection_lost", Network.this.getHost() + ":" + Network.this.getPort() );
                 LocaleAPI.log( "network_master_failed_connection_reconnect" );
                 Network.this.nettyHandler.reconnectToServer( 3, Network.this.getConnectingConsumer() );
-
             }
         } );
 
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
+                if ( packet instanceof DispatchCommandPacket ) {
+                    DispatchCommandPacket dispatchCommandPacket = (DispatchCommandPacket) packet;
+                    Bukkit.dispatchCommand( Bukkit.getConsoleSender(), dispatchCommandPacket.getCommandline() );
+                    return;
+                }
+
+                if ( packet instanceof VerifyPlayerPacket ) {
+                    VerifyPlayerPacket verifyPlayerPacket = (VerifyPlayerPacket) packet;
+                    if ( Network.this.getBukkitCloudAPI().getAllowedPlayers().contains( verifyPlayerPacket.getPlayer() ) ) {
+                        return;
+                    }
+
+                    Network.this.getBukkitCloudAPI().getAllowedPlayers().add( verifyPlayerPacket.getPlayer() );
+                    System.out.println( "Verify " + verifyPlayerPacket.getPlayer().toString() + " at " + System.currentTimeMillis() );
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if ( !Network.this.getBukkitCloudAPI().getAllowedPlayers().contains( verifyPlayerPacket.getPlayer() ) ) {
+                                return;
+                            }
+
+                            Network.this.getBukkitCloudAPI().getAllowedPlayers().add( verifyPlayerPacket.getPlayer() );
+                        }
+                    }.runTaskLater( Network.this.getBukkitCloudAPI(), 5 * 20 );
+                    return;
+                }
             }
 
             @Override

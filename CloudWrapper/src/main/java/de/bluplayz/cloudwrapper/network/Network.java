@@ -6,7 +6,7 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudlib.packet.CommandSendPacket;
+import de.bluplayz.cloudlib.packet.DispatchCommandPacket;
 import de.bluplayz.cloudlib.packet.SaveServerPacket;
 import de.bluplayz.cloudlib.packet.ServerStartedPacket;
 import de.bluplayz.cloudlib.packet.StartServerPacket;
@@ -105,23 +105,6 @@ public class Network {
                         SpigotServer spigotServer = new SpigotServer( startServerPacket.getServerData() );
                         Network.this.getCloudWrapper().getSpigotServers().add( spigotServer );
                         spigotServer.startServer();
-                    }
-                    return;
-                }
-
-                if ( packet instanceof CommandSendPacket ) {
-                    CommandSendPacket commandSendPacket = (CommandSendPacket) packet;
-
-                    SpigotServer spigotServer = Network.this.getCloudWrapper().getServerByName( commandSendPacket.getServername() );
-                    if ( spigotServer != null ) {
-                        spigotServer.execute( commandSendPacket.getCommandline() );
-                        return;
-                    }
-
-                    BungeeCordProxy bungeeCordProxy = Network.this.getCloudWrapper().getProxyByName( commandSendPacket.getServername() );
-                    if ( bungeeCordProxy != null ) {
-                        bungeeCordProxy.execute( commandSendPacket.getCommandline() );
-                        return;
                     }
                     return;
                 }
