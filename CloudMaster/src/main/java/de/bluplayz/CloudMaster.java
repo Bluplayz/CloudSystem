@@ -70,12 +70,6 @@ public class CloudMaster {
      * - Screen Funktion
      *
      * - ServerDataUpdatePacket
-     * -
-     *
-     * - Spieler connectet über einen Proxy
-     * - Beim ServerSwitch Und/oder ServerJoin schickt er zum Server ein packet (über den Master)
-     * und die BukkitAPI schaltet ihn in einer List für 3 Sekunden frei zu joinen
-     * Andernfalls wird er gekickt, weil er nicht von einem CloudSystem proxy kam sondern von einem anderen Proxy
      */
     public CloudMaster() {
         // Save instance for further use
@@ -197,6 +191,7 @@ public class CloudMaster {
         this.getCommandHandler().registerCommand( new DispatchCommand() );
         this.getCommandHandler().registerCommand( new ScreenCommand() );
         this.getCommandHandler().registerCommand( new SaveServerCommand() );
+        this.getCommandHandler().registerCommand( new StopServerCommand() );
     }
 
     private void initMainConfig() {
@@ -228,7 +223,6 @@ public class CloudMaster {
         if ( !this.getMainConfig().exists( "network.cloudmaster.whitelist" ) ) {
             this.getMainConfig().set( "network.cloudmaster.whitelist", new ArrayList<String>() {{
                 this.add( "localhost" );
-                this.add( "185.82.22.43" );
             }} );
             shouldSave = true;
         }
@@ -332,6 +326,9 @@ public class CloudMaster {
         translations.put( "command_saveserver_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
         translations.put( "command_saveserver_template_not_exist", "§cDas Template §b{0} §cexistiert nicht!" );
         translations.put( "command_saveserver_success", "§7Der Server §b{0} §7wurde in das Template §b{1} §7kopiert." );
+
+        translations.put( "command_stopserver_usage", "§7Benutzung: stopserver <Servername>" );
+        translations.put( "command_stopserver_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */

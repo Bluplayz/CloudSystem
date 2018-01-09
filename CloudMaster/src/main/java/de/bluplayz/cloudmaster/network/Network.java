@@ -1,7 +1,6 @@
 package de.bluplayz.cloudmaster.network;
 
 import de.bluplayz.CloudMaster;
-import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudlib.netty.ConnectionListener;
 import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
@@ -17,10 +16,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
 
 public class Network {
 
@@ -59,8 +57,16 @@ public class Network {
         this.getNettyHandler().registerConnectionListener( this.connectionListener = new ConnectionListener() {
             @Override
             public void channelConnected( ChannelHandlerContext ctx ) {
-                if ( !Network.this.getWhitelist().contains( ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] ) ) {
-                    //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to connect!" );
+                String address = ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0];
+
+                try {
+                    if ( !Network.this.getWhitelist().contains( address ) && !Objects.equals( InetAddress.getLocalHost().getHostAddress(), address ) ) {
+                        //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to connect!" );
+                        ctx.close();
+                        return;
+                    }
+                } catch ( UnknownHostException e ) {
+                    e.printStackTrace();
                     ctx.close();
                     return;
                 }
@@ -70,8 +76,16 @@ public class Network {
 
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
-                if ( !Network.this.getWhitelist().contains( ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] ) ) {
-                    //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to disconnect!" );
+                String address = ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0];
+
+                try {
+                    if ( !Network.this.getWhitelist().contains( address ) && !Objects.equals( InetAddress.getLocalHost().getHostAddress(), address ) ) {
+                        //Logger.getGlobal().warning( "Not Whitelisted IP(" + ctx.channel().remoteAddress().toString().substring( 1 ).split( ":" )[0] + ") want to connect!" );
+                        ctx.close();
+                        return;
+                    }
+                } catch ( UnknownHostException e ) {
+                    e.printStackTrace();
                     ctx.close();
                     return;
                 }

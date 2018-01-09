@@ -20,7 +20,7 @@ public abstract class PacketHandler {
         PacketHandler.PACKETS.add( SetNamePacket.class );
 
         PacketHandler.PACKETS.add( StartServerPacket.class );
-        //PacketHandler.PACKETS.add( StopServerPacket.class ); TODO
+        PacketHandler.PACKETS.add( StopServerPacket.class );
 
         PacketHandler.PACKETS.add( ServerStartedPacket.class );
         PacketHandler.PACKETS.add( ServerStoppedPacket.class );

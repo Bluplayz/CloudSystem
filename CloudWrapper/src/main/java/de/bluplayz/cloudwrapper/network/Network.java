@@ -6,10 +6,10 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.PacketHandler;
 import de.bluplayz.cloudlib.netty.packet.Packet;
 import de.bluplayz.cloudlib.netty.packet.defaults.SetNamePacket;
-import de.bluplayz.cloudlib.packet.DispatchCommandPacket;
 import de.bluplayz.cloudlib.packet.SaveServerPacket;
 import de.bluplayz.cloudlib.packet.ServerStartedPacket;
 import de.bluplayz.cloudlib.packet.StartServerPacket;
+import de.bluplayz.cloudlib.packet.StopServerPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.ServerData;
 import de.bluplayz.cloudlib.server.template.Template;
@@ -78,10 +78,10 @@ public class Network {
             @Override
             public void channelDisconnected( ChannelHandlerContext ctx ) {
                 for ( BungeeCordProxy bungeeCordProxy : Network.this.getCloudWrapper().getBungeeCordProxies() ) {
-                    bungeeCordProxy.shutdown();
+                    bungeeCordProxy.forceShutdown();
                 }
                 for ( SpigotServer spigotServer : Network.this.getCloudWrapper().getSpigotServers() ) {
-                    spigotServer.shutdown();
+                    spigotServer.forceShutdown();
                 }
 
                 LocaleAPI.log( "network_master_connection_lost", Network.this.getHost() + ":" + Network.this.getPort() );
@@ -105,6 +105,18 @@ public class Network {
                         SpigotServer spigotServer = new SpigotServer( startServerPacket.getServerData() );
                         Network.this.getCloudWrapper().getSpigotServers().add( spigotServer );
                         spigotServer.startServer();
+                    }
+                    return;
+                }
+
+                if ( packet instanceof StopServerPacket ) {
+                    StopServerPacket stopServerPacket = (StopServerPacket) packet;
+
+                    LocaleAPI.log( "network_server_stopping", stopServerPacket.getServerData().getName(), stopServerPacket.getServerData().getUniqueId().toString() );
+                    if ( stopServerPacket.getServerData().getTemplate().getType() == Template.Type.PROXY ) {
+                        Network.this.getCloudWrapper().getProxyByName( stopServerPacket.getServerData().getName() ).execute( "end" );
+                    } else {
+                        Network.this.getCloudWrapper().getServerByName( stopServerPacket.getServerData().getName() ).execute( "stop" );
                     }
                     return;
                 }
@@ -158,7 +170,7 @@ public class Network {
         try {
             for ( File file : src.listFiles() ) {
                 if ( file.isDirectory() ) {
-                    this.copyDirectoryRecursive(file, new File( dest, file.getName() ));
+                    this.copyDirectoryRecursive( file, new File( dest, file.getName() ) );
                 } else {
                     FileUtils.copyFileToDirectory( file, dest );
                 }

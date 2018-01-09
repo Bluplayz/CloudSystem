@@ -47,7 +47,7 @@ public class BungeeCordProxy extends ServerData {
         this.getCloudWrapper().getBungeeCordProxies().add( this );
     }
 
-    public void shutdown() {
+    public void forceShutdown() {
         if ( this.getActiveMode() != ActiveMode.OFFLINE && this.getActiveMode() != ActiveMode.STOPPING ) {
             LocaleAPI.log( "network_server_stopping", this.getName(), this.getUniqueId().toString() );
             this.setActiveMode( ActiveMode.STOPPING );
@@ -162,7 +162,7 @@ public class BungeeCordProxy extends ServerData {
 
                 int exitCode = this.process.waitFor();
                 this.setActiveMode( ActiveMode.STOPPING );
-                this.shutdown();
+                this.forceShutdown();
             } catch ( InterruptedException e ) {
                 Logger.getGlobal().error( e.getMessage(), e );
             }

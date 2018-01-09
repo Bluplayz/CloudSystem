@@ -106,10 +106,10 @@ public class CloudWrapper {
 
             // Stop all Minecraft Server and Proxies
             for ( BungeeCordProxy bungeeCordProxy : this.getBungeeCordProxies() ) {
-                bungeeCordProxy.shutdown();
+                bungeeCordProxy.forceShutdown();
             }
             for ( SpigotServer spigotServer : this.getSpigotServers() ) {
-                spigotServer.shutdown();
+                spigotServer.forceShutdown();
             }
 
             LocaleAPI.log( "system_exit_finished" );
@@ -200,7 +200,7 @@ public class CloudWrapper {
 
         // NETWORK
         if ( !this.getConfig().exists( "network.cloudmaster.address" ) ) {
-            this.getConfig().set( "network.cloudmaster.address", "185.82.22.43" );
+            this.getConfig().set( "network.cloudmaster.address", "localhost" );
             shouldSave = true;
         }
         if ( !this.getConfig().exists( "network.cloudmaster.port" ) ) {

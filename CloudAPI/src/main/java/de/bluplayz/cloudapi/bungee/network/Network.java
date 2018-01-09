@@ -107,7 +107,7 @@ public class Network {
                 if ( packet instanceof UnregisterServerPacket ) {
                     UnregisterServerPacket unregisterServerPacket = (UnregisterServerPacket) packet;
 
-                    if ( ProxyServer.getInstance().getServers().containsKey( unregisterServerPacket.getServerData().getName() ) ) {
+                    if ( !ProxyServer.getInstance().getServers().containsKey( unregisterServerPacket.getServerData().getName() ) ) {
                         return;
                     }
 
