@@ -14,7 +14,5 @@ Installation-Tutorial: Coming soon (If someone make a good one, i will post them
 
 # Downloads
 CloudMaster-Jar: https://www.dropbox.com/s/tkllxzlzpqw9phl/CloudMaster.jar?dl=1
-
 CloudWrapper-Jar: https://www.dropbox.com/s/edb1wy2016pbq0a/CloudWrapper.jar?dl=1
-
 CloudAPI-Jar: https://www.dropbox.com/s/s0zet4aw1620tbo/CloudAPI.jar?dl=1
