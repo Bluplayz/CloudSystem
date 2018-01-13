@@ -5,10 +5,7 @@ import de.bluplayz.cloudlib.netty.NettyHandler;
 import de.bluplayz.cloudlib.netty.packet.PacketDecoder;
 import de.bluplayz.cloudlib.netty.packet.PacketEncoder;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
@@ -65,6 +62,8 @@ public class NettyClient {
                 this.bootstrap = new Bootstrap()
                         .group( this.getEventLoopGroup() )
                         .channel( EPOLL ? EpollSocketChannel.class : NioSocketChannel.class )
+                        .option( ChannelOption.SO_BACKLOG, 128 )
+                        .option( ChannelOption.SO_KEEPALIVE, true )
                         .handler( new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel( SocketChannel channel ) throws Exception {

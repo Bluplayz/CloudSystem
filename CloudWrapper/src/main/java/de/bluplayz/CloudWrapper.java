@@ -6,12 +6,14 @@ import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import de.bluplayz.cloudlib.logging.Logger;
 import de.bluplayz.cloudwrapper.command.HelpCommand;
+import de.bluplayz.cloudwrapper.command.ListCommand;
 import de.bluplayz.cloudwrapper.command.StopCommand;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import de.bluplayz.cloudwrapper.network.Network;
 import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
 import de.bluplayz.cloudwrapper.server.SpigotServer;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,12 +133,15 @@ public class CloudWrapper {
                 pluginDirectory.mkdir();
             }
 
-            // Load libs
             File libDirectory = new File( CloudWrapper.getRootDirectory(), "libs" );
             if ( !libDirectory.isDirectory() ) {
                 libDirectory.mkdir();
             }
 
+            // Download Libs
+            FileUtils.copyURLToFile( new URL( "http://central.maven.org/maven2/io/netty/netty-all/4.0.36.Final/netty-all-4.0.36.Final.jar" ), new File( libDirectory, "NettyLib.jar" ) );
+
+            // Load libs
             for ( File file : libDirectory.listFiles() ) {
                 URL url = file.toURI().toURL();
 
@@ -175,6 +180,7 @@ public class CloudWrapper {
 
     private void registerCommands() {
         this.getCommandHandler().registerCommand( new HelpCommand() );
+        this.getCommandHandler().registerCommand( new ListCommand() );
         this.getCommandHandler().registerCommand( new StopCommand() );
     }
 
@@ -238,7 +244,7 @@ public class CloudWrapper {
         translations.put( "network_server_stopped", "§b{0}§7(§6{1}§7) §7wurde heruntergefahren." );
         translations.put( "network_server_stopped_successfully", "§b{0} §7ist nun offline." );
 
-        translations.put( "network_server_starting_no_template_folder", "§b{0} §7konnte nicht gestartet werden. Der TemplatePfad von dem Template §6{1}§7(§6{2}§7) ist ungültig!" );
+        translations.put( "network_server_starting_no_template_folder", "§b{0} §7konnte nicht gestartet werden. Der Template-Pfad von dem ServerGroup §6{1}§7(§6{2}§7) ist ungültig!" );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */

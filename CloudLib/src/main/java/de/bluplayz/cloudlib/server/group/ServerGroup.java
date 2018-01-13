@@ -1,6 +1,5 @@
-package de.bluplayz.cloudlib.server.template;
+package de.bluplayz.cloudlib.server.group;
 
-import de.bluplayz.cloudlib.server.ActiveMode;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,12 +7,11 @@ import lombok.Setter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class Template {
+public class ServerGroup {
 
     @Getter
-    private static List<Template> allTemplates = new ArrayList<>();
+    private static List<ServerGroup> allServerGroups = new ArrayList<>();
 
     @Getter
     @Setter
@@ -43,34 +41,34 @@ public class Template {
     @Setter
     private List<String> proxyFallbackPriorities = new ArrayList<>();
 
-    public static List<Template> getProxyTemplates() {
-        List<Template> templates = new ArrayList<>();
+    public static List<ServerGroup> getProxyTemplates() {
+        List<ServerGroup> serverGroups = new ArrayList<>();
 
-        for ( Template template : Template.getAllTemplates() ) {
-            if ( template.getType() == Type.PROXY ) {
-                templates.add( template );
+        for ( ServerGroup serverGroup : ServerGroup.getAllServerGroups() ) {
+            if ( serverGroup.getType() == Type.PROXY ) {
+                serverGroups.add( serverGroup );
             }
         }
 
-        return templates;
+        return serverGroups;
     }
 
-    public static List<Template> getSpigotTemplates() {
-        List<Template> templates = new ArrayList<>();
+    public static List<ServerGroup> getSpigotTemplates() {
+        List<ServerGroup> serverGroups = new ArrayList<>();
 
-        for ( Template template : Template.getAllTemplates() ) {
-            if ( template.getType() == Type.SPIGOT ) {
-                templates.add( template );
+        for ( ServerGroup serverGroup : ServerGroup.getAllServerGroups() ) {
+            if ( serverGroup.getType() == Type.SPIGOT ) {
+                serverGroups.add( serverGroup );
             }
         }
 
-        return templates;
+        return serverGroups;
     }
 
-    public static Template getTemplateByName( String templatename ) {
-        for ( Template template : Template.getAllTemplates() ) {
-            if ( template.getName().equalsIgnoreCase( templatename ) ) {
-                return template;
+    public static ServerGroup getServerGroupByName( String serverGroupName ) {
+        for ( ServerGroup serverGroup : ServerGroup.getAllServerGroups() ) {
+            if ( serverGroup.getName().equalsIgnoreCase( serverGroupName ) ) {
+                return serverGroup;
             }
         }
 
@@ -163,7 +161,7 @@ public class Template {
         }
 
         this.setName( name );
-        this.setType( Template.Type.valueOf( serverType ) );
+        this.setType( ServerGroup.Type.valueOf( serverType ) );
         this.setMinOnlineServers( minOnlineServers );
         this.setMaxOnlineServers( maxOnlineServers );
         this.setMaxMemory( maxMemory );
@@ -173,7 +171,7 @@ public class Template {
 
     @Override
     public String toString() {
-        return "Template{" +
+        return "ServerGroup{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
                 ", minOnlineServers=" + minOnlineServers +

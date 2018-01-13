@@ -5,7 +5,7 @@ import de.bluplayz.cloudlib.config.Config;
 import de.bluplayz.cloudlib.localemanager.LocaleManager;
 import de.bluplayz.cloudlib.localemanager.locale.Locale;
 import de.bluplayz.cloudlib.logging.Logger;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import de.bluplayz.cloudmaster.command.*;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.network.Network;
@@ -14,6 +14,7 @@ import de.bluplayz.cloudmaster.server.CloudWrapper;
 import de.bluplayz.cloudmaster.server.ServerManager;
 import de.bluplayz.cloudmaster.server.SpigotServer;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -64,8 +65,6 @@ public class CloudMaster {
 
     /**
      * TODO
-     * - StartServer Command
-     * - StopServer Command
      * - Logs speichern
      * - Screen Funktion
      *
@@ -142,12 +141,15 @@ public class CloudMaster {
 
     public static void main( String[] args ) {
         try {
-            // Load libs
             File libDirectory = new File( CloudMaster.getRootDirectory(), "libs" );
             if ( !libDirectory.isDirectory() ) {
                 libDirectory.mkdir();
             }
 
+            // Download Libs
+            FileUtils.copyURLToFile( new URL( "http://central.maven.org/maven2/io/netty/netty-all/4.0.36.Final/netty-all-4.0.36.Final.jar" ), new File( libDirectory, "NettyLib.jar" ) );
+
+            // Load libs
             for ( File file : libDirectory.listFiles() ) {
                 URL url = file.toURI().toURL();
 
@@ -192,6 +194,7 @@ public class CloudMaster {
         this.getCommandHandler().registerCommand( new ScreenCommand() );
         this.getCommandHandler().registerCommand( new SaveServerCommand() );
         this.getCommandHandler().registerCommand( new StopServerCommand() );
+        this.getCommandHandler().registerCommand( new StartServerCommand() );
     }
 
     private void initMainConfig() {
@@ -271,24 +274,24 @@ public class CloudMaster {
             this.getGroupConfig().save();
         }
 
-        LocaleAPI.log( "network_templates_loading" );
+        LocaleAPI.log( "network_servergroups_loading" );
         for ( Map.Entry entry : this.getGroupConfig().getAll().entrySet() ) {
             String name = (String) entry.getKey();
             Map<String, Object> data = (Map<String, Object>) entry.getValue();
 
-            Template template = new Template();
-            template.setName( name );
-            template.setType( Template.Type.valueOf( (String) data.get( "serverType" ) ) );
-            template.setMinOnlineServers( (int) data.get( "minOnlineServers" ) );
-            template.setMaxOnlineServers( (int) data.get( "maxOnlineServers" ) );
-            template.setMaxMemory( (int) data.get( "maxMemory" ) );
-            template.setTemplateFolder( (String) data.get( "templateFolder" ) );
-            if ( template.getType() == Template.Type.PROXY ) {
-                template.setProxyFallbackPriorities( (List<String>) data.get( "fallbackPriorities" ) );
+            ServerGroup serverGroup = new ServerGroup();
+            serverGroup.setName( name );
+            serverGroup.setType( ServerGroup.Type.valueOf( (String) data.get( "serverType" ) ) );
+            serverGroup.setMinOnlineServers( (int) data.get( "minOnlineServers" ) );
+            serverGroup.setMaxOnlineServers( (int) data.get( "maxOnlineServers" ) );
+            serverGroup.setMaxMemory( (int) data.get( "maxMemory" ) );
+            serverGroup.setTemplateFolder( (String) data.get( "templateFolder" ) );
+            if ( serverGroup.getType() == ServerGroup.Type.PROXY ) {
+                serverGroup.setProxyFallbackPriorities( (List<String>) data.get( "fallbackPriorities" ) );
             }
 
-            Template.getAllTemplates().add( template );
-            LocaleAPI.log( "network_template_loaded", template.getName() );
+            ServerGroup.getAllServerGroups().add( serverGroup );
+            LocaleAPI.log( "network_servergroup_loaded", serverGroup.getName() );
         }
     }
 
@@ -315,20 +318,23 @@ public class CloudMaster {
         translations.put( "network_wrapper_disconnected", "§b{0} §7hat die Verbindung getrennt von §b{1}§7." );
         translations.put( "system_exit_loading", "§7CloudMaster wird heruntergefahren..." );
         translations.put( "system_exit_finished", "§7CloudMaster wurde heruntergefahren." );
-        translations.put( "network_templates_loading", "§7Templates werden geladen..." );
-        translations.put( "network_template_loaded", "§7Template geladen: §b{0}§7." );
+        translations.put( "network_servergroups_loading", "§7ServerGruppen werden geladen..." );
+        translations.put( "network_servergroup_loaded", "§7ServerGruppe geladen: §b{0}§7." );
+        translations.put( "network_command_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
+        translations.put( "network_command_servergroup_not_exist", "§cDie ServerGruppe §b{0} §cexistiert nicht!" );
 
         translations.put( "command_dispatch_usage", "§7Benutzung: dispatch <Servername> <Commandline>" );
         translations.put( "command_dispatch_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
         translations.put( "command_dispatch_success", "§7Du hast §b{0} §7den Command §b{1} §7geschickt." );
 
-        translations.put( "command_saveserver_usage", "§7Benutzung: saveserver <Servername> <Templatename>" );
-        translations.put( "command_saveserver_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
-        translations.put( "command_saveserver_template_not_exist", "§cDas Template §b{0} §cexistiert nicht!" );
-        translations.put( "command_saveserver_success", "§7Der Server §b{0} §7wurde in das Template §b{1} §7kopiert." );
+        translations.put( "command_saveserver_usage", "§7Benutzung: saveserver <Servername> <ServerGruppe>" );
+        translations.put( "command_saveserver_success", "§7Der Server §b{0} §7wurde in den ServerGroup Ordner von §b{1} §7kopiert." );
 
         translations.put( "command_stopserver_usage", "§7Benutzung: stopserver <Servername>" );
-        translations.put( "command_stopserver_server_not_exist", "§cDer Server §b{0} §cexistiert nicht!" );
+
+        translations.put( "command_startserver_usage", "§7Benutzung: startserver <ServerGruppe> <optional : Anzahl>" );
+        translations.put( "command_startserver_success_single", "§7Es wird ein Server der ServerGruppe §b{0} §7gestartet..." );
+        translations.put( "command_startserver_success_multi", "§7Es werden §b{0} §7Server der ServerGruppe §b{1} §7gestartet..." );
 
         germanLocale.addTranslations( translations, false );
         /** GERMAN */
@@ -350,17 +356,22 @@ public class CloudMaster {
         translations.put( "network_wrapper_disconnected", "§b{0} §7disconnected from §b{1}§7." );
         translations.put( "system_exit_loading", "§7CloudMaster shutting down..." );
         translations.put( "system_exit_finished", "§7CloudMaster shutdown." );
-        translations.put( "network_templates_loading", "§7Loading Templates..." );
-        translations.put( "network_template_loaded", "§7Template loaded: §b{0}§7." );
+        translations.put( "network_servergroups_loading", "§7Loading ServerGroups..." );
+        translations.put( "network_servergroups_loaded", "§7ServerGroup loaded: §b{0}§7." );
+        translations.put( "network_command_server_not_exist", "§cThe Server §b{0} §cdoesn't exit!" );
+        translations.put( "network_command_servergroup_not_exist", "§cThe ServerGroup §b{0} §cdoesn't exist!" );
 
         translations.put( "command_dispatch_usage", "§7Usage: dispatch <Servername> <Commandline>" );
-        translations.put( "command_dispatch_server_not_exist", "§cThe Server §b{0} §cdoesn't exist!" );
         translations.put( "command_dispatch_success", "§7You send the Command §b{1} §7to §b{0}§7." );
 
-        translations.put( "command_saveserver_usage", "§7Usage: saveserver <Servername> <Templatename>" );
-        translations.put( "command_saveserver_server_not_exist", "§cThe Server §b{0} §cdoesn't exit!" );
-        translations.put( "command_saveserver_template_not_exist", "§cThe Template §b{0} §cdoesn't exist!" );
-        translations.put( "command_saveserver_success", "§7The Server §b{0} §7was copied in the Template §b{1}§7." );
+        translations.put( "command_saveserver_usage", "§7Usage: saveserver <Servername> <ServerGroup>" );
+        translations.put( "command_saveserver_success", "§7The Server §b{0} §7was copied in the ServerGroup Folder from §b{1}§7." );
+
+        translations.put( "command_stopserver_usage", "§7Usage: stopserver <Servername>" );
+
+        translations.put( "command_startserver_usage", "§7Usage: startserver <ServerGroup> <optional : Amount>" );
+        translations.put( "command_startserver_success_single", "§7One Server from the ServerGroup §b{0} §7will be started..." );
+        translations.put( "command_startserver_success_multi", "§b{0} §7Server from the ServerGroup §b{1} §7will be started..." );
 
         englishLocale.addTranslations( translations, false );
         /** ENGLISH */

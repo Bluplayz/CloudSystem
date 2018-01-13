@@ -2,7 +2,7 @@ package de.bluplayz.cloudmaster.server;
 
 import de.bluplayz.CloudMaster;
 import de.bluplayz.cloudlib.netty.packet.Packet;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CloudWrapper {
 
@@ -56,10 +55,10 @@ public class CloudWrapper {
         this.channel = null;
     }
 
-    public void startServers( Template... templates ) {
+    public void startServers( ServerGroup... serverGroups ) {
         List<SpigotServer> spigotServers = new ArrayList<>();
-        for ( Template template : templates ) {
-            spigotServers.add( new SpigotServer( this, template ) );
+        for ( ServerGroup serverGroup : serverGroups ) {
+            spigotServers.add( new SpigotServer( this, serverGroup ) );
         }
 
         for ( SpigotServer spigotServer : spigotServers ) {
@@ -67,10 +66,10 @@ public class CloudWrapper {
         }
     }
 
-    public void startProxies( Template... templates ) {
+    public void startProxies( ServerGroup... serverGroups ) {
         List<BungeeCordProxy> bungeeCordProxies = new ArrayList<>();
-        for ( Template template : templates ) {
-            bungeeCordProxies.add( new BungeeCordProxy( this, template ) );
+        for ( ServerGroup serverGroup : serverGroups ) {
+            bungeeCordProxies.add( new BungeeCordProxy( this, serverGroup ) );
         }
 
         for ( BungeeCordProxy bungeeCordProxy : bungeeCordProxies ) {

@@ -27,7 +27,7 @@ public class BungeeCordProxy extends ServerData {
     private BufferedWriter bufferedWriter;
 
     public BungeeCordProxy( ServerData serverData ) {
-        super( serverData.getTemplate() );
+        super( serverData.getServerGroup() );
 
         this.setId( serverData.getId() );
         this.setName( serverData.getName() );
@@ -65,7 +65,7 @@ public class BungeeCordProxy extends ServerData {
         }
 
         try {
-            File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
+            File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getServerGroup().getName() + "/" + this.getName() );
             FileUtils.deleteDirectory( serverDirectory );
         } catch ( IOException e ) {
             //Logger.getGlobal().error( e.getMessage(), e );
@@ -83,13 +83,13 @@ public class BungeeCordProxy extends ServerData {
     }
 
     private File initServerDirectory() {
-        File templateFolder = new File( this.getTemplate().getTemplateFolder() );
+        File templateFolder = new File( this.getServerGroup().getTemplateFolder() );
         if ( !templateFolder.exists() ) {
-            LocaleAPI.log( "network_server_starting_no_template_folder", this.getName(), this.getTemplate().getName(), this.getTemplate().getTemplateFolder() );
+            LocaleAPI.log( "network_server_starting_no_template_folder", this.getName(), this.getServerGroup().getName(), this.getServerGroup().getTemplateFolder() );
             return null;
         }
 
-        File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
+        File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getServerGroup().getName() + "/" + this.getName() );
         if ( !serverDirectory.exists() ) {
             serverDirectory.mkdirs();
         } else {
@@ -103,7 +103,7 @@ public class BungeeCordProxy extends ServerData {
             }
         }
 
-        // Copy Template Folder
+        // Copy ServerGroup Folder
         try {
             FileUtils.copyDirectory( templateFolder, serverDirectory );
         } catch ( IOException e ) {
@@ -125,7 +125,7 @@ public class BungeeCordProxy extends ServerData {
             dataConfig.set( "uuid", this.getUniqueId().toString() );
             dataConfig.set( "address", this.getCloudWrapper().getNetwork().getHost() );
             dataConfig.set( "port", this.getCloudWrapper().getNetwork().getPort() );
-            dataConfig.set( "fallbackPriorities", this.getTemplate().getProxyFallbackPriorities() );
+            dataConfig.set( "fallbackPriorities", this.getServerGroup().getProxyFallbackPriorities() );
             dataConfig.save();
         } catch ( IOException | NullPointerException e ) {
             Logger.getGlobal().error( e.getMessage(), e );
@@ -147,7 +147,7 @@ public class BungeeCordProxy extends ServerData {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory( serverDirectory );
-        processBuilder.command( /*"screen", "-S", this.getName(),*/ "java", "-jar"/*, "Xmx" + this.getTemplate().getMaxMemory() + "M" */, bungeeCordJar );
+        processBuilder.command( /*"screen", "-S", this.getName(),*/ "java", "-jar"/*, "Xmx" + this.getServerGroup().getMaxMemory() + "M" */, bungeeCordJar );
 
         try {
             this.process = processBuilder.start();

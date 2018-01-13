@@ -12,7 +12,7 @@ import de.bluplayz.cloudlib.packet.StartServerPacket;
 import de.bluplayz.cloudlib.packet.StopServerPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.ServerData;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import de.bluplayz.cloudwrapper.locale.LocaleAPI;
 import de.bluplayz.cloudwrapper.server.BungeeCordProxy;
 import de.bluplayz.cloudwrapper.server.SpigotServer;
@@ -94,10 +94,11 @@ public class Network {
         this.getNettyHandler().registerPacketHandler( this.packetHandler = new PacketHandler() {
             @Override
             public void incomingPacket( Packet packet, Channel channel ) {
+                //Logger.getGlobal().debug( "Incoming Packet " + packet.getClass().getSimpleName() );
                 if ( packet instanceof StartServerPacket ) {
                     StartServerPacket startServerPacket = (StartServerPacket) packet;
 
-                    if ( startServerPacket.getServerData().getTemplate().getType() == Template.Type.PROXY ) {
+                    if ( startServerPacket.getServerData().getServerGroup().getType() == ServerGroup.Type.PROXY ) {
                         BungeeCordProxy bungeeCordProxy = new BungeeCordProxy( startServerPacket.getServerData() );
                         Network.this.getCloudWrapper().getBungeeCordProxies().add( bungeeCordProxy );
                         bungeeCordProxy.startProxy();
@@ -113,7 +114,7 @@ public class Network {
                     StopServerPacket stopServerPacket = (StopServerPacket) packet;
 
                     LocaleAPI.log( "network_server_stopping", stopServerPacket.getServerData().getName(), stopServerPacket.getServerData().getUniqueId().toString() );
-                    if ( stopServerPacket.getServerData().getTemplate().getType() == Template.Type.PROXY ) {
+                    if ( stopServerPacket.getServerData().getServerGroup().getType() == ServerGroup.Type.PROXY ) {
                         Network.this.getCloudWrapper().getProxyByName( stopServerPacket.getServerData().getName() ).execute( "end" );
                     } else {
                         Network.this.getCloudWrapper().getServerByName( stopServerPacket.getServerData().getName() ).execute( "stop" );
@@ -152,8 +153,8 @@ public class Network {
 
                     ServerData serverData = spigotServer != null ? spigotServer : bungeeCordProxy;
 
-                    File templateDirectory = new File( saveServerPacket.getTargetTemplate().getTemplateFolder() );
-                    File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + serverData.getTemplate().getName() + "/" + serverData.getName() );
+                    File templateDirectory = new File( saveServerPacket.getTargetServerGroup().getTemplateFolder() );
+                    File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + serverData.getServerGroup().getName() + "/" + serverData.getName() );
 
                     Network.this.copyDirectoryRecursive( serverDirectory, templateDirectory );
                     return;

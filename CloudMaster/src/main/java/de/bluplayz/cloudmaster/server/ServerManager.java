@@ -1,7 +1,8 @@
 package de.bluplayz.cloudmaster.server;
 
 import de.bluplayz.CloudMaster;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.ServerData;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import io.netty.channel.Channel;
 import lombok.Getter;
 
@@ -126,12 +127,12 @@ public class ServerManager {
         return null;
     }
 
-    public List<SpigotServer> getServersByTemplate( Template template ) {
+    public List<SpigotServer> getServersByServerGroup( ServerGroup serverGroup ) {
         List<SpigotServer> servers = new ArrayList<>();
 
         for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
             for ( SpigotServer spigotServer : cloudWrapper.getSpigotServers() ) {
-                if ( spigotServer.getTemplate() == template ) {
+                if ( spigotServer.getServerGroup() == serverGroup ) {
                     servers.add( spigotServer );
                 }
             }
@@ -140,12 +141,12 @@ public class ServerManager {
         return servers;
     }
 
-    public List<BungeeCordProxy> getProxiesByTemplate( Template template ) {
+    public List<BungeeCordProxy> getProxiesByServerGroup( ServerGroup serverGroup ) {
         List<BungeeCordProxy> proxies = new ArrayList<>();
 
         for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
             for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
-                if ( bungeeCordProxy.getTemplate() == template ) {
+                if ( bungeeCordProxy.getServerGroup() == serverGroup ) {
                     proxies.add( bungeeCordProxy );
                 }
             }
@@ -180,35 +181,28 @@ public class ServerManager {
                 return;
             }
 
-            for ( Template template : Template.getAllTemplates() ) {
-                if ( template.getType() == Template.Type.PROXY ) {
-                    List<BungeeCordProxy> proxies = this.getProxiesByTemplate( template );
-                    if ( proxies.size() < template.getMinOnlineServers() ) {
-                        int neededServer = template.getMinOnlineServers() - proxies.size();
-                        for ( int i = 0; i < neededServer; i++ ) {
-                            CloudWrapper bestCloudWrapper = this.getCloudWrappers().get( 0 );
-                            for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
-                                if ( ( cloudWrapper.getBungeeCordProxies().size() + cloudWrapper.getSpigotServers().size() ) <= ( bestCloudWrapper.getBungeeCordProxies().size() + bestCloudWrapper.getSpigotServers().size() ) ) {
-                                    bestCloudWrapper = cloudWrapper;
-                                }
-                            }
+            for ( ServerGroup serverGroup : ServerGroup.getAllServerGroups() ) {
+                List<ServerData> servers = new ArrayList<>();
+                if ( serverGroup.getType() == ServerGroup.Type.PROXY ) {
+                    servers.addAll( this.getProxiesByServerGroup( serverGroup ) );
+                } else {
+                    servers.addAll( this.getServersByServerGroup( serverGroup ) );
+                }
 
-                            bestCloudWrapper.startProxies( template );
+                if ( servers.size() < serverGroup.getMinOnlineServers() ) {
+                    int neededServer = serverGroup.getMinOnlineServers() - servers.size();
+                    for ( int i = 0; i < neededServer; i++ ) {
+                        CloudWrapper bestCloudWrapper = this.getCloudWrappers().get( 0 );
+                        for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
+                            if ( ( cloudWrapper.getBungeeCordProxies().size() + cloudWrapper.getSpigotServers().size() ) <= ( bestCloudWrapper.getBungeeCordProxies().size() + bestCloudWrapper.getSpigotServers().size() ) ) {
+                                bestCloudWrapper = cloudWrapper;
+                            }
                         }
-                    }
-                } else if ( template.getType() == Template.Type.SPIGOT ) {
-                    List<SpigotServer> servers = this.getServersByTemplate( template );
-                    if ( servers.size() < template.getMinOnlineServers() ) {
-                        int neededServer = template.getMinOnlineServers() - servers.size();
-                        for ( int i = 0; i < neededServer; i++ ) {
-                            CloudWrapper bestCloudWrapper = this.getCloudWrappers().get( 0 );
-                            for ( CloudWrapper cloudWrapper : this.getCloudWrappers() ) {
-                                if ( ( cloudWrapper.getBungeeCordProxies().size() + cloudWrapper.getSpigotServers().size() ) <= ( bestCloudWrapper.getBungeeCordProxies().size() + bestCloudWrapper.getSpigotServers().size() ) ) {
-                                    bestCloudWrapper = cloudWrapper;
-                                }
-                            }
 
-                            bestCloudWrapper.startServers( template );
+                        if ( serverGroup.getType() == ServerGroup.Type.PROXY ) {
+                            bestCloudWrapper.startProxies( serverGroup );
+                        } else {
+                            bestCloudWrapper.startServers( serverGroup );
                         }
                     }
                 }

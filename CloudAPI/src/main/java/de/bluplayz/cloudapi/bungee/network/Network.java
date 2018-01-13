@@ -97,7 +97,7 @@ public class Network {
                     );
                     ProxyServer.getInstance().getServers().put( registerServerPacket.getServerData().getName(), serverInfo );
 
-                    if ( Network.this.getBungeeCloudAPI().getProxyFallbackPriorities().contains( registerServerPacket.getServerData().getTemplate().getName() ) ) {
+                    if ( Network.this.getBungeeCloudAPI().getProxyFallbackPriorities().contains( registerServerPacket.getServerData().getServerGroup().getName() ) ) {
                         // Add to fallback Server
                         ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().add( registerServerPacket.getServerData().getName() );
                     }
@@ -113,7 +113,7 @@ public class Network {
 
                     ProxyServer.getInstance().getServers().remove( unregisterServerPacket.getServerData().getName() );
 
-                    if ( Network.this.getBungeeCloudAPI().getProxyFallbackPriorities().contains( unregisterServerPacket.getServerData().getTemplate().getName() ) ) {
+                    if ( Network.this.getBungeeCloudAPI().getProxyFallbackPriorities().contains( unregisterServerPacket.getServerData().getServerGroup().getName() ) ) {
                         // Remove from fallback Server
                         ProxyServer.getInstance().getConfig().getListeners().iterator().next().getServerPriority().remove( unregisterServerPacket.getServerData().getName() );
                     }

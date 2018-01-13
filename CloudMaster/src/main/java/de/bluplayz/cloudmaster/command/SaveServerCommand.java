@@ -3,7 +3,7 @@ package de.bluplayz.cloudmaster.command;
 import de.bluplayz.CloudMaster;
 import de.bluplayz.cloudlib.command.Command;
 import de.bluplayz.cloudlib.packet.SaveServerPacket;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import de.bluplayz.cloudmaster.server.BungeeCordProxy;
 import de.bluplayz.cloudmaster.server.CloudWrapper;
@@ -19,8 +19,8 @@ public class SaveServerCommand extends Command {
 
     @Override
     public void execute( String label, String[] args ) {
-        // Usage: /saveserver <name | uuid> <templatename>
-        // SaveServer Command um den aktuellen Server mit allen Configs direkt zu kopieren (/saveserver Lobby-1 Lobby / /saveserver <name> <templatename>)
+        // Usage: /saveserver <name | uuid> <servergroup>
+        // SaveServer Command um den aktuellen Server mit allen Configs direkt zu kopieren (/saveserver Lobby-1 Lobby / /saveserver <name> <servergroup>)
 
         if ( args.length < 2 ) {
             LocaleAPI.log( "command_saveserver_usage" );
@@ -28,19 +28,19 @@ public class SaveServerCommand extends Command {
         }
 
         String server = args[0];
-        String templatename = args[1];
+        String serverGroupName = args[1];
 
         SpigotServer spigotServer = this.getSpigotServer( server );
         BungeeCordProxy bungeeCordProxy = this.getBungeeCordProxy( server );
-        Template template = Template.getTemplateByName( templatename );
+        ServerGroup serverGroup = ServerGroup.getServerGroupByName( serverGroupName );
 
         if ( spigotServer == null && bungeeCordProxy == null ) {
-            LocaleAPI.log( "command_saveserver_server_not_exist", server );
+            LocaleAPI.log( "network_command_server_not_exist", server );
             return;
         }
 
-        if ( template == null ) {
-            LocaleAPI.log( "command_saveserver_template_not_exist", server );
+        if ( serverGroup == null ) {
+            LocaleAPI.log( "network_command_servergroup_not_exist", server );
             return;
         }
 
@@ -52,11 +52,11 @@ public class SaveServerCommand extends Command {
         }
 
         // Send Packet to Wrapper
-        SaveServerPacket saveServerPacket = new SaveServerPacket( spigotServer != null ? spigotServer.getName() : bungeeCordProxy.getName(), template );
+        SaveServerPacket saveServerPacket = new SaveServerPacket( spigotServer != null ? spigotServer.getName() : bungeeCordProxy.getName(), serverGroup );
         CloudMaster.getInstance().getNetwork().getPacketHandler().sendPacket( saveServerPacket, cloudWrapper.getChannel() );
 
         // Success Message
-        LocaleAPI.log( "command_saveserver_success", spigotServer != null ? spigotServer.getName() : bungeeCordProxy.getName(), template.getName() );
+        LocaleAPI.log( "command_saveserver_success", spigotServer != null ? spigotServer.getName() : bungeeCordProxy.getName(), serverGroup.getName() );
     }
 
     private SpigotServer getSpigotServer( String server ) {

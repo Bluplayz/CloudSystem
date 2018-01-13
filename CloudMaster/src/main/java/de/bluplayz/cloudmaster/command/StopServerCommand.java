@@ -23,7 +23,7 @@ public class StopServerCommand extends Command {
         String servername = args[0];
         SpigotServer spigotServer = CloudMaster.getInstance().getServerManager().getServerByName( servername );
         if ( spigotServer == null ) {
-            LocaleAPI.log( "command_stopserver_server_not_exist", servername );
+            LocaleAPI.log( "network_command_server_not_exist", servername );
             return;
         }
 

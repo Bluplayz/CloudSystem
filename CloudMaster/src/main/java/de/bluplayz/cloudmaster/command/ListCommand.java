@@ -21,7 +21,7 @@ public class ListCommand extends Command {
             CloudMaster.getInstance().getLogger().info( this.getTabString() + "BungeeCordProxies: " + cloudWrapper.getBungeeCordProxies().size() );
             for ( BungeeCordProxy bungeeCordProxy : cloudWrapper.getBungeeCordProxies() ) {
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + bungeeCordProxy.getName() + " {" );
-                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Template: " + bungeeCordProxy.getTemplate().getName() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "ServerGroup: " + bungeeCordProxy.getServerGroup().getName() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "UniqueId: " + bungeeCordProxy.getUniqueId().toString() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Port: " + bungeeCordProxy.getPort() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Players: " + bungeeCordProxy.getOnlinePlayers() + " / " + bungeeCordProxy.getSlots() );
@@ -32,7 +32,7 @@ public class ListCommand extends Command {
             CloudMaster.getInstance().getLogger().info( this.getTabString() + "SpigotServer: " + cloudWrapper.getSpigotServers().size() );
             for ( SpigotServer spigotServer : cloudWrapper.getSpigotServers() ) {
                 CloudMaster.getInstance().getLogger().info( this.getTabString() + spigotServer.getName() + " {" );
-                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Template: " + spigotServer.getTemplate().getName() );
+                CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "ServerGroup: " + spigotServer.getServerGroup().getName() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "UniqueId: " + spigotServer.getUniqueId().toString() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Port: " + spigotServer.getPort() );
                 CloudMaster.getInstance().getLogger().info( this.getTabString( 2 ) + "Players: " + spigotServer.getOnlinePlayers() + " / " + spigotServer.getSlots() );

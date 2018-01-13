@@ -4,7 +4,7 @@ import de.bluplayz.CloudMaster;
 import de.bluplayz.cloudlib.packet.StartServerPacket;
 import de.bluplayz.cloudlib.server.ActiveMode;
 import de.bluplayz.cloudlib.server.ServerData;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import de.bluplayz.cloudmaster.locale.LocaleAPI;
 import lombok.Getter;
 
@@ -19,10 +19,10 @@ public class BungeeCordProxy extends ServerData {
     @Getter
     private CloudWrapper cloudWrapper;
 
-    public BungeeCordProxy( CloudWrapper cloudWrapper, Template template ) {
-        super( template );
+    public BungeeCordProxy( CloudWrapper cloudWrapper, ServerGroup serverGroup ) {
+        super( serverGroup );
         this.setId( this.getAvailableId() );
-        this.setName( this.getTemplate().getName() + "-" + this.getId() );
+        this.setName( this.getServerGroup().getName() + "-" + this.getId() );
         this.cloudWrapper = cloudWrapper;
         this.setPort( this.getAvailablePort() );
 

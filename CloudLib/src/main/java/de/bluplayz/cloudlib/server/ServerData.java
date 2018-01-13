@@ -1,6 +1,6 @@
 package de.bluplayz.cloudlib.server;
 
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class ServerData {
 
     @Getter
     @Setter
-    private Template template;
+    private ServerGroup serverGroup;
 
     @Getter
     @Setter
@@ -60,8 +60,8 @@ public class ServerData {
     @Setter
     private ActiveMode activeMode = ActiveMode.OFFLINE;
 
-    public ServerData( Template template ) {
-        this.template = template;
+    public ServerData( ServerGroup serverGroup ) {
+        this.serverGroup = serverGroup;
 
         try {
             this.host = InetAddress.getLocalHost().getHostAddress();
@@ -73,8 +73,8 @@ public class ServerData {
     public void toByteBuf( ByteBuf byteBuf ) {
         byte[] bytes;
 
-        // Template
-        this.getTemplate().toByteBuf( byteBuf );
+        // ServerGroup
+        this.getServerGroup().toByteBuf( byteBuf );
 
         // ID
         byteBuf.writeInt( this.getId() );
@@ -118,9 +118,9 @@ public class ServerData {
         int length;
         byte[] bytes;
 
-        // Template
-        this.template = new Template();
-        this.template.fromByteBuf( byteBuf );
+        // ServerGroup
+        this.serverGroup = new ServerGroup();
+        this.serverGroup.fromByteBuf( byteBuf );
 
         // ID
         this.setId( byteBuf.readInt() );
@@ -181,7 +181,7 @@ public class ServerData {
                 "id=" + id +
                 ", uniqueId=" + uniqueId +
                 ", port=" + port +
-                ", template=" + template +
+                ", serverGroup=" + serverGroup +
                 ", name='" + name + '\'' +
                 ", slots=" + slots +
                 ", onlinePlayers=" + onlinePlayers +

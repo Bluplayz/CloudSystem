@@ -30,7 +30,7 @@ public class SpigotServer extends ServerData {
     private BufferedWriter bufferedWriter;
 
     public SpigotServer( ServerData serverData ) {
-        super( serverData.getTemplate() );
+        super( serverData.getServerGroup() );
 
         this.setId( serverData.getId() );
         this.setName( serverData.getName() );
@@ -69,7 +69,7 @@ public class SpigotServer extends ServerData {
         }
 
         try {
-            File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
+            File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getServerGroup().getName() + "/" + this.getName() );
             FileUtils.deleteDirectory( serverDirectory );
         } catch ( IOException e ) {
             //Logger.getGlobal().error( e.getMessage(), e );
@@ -87,13 +87,13 @@ public class SpigotServer extends ServerData {
     }
 
     private File initServerDirectory() {
-        File templateFolder = new File( this.getTemplate().getTemplateFolder() );
+        File templateFolder = new File( this.getServerGroup().getTemplateFolder() );
         if ( !templateFolder.exists() ) {
-            LocaleAPI.log( "network_server_starting_no_template_folder", this.getName(), this.getTemplate().getName(), this.getTemplate().getTemplateFolder() );
+            LocaleAPI.log( "network_server_starting_no_template_folder", this.getName(), this.getServerGroup().getName(), this.getServerGroup().getTemplateFolder() );
             return null;
         }
 
-        File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getTemplate().getName() + "/" + this.getName() );
+        File serverDirectory = new File( CloudWrapper.getRootDirectory(), "temp/" + this.getServerGroup().getName() + "/" + this.getName() );
         if ( !serverDirectory.exists() ) {
             serverDirectory.mkdirs();
         } else {
@@ -107,7 +107,7 @@ public class SpigotServer extends ServerData {
             }
         }
 
-        // Copy Template Folder
+        // Copy ServerGroup Folder
         try {
             FileUtils.copyDirectory( templateFolder, serverDirectory );
         } catch ( IOException e ) {
@@ -201,7 +201,7 @@ public class SpigotServer extends ServerData {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory( serverDirectory );
-        processBuilder.command( /*"screen", "-S", this.getName(),*/ "java", "-jar"/*, "Xmx" + this.getTemplate().getMaxMemory() + "M" */, spigotJarName );
+        processBuilder.command( /*"screen", "-S", this.getName(),*/ "java", "-jar"/*, "Xmx" + this.getServerGroup().getMaxMemory() + "M" */, spigotJarName );
 
         CloudWrapper.getInstance().getPool().execute( () -> {
             try {

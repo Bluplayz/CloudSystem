@@ -1,7 +1,7 @@
 package de.bluplayz.cloudlib.packet;
 
 import de.bluplayz.cloudlib.netty.packet.Packet;
-import de.bluplayz.cloudlib.server.template.Template;
+import de.bluplayz.cloudlib.server.group.ServerGroup;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,15 +15,15 @@ public class SaveServerPacket extends Packet {
     private String targetServerName;
 
     @Getter
-    private Template targetTemplate;
+    private ServerGroup targetServerGroup;
 
     /**
      * Will be sent from CloudMaster to CloudWrapper
-     * to save the Temp Server to the Template folder
+     * to save the Temp Server to the ServerGroup folder
      */
-    public SaveServerPacket( String targetServerName, Template targetTemplate ) {
+    public SaveServerPacket( String targetServerName, ServerGroup targetServerGroup ) {
         this.targetServerName = targetServerName;
-        this.targetTemplate = targetTemplate;
+        this.targetServerGroup = targetServerGroup;
     }
 
     @Override
@@ -39,9 +39,9 @@ public class SaveServerPacket extends Packet {
         }
         this.targetServerName = new String( bytes );
 
-        // Template
-        this.targetTemplate = new Template();
-        this.targetTemplate.fromByteBuf( byteBuf );
+        // ServerGroup
+        this.targetServerGroup = new ServerGroup();
+        this.targetServerGroup.fromByteBuf( byteBuf );
     }
 
     @Override
@@ -53,15 +53,15 @@ public class SaveServerPacket extends Packet {
         byteBuf.writeInt( bytes.length );
         byteBuf.writeBytes( bytes );
 
-        // Template
-        this.getTargetTemplate().toByteBuf( byteBuf );
+        // ServerGroup
+        this.getTargetServerGroup().toByteBuf( byteBuf );
     }
 
     @Override
     public String toString() {
         return "SaveServerPacket{" +
                 "targetServerName='" + targetServerName + '\'' +
-                ", targetTemplate=" + targetTemplate +
+                ", targetServerGroup=" + targetServerGroup +
                 ", uniqueId=" + uniqueId +
                 '}';
     }
